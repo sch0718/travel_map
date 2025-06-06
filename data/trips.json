@@ -15,19 +15,22 @@
               "placeId": "place4",
               "order": 1,
               "memo": "제주공항 도착, 렌터카 수령",
-              "timeEstimate": "12:00"
+              "timeEstimate": "12:00",
+              "transportation": "airplane"
             },
             {
               "placeId": "place5",
               "order": 2,
               "memo": "올레시장에서 점심식사 및 특산품 구경",
-              "timeEstimate": "13:30"
+              "timeEstimate": "13:30",
+              "transportation": "car"
             },
             {
               "placeId": "place9",
               "order": 3,
               "memo": "호텔 체크인 및 휴식",
-              "timeEstimate": "16:00"
+              "timeEstimate": "16:00",
+              "transportation": "car"
             }
           ],
           "memo": "첫날은 이동 및 휴식 위주로 일정을 가볍게 구성"
@@ -40,19 +43,22 @@
               "placeId": "place1",
               "order": 1,
               "memo": "일출봉 등반",
-              "timeEstimate": "08:00"
+              "timeEstimate": "08:00",
+              "transportation": "car"
             },
             {
               "placeId": "place2",
               "order": 2,
               "memo": "우도 관광 (배타고 이동)",
-              "timeEstimate": "11:00"
+              "timeEstimate": "11:00",
+              "transportation": "ship"
             },
             {
               "placeId": "place7",
               "order": 3,
               "memo": "만장굴 탐험",
-              "timeEstimate": "16:00"
+              "timeEstimate": "16:00",
+              "transportation": "car"
             }
           ],
           "memo": "제주도 동부 지역 관광"
@@ -65,7 +71,8 @@
               "placeId": "place6",
               "order": 1,
               "memo": "한라산 등반 (어리목 코스)",
-              "timeEstimate": "07:00"
+              "timeEstimate": "07:00",
+              "transportation": "car"
             }
           ],
           "memo": "한라산 등반에 하루 전체를 할애"
@@ -78,19 +85,22 @@
               "placeId": "place3",
               "order": 1,
               "memo": "협재해수욕장 산책",
-              "timeEstimate": "10:00"
+              "timeEstimate": "10:00",
+              "transportation": "car"
             },
             {
               "placeId": "place8",
               "order": 2,
               "memo": "쇠소깍에서 카약 체험",
-              "timeEstimate": "14:00"
+              "timeEstimate": "14:00",
+              "transportation": "car"
             },
             {
               "placeId": "place10",
               "order": 3,
               "memo": "흑돼지 거리에서 저녁 식사",
-              "timeEstimate": "18:00"
+              "timeEstimate": "18:00",
+              "transportation": "car"
             }
           ],
           "memo": "제주도 서부 및 남부 지역 관광"
@@ -103,13 +113,15 @@
               "placeId": "place5",
               "order": 1,
               "memo": "올레시장에서 기념품 쇼핑",
-              "timeEstimate": "10:00"
+              "timeEstimate": "10:00",
+              "transportation": "car"
             },
             {
               "placeId": "place4",
               "order": 2,
               "memo": "공항 이동 및 귀가",
-              "timeEstimate": "14:00"
+              "timeEstimate": "14:00",
+              "transportation": "car"
             }
           ],
           "memo": "마지막 날은 쇼핑 및 귀가 준비"
@@ -133,19 +145,22 @@
               "placeId": "place4",
               "order": 1,
               "memo": "제주공항 도착",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "airplane"
             },
             {
               "placeId": "place9",
               "order": 2,
               "memo": "호텔 체크인 및 휴식",
-              "timeEstimate": "12:00"
+              "timeEstimate": "12:00",
+              "transportation": "bus"
             },
             {
               "placeId": "place3",
               "order": 3,
               "memo": "해변에서 일몰 감상",
-              "timeEstimate": "18:00"
+              "timeEstimate": "18:00",
+              "transportation": "walking"
             }
           ],
           "memo": "첫날은 이동 후 휴식"
@@ -158,13 +173,15 @@
               "placeId": "place1",
               "order": 1,
               "memo": "일출봉에서 일출 감상",
-              "timeEstimate": "05:30"
+              "timeEstimate": "05:30",
+              "transportation": "taxi"
             },
             {
               "placeId": "place2",
               "order": 2,
               "memo": "우도 자전거 여행",
-              "timeEstimate": "10:00"
+              "timeEstimate": "10:00",
+              "transportation": "ship"
             }
           ],
           "memo": "동부 지역 자연 경관 감상"
@@ -177,13 +194,15 @@
               "placeId": "place8",
               "order": 1,
               "memo": "쇠소깍 탐방",
-              "timeEstimate": "10:00"
+              "timeEstimate": "10:00",
+              "transportation": "bus"
             },
             {
               "placeId": "place10",
               "order": 2,
               "memo": "맛집 탐방",
-              "timeEstimate": "18:00"
+              "timeEstimate": "18:00",
+              "transportation": "taxi"
             }
           ],
           "memo": "남부 지역 관광 및 맛집 탐방"
@@ -196,13 +215,15 @@
               "placeId": "place5",
               "order": 1,
               "memo": "시장 구경 및 쇼핑",
-              "timeEstimate": "10:00"
+              "timeEstimate": "10:00",
+              "transportation": "bus"
             },
             {
               "placeId": "place4",
               "order": 2,
               "memo": "공항 이동 및 귀가",
-              "timeEstimate": "15:00"
+              "timeEstimate": "15:00",
+              "transportation": "bus"
             }
           ],
           "memo": "마지막 날은 쇼핑 후 귀가"
@@ -226,55 +247,64 @@
               "placeId": "place4",
               "order": 1,
               "memo": "제주공항 도착, 렌터카 픽업",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "airplane"
             },
             {
               "placeId": "place11",
               "order": 2,
               "memo": "애월 해안도로에 위치한 오션뷰 카페",
-              "timeEstimate": "09:30"
+              "timeEstimate": "09:30",
+              "transportation": "car"
             },
             {
               "placeId": "place12",
               "order": 3,
               "memo": "애월에서 유명한 수제 도넛 맛집",
-              "timeEstimate": "11:00"
+              "timeEstimate": "11:00",
+              "transportation": "car"
             },
             {
               "placeId": "place3",
               "order": 4,
               "memo": "에메랄드빛 바다와 하얀 모래사장이 아름다운 해변",
-              "timeEstimate": "12:00"
+              "timeEstimate": "12:00",
+              "transportation": "car"
             },
             {
               "placeId": "place13",
               "order": 5,
               "memo": "점심: 담백한 해장국",
-              "timeEstimate": "13:00"
+              "timeEstimate": "13:00",
+              "transportation": "walking"
             },
             {
               "placeId": "place14",
               "order": 6,
               "memo": "완만한 경사로 쉽게 오를 수 있는 오름",
-              "timeEstimate": "14:00"
+              "timeEstimate": "14:00",
+              "transportation": "car"
             },
             {
               "placeId": "place15",
               "order": 7,
               "memo": "숙소 체크인 및 휴식",
-              "timeEstimate": "17:00"
+              "timeEstimate": "17:00",
+              "transportation": "car"
             },
             {
               "placeId": "place16",
               "order": 8,
               "memo": "저녁: 모슬포 고등어회 맛집",
-              "timeEstimate": "19:00"
+              "timeEstimate": "19:00",
+              "transportation": "car"
             },
             {
               "placeId": "place17",
               "order": 9,
               "memo": "바다 전망이 아름다운 베이커리 카페",
-              "timeEstimate": "21:00"
+              "timeEstimate": "21:00",
+              "transportation": "walking"
             }
           ],
           "memo": "제주공항 → 서부 → 서남부 (모슬포/사계 숙소)"
@@ -287,49 +317,57 @@
               "placeId": "place15",
               "order": 1,
               "memo": "출발",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "car"
             },
             {
               "placeId": "place18",
               "order": 2,
               "memo": "제주 서남부 해안과 산방산을 조망할 수 있는 오름",
-              "timeEstimate": "09:30"
+              "timeEstimate": "09:30",
+              "transportation": "car"
             },
             {
               "placeId": "place19",
               "order": 3,
               "memo": "마라도 배 탑승",
-              "timeEstimate": "11:30"
+              "timeEstimate": "11:30",
+              "transportation": "car"
             },
             {
               "placeId": "place20",
               "order": 4,
               "memo": "대한민국 최남단 섬",
-              "timeEstimate": "12:00"
+              "timeEstimate": "12:00",
+              "transportation": "ship"
             },
             {
               "placeId": "place20",
               "order": 5,
               "memo": "점심: 마라도 짜장면",
-              "timeEstimate": "13:00"
+              "timeEstimate": "13:00",
+              "transportation": "walking"
             },
             {
               "placeId": "place21",
               "order": 6,
               "memo": "청보리 군락지로 유명한 작은 섬",
-              "timeEstimate": "14:30"
+              "timeEstimate": "14:30",
+              "transportation": "ship"
             },
             {
               "placeId": "place22",
               "order": 7,
               "memo": "산방산을 배경으로 한 아름다운 해변, 일몰 명소",
-              "timeEstimate": "17:00"
+              "timeEstimate": "17:00",
+              "transportation": "car"
             },
             {
               "placeId": "place23",
               "order": 8,
               "memo": "저녁: 갈치조림과 우럭조림으로 유명한 현지인 맛집",
-              "timeEstimate": "18:30"
+              "timeEstimate": "18:30",
+              "transportation": "car"
             }
           ],
           "memo": "서남부 지역 관광 (모슬포/사계 숙소)"
@@ -342,67 +380,78 @@
               "placeId": "place15",
               "order": 1,
               "memo": "출발",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "car"
             },
             {
               "placeId": "place24",
               "order": 2,
               "memo": "거대한 종 모양의 화산암체",
-              "timeEstimate": "09:30"
+              "timeEstimate": "09:30",
+              "transportation": "car"
             },
             {
               "placeId": "place25",
               "order": 3,
               "memo": "파도에 의해 침식된 독특한 지형의 해안가",
-              "timeEstimate": "10:40"
+              "timeEstimate": "10:40",
+              "transportation": "car"
             },
             {
               "placeId": "place26",
               "order": 4,
               "memo": "아름다운 풍경을 감상할 수 있는 오름",
-              "timeEstimate": "11:45"
+              "timeEstimate": "11:45",
+              "transportation": "car"
             },
             {
               "placeId": "place27",
               "order": 5,
               "memo": "바다 전망이 아름다운 레스토랑",
-              "timeEstimate": "13:10"
+              "timeEstimate": "13:10",
+              "transportation": "car"
             },
             {
               "placeId": "place28",
               "order": 6,
               "memo": "아름다운 사찰로 평화로운 분위기의 명소",
-              "timeEstimate": "14:55"
+              "timeEstimate": "14:55",
+              "transportation": "car"
             },
             {
               "placeId": "place29",
               "order": 7,
               "memo": "서귀포 새섬으로 연결되는 아름다운 다리",
-              "timeEstimate": "16:10"
+              "timeEstimate": "16:10",
+              "transportation": "car"
             },
             {
               "placeId": "place30",
               "order": 8,
               "memo": "바다로 직접 떨어지는 해안 폭포",
-              "timeEstimate": "17:05"
+              "timeEstimate": "17:05",
+              "transportation": "walking"
             },
             {
               "placeId": "place31",
               "order": 9,
               "memo": "아기자기한 카페",
-              "timeEstimate": "17:45"
+              "timeEstimate": "17:45",
+              "transportation": "walking"
             },
             {
               "placeId": "place32",
               "order": 10,
               "memo": "숙소 체크인",
-              "timeEstimate": "19:15"
+              "timeEstimate": "19:15",
+              "transportation": "car"
             },
             {
               "placeId": "place33",
               "order": 11,
               "memo": "저녁: 중문에 위치한 전복요리 전문점",
-              "timeEstimate": "20:00"
+              "timeEstimate": "20:00",
+              "transportation": "walking"
             }
           ],
           "memo": "서남부 → 남동부 (중문 숙소)"
@@ -415,43 +464,50 @@
               "placeId": "place32",
               "order": 1,
               "memo": "출발",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "car"
             },
             {
               "placeId": "place34",
               "order": 2,
               "memo": "성산일출봉을 배경으로 한 아름다운 해안가",
-              "timeEstimate": "09:00"
+              "timeEstimate": "09:00",
+              "transportation": "car"
             },
             {
               "placeId": "place35",
               "order": 3,
               "memo": "성산일출봉이 보이는 아름다운 해변",
-              "timeEstimate": "10:50"
+              "timeEstimate": "10:50",
+              "transportation": "car"
             },
             {
               "placeId": "place36",
               "order": 4,
               "memo": "점심: 고등어쌈밥",
-              "timeEstimate": "12:00"
+              "timeEstimate": "12:00",
+              "transportation": "walking"
             },
             {
               "placeId": "place1",
               "order": 5,
               "memo": "유네스코 세계자연유산",
-              "timeEstimate": "13:00"
+              "timeEstimate": "13:00",
+              "transportation": "car"
             },
             {
               "placeId": "place37",
               "order": 6,
               "memo": "성산일출봉과 우도를 조망할 수 있는 오션뷰 카페",
-              "timeEstimate": "14:40"
+              "timeEstimate": "14:40",
+              "transportation": "car"
             },
             {
               "placeId": "place4",
               "order": 7,
               "memo": "렌터카 반납",
-              "timeEstimate": "17:15"
+              "timeEstimate": "17:15",
+              "transportation": "car"
             }
           ],
           "memo": "중문 → 성산 → 공항"

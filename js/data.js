@@ -10,7 +10,8 @@ const dataStore = {
     trips: [],
     currentTheme: null,
     currentTrip: null,
-    filteredPlaces: []
+    filteredPlaces: [],
+    transportations: []
 };
 
 /**
@@ -22,17 +23,19 @@ async function initData() {
         // 로딩 상태 표시
         showLoading(true);
         
-        // 장소, 테마, 여행 데이터 로드
+        // 장소, 테마, 여행, 이동수단 데이터 로드
         await Promise.all([
             loadPlaces(),
             loadThemes(),
-            loadTrips()
+            loadTrips(),
+            loadTransportations()
         ]);
         
         console.log('데이터 로드 완료:', {
             places: dataStore.places.length,
             themes: dataStore.themes.length,
-            trips: dataStore.trips.length
+            trips: dataStore.trips.length,
+            transportations: dataStore.transportations.length
         });
         
         // 테마 선택 드롭다운 초기화
@@ -98,6 +101,23 @@ async function loadTrips() {
         dataStore.trips = data.trips || [];
     } catch (error) {
         console.error('여행 일정 데이터 로드 오류:', error);
+        throw error;
+    }
+}
+
+/**
+ * 이동수단 데이터 로드
+ */
+async function loadTransportations() {
+    try {
+        const response = await fetch('data/transportations.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        dataStore.transportations = data.transportations || [];
+    } catch (error) {
+        console.error('이동수단 데이터 로드 오류:', error);
         throw error;
     }
 }
@@ -337,6 +357,15 @@ function showError(message) {
     // 오류 메시지 표시 구현 (MVP에서는 콘솔에만 출력)
     console.error('오류:', message);
     alert(message); // 임시로 alert 사용
+}
+
+/**
+ * 이동수단 정보 가져오기 함수
+ * @param {string} id - 이동수단 ID
+ * @returns {Object} - 이동수단 객체
+ */
+function getTransportationById(id) {
+    return dataStore.transportations.find(t => t.id === id);
 }
 
 // 데이터 모듈 초기화 (DOM 로드 후)

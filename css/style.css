@@ -277,20 +277,32 @@ h1, h2, h3 {
     margin-bottom: 0.5rem;
 }
 
-/* 이동 정보 (거리 및 소요시간) */
+/* 장소 거리 정보 */
 .place-distance {
+    margin-top: 0.5rem;
     font-size: 0.85rem;
-    color: var(--accent-color);
+    color: var(--light-text-color);
+    border-top: 1px dashed var(--border-color);
+    padding-top: 0.5rem;
     display: flex;
     align-items: center;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px dashed var(--border-color);
 }
 
-.place-distance:before {
-    content: "↔️";
-    margin-right: 0.5rem;
+/* 이동수단 아이콘 스타일 */
+.transportation-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+}
+
+.transportation-icon iconify-icon {
+    margin-right: 4px;
+    color: var(--primary-color);
+}
+
+.transportation-icon span {
+    font-size: 0.85rem;
+    color: var(--light-text-color);
 }
 
 /* 장소 순서 마커 */

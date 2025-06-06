@@ -1,0 +1,76 @@
+{
+  "transportations": [
+    {
+      "id": "airplane",
+      "type": "비행기",
+      "description": "항공편을 이용한 이동",
+      "icon": "mdi:airplane",
+      "iconifyIcon": "mdi:airplane",
+      "category": "public"
+    },
+    {
+      "id": "car",
+      "type": "자동차",
+      "description": "렌터카 또는 개인 차량을 이용한 이동",
+      "icon": "car",
+      "iconifyIcon": "mdi:car",
+      "category": "private"
+    },
+    {
+      "id": "bus",
+      "type": "버스",
+      "description": "대중교통 버스를 이용한 이동",
+      "icon": "bus",
+      "iconifyIcon": "mdi:bus",
+      "category": "public"
+    },
+    {
+      "id": "taxi",
+      "type": "택시",
+      "description": "택시를 이용한 이동",
+      "icon": "taxi",
+      "iconifyIcon": "mdi:taxi",
+      "category": "public"
+    },
+    {
+      "id": "walking",
+      "type": "도보",
+      "description": "걸어서 이동",
+      "icon": "walking",
+      "iconifyIcon": "mdi:walk",
+      "category": "personal"
+    },
+    {
+      "id": "ship",
+      "type": "배",
+      "description": "배나 페리를 이용한 이동",
+      "icon": "ship",
+      "iconifyIcon": "mdi:ferry",
+      "category": "public"
+    },
+    {
+      "id": "subway",
+      "type": "지하철",
+      "description": "지하철을 이용한 이동",
+      "icon": "subway",
+      "iconifyIcon": "mdi:subway",
+      "category": "public"
+    },
+    {
+      "id": "bicycle",
+      "type": "자전거",
+      "description": "자전거를 이용한 이동",
+      "icon": "bicycle",
+      "iconifyIcon": "mdi:bicycle",
+      "category": "personal"
+    },
+    {
+      "id": "etc",
+      "type": "기타",
+      "description": "기타 이동 수단",
+      "icon": "etc",
+      "iconifyIcon": "mdi:dots-horizontal",
+      "category": "other"
+    }
+  ]
+} 

@@ -397,14 +397,40 @@ function showTripDay(trip, dayIndex) {
         
         // 다음 장소와의 이동 정보 계산
         let distanceInfo = '';
+        let transportationIcon = '';
+        
         if (index < sortedPlaces.length - 1) {
             const nextPlace = getPlaceById(sortedPlaces[index + 1].placeId);
-            if (nextPlace && dayPlace.distance) {
-                distanceInfo = `
-                    <div class="place-distance">
-                        ${dayPlace.distance || ''} ${dayPlace.duration || ''}
-                    </div>
-                `;
+            if (nextPlace) {
+                // 이동수단 정보가 있는 경우
+                if (dayPlace.transportation) {
+                    const transportation = getTransportationById(dayPlace.transportation);
+                    if (transportation) {
+                        transportationIcon = `
+                            <div class="transportation-icon">
+                                <iconify-icon icon="${transportation.iconifyIcon}" width="20" height="20"></iconify-icon>
+                                <span>${transportation.type}</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // 거리 정보가 있는 경우
+                if (dayPlace.distance) {
+                    distanceInfo = `
+                        <div class="place-distance">
+                            ${transportationIcon}
+                            <span>${dayPlace.distance || ''} ${dayPlace.duration || ''}</span>
+                        </div>
+                    `;
+                } else if (transportationIcon) {
+                    // 거리 정보는 없지만 이동수단 정보는 있는 경우
+                    distanceInfo = `
+                        <div class="place-distance">
+                            ${transportationIcon}
+                        </div>
+                    `;
+                }
             }
         }
         
