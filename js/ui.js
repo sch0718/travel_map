@@ -252,7 +252,7 @@ function updateTripInfo(trip) {
     
     // 일자별 탭 생성
     const dayTabs = document.createElement('div');
-    dayTabs.className = 'day-tabs';
+    dayTabs.className = 'day-buttons';
     
     trip.days.forEach((day, index) => {
         const dayTab = document.createElement('button');
@@ -264,11 +264,20 @@ function updateTripInfo(trip) {
             dayTab.classList.add('active');
         }
         
-        dayTab.addEventListener('click', () => showTripDay(trip, index));
+        dayTab.addEventListener('click', () => {
+            // 클릭한 탭 활성화 및 다른 탭 비활성화
+            document.querySelectorAll('.day-tab').forEach(tab => tab.classList.remove('active'));
+            dayTab.classList.add('active');
+            
+            showTripDay(trip, index);
+        });
         dayTabs.appendChild(dayTab);
     });
     
     categoryList.appendChild(dayTabs);
+    
+    // 이동 거리와 시간 정보 추가
+    calculateTripDistances(trip);
     
     // 기본적으로 첫 번째 일차 표시
     if (trip.days.length > 0) {
@@ -277,6 +286,72 @@ function updateTripInfo(trip) {
     
     // 장소 목록에 일정 일차만 표시하도록 UI 업데이트
     document.getElementById('places-list-title').textContent = '일정';
+}
+
+/**
+ * 여행 일정의 장소 간 이동 거리와 시간 계산
+ * @param {Object} trip - 여행 일정 객체
+ */
+function calculateTripDistances(trip) {
+    trip.days.forEach(day => {
+        const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
+        
+        sortedPlaces.forEach((place, index) => {
+            if (index < sortedPlaces.length - 1) {
+                const nextPlace = sortedPlaces[index + 1];
+                const currentPlace = getPlaceById(place.placeId);
+                const nextPlaceObj = getPlaceById(nextPlace.placeId);
+                
+                if (currentPlace && nextPlaceObj) {
+                    // 두 장소 간의 직선 거리 계산 (km)
+                    const distance = calculateDistance(
+                        currentPlace.location.lat, 
+                        currentPlace.location.lng,
+                        nextPlaceObj.location.lat, 
+                        nextPlaceObj.location.lng
+                    );
+                    
+                    // 거리에 따른 소요 시간 추정 (차량 이동 기준, 시속 40km 가정)
+                    const durationMinutes = Math.round(distance / 40 * 60);
+                    
+                    // 이동 정보 저장
+                    place.distance = `약 ${distance.toFixed(1)}km`;
+                    place.duration = `(${Math.floor(durationMinutes / 60) > 0 ? 
+                        Math.floor(durationMinutes / 60) + '시간 ' : ''}${durationMinutes % 60}분)`;
+                }
+            }
+        });
+    });
+}
+
+/**
+ * 두 지점 간의 거리 계산 (Haversine 공식)
+ * @param {number} lat1 - 첫 번째 지점의 위도
+ * @param {number} lon1 - 첫 번째 지점의 경도
+ * @param {number} lat2 - 두 번째 지점의 위도
+ * @param {number} lon2 - 두 번째 지점의 경도
+ * @returns {number} - km 단위 거리
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // 지구 반경 (km)
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    const distance = R * c; // 킬로미터 단위
+    return distance;
+}
+
+/**
+ * 각도를 라디안으로 변환
+ * @param {number} deg - 각도
+ * @returns {number} - 라디안
+ */
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
 }
 
 /**
@@ -313,19 +388,32 @@ function showTripDay(trip, dayIndex) {
     // 일차의 장소 목록 (방문 순서대로 정렬)
     const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
     
-    sortedPlaces.forEach(dayPlace => {
+    sortedPlaces.forEach((dayPlace, index) => {
         const place = getPlaceById(dayPlace.placeId);
         if (!place) return;
         
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item trip-place';
+        
+        // 다음 장소와의 이동 정보 계산
+        let distanceInfo = '';
+        if (index < sortedPlaces.length - 1) {
+            const nextPlace = getPlaceById(sortedPlaces[index + 1].placeId);
+            if (nextPlace && dayPlace.distance) {
+                distanceInfo = `
+                    <div class="place-distance">
+                        ${dayPlace.distance || ''} ${dayPlace.duration || ''}
+                    </div>
+                `;
+            }
+        }
+        
         placeItem.innerHTML = `
             <div class="place-order">${dayPlace.order}</div>
-            <div class="place-content">
-                <div class="place-title">${place.title}</div>
-                <div class="place-time">${dayPlace.timeEstimate || ''}</div>
-                <div class="place-memo">${dayPlace.memo || ''}</div>
-            </div>
+            <div class="place-time">${dayPlace.timeEstimate || ''}</div>
+            <div class="place-title">${place.title}</div>
+            <div class="place-memo">${dayPlace.memo || ''}</div>
+            ${distanceInfo}
         `;
         
         // 장소 클릭 이벤트
@@ -442,11 +530,15 @@ function toggleSidePanel() {
     if (window.innerWidth >= 1024) {
         sidePanel.classList.toggle('collapsed');
         
-        // 토글 버튼 방향 변경
+        // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
         if (sidePanel.classList.contains('collapsed')) {
-            togglePanelButton.textContent = '▶';
-        } else {
+            // 패널이 접힌 상태(패널이 보이지 않음) -> 패널을 펼치는 아이콘(왼쪽 화살표)
             togglePanelButton.textContent = '◀';
+            console.log('패널 접힘 상태 - 왼쪽 화살표(◀) 표시: 패널 펼치기 동작');
+        } else {
+            // 패널이 펼쳐진 상태(패널이 보임) -> 패널을 접는 아이콘(오른쪽 화살표)
+            togglePanelButton.textContent = '▶';
+            console.log('패널 펼침 상태 - 오른쪽 화살표(▶) 표시: 패널 접기 동작');
         }
         
         // 사이드 패널 전환 후 CSS transition이 완료될 때 지도 영역 리사이즈 트리거
@@ -592,8 +684,16 @@ function handleResize() {
         sidePanel.classList.remove('show');
         mobilePanelHandle.style.display = 'none';
         
-        // 토글 버튼 텍스트 초기화
-        togglePanelButton.textContent = '◀';
+        // 토글 버튼 텍스트 초기화 - 패널 상태에 맞는 아이콘으로 설정
+        if (sidePanel.classList.contains('collapsed')) {
+            // 패널이 접힌 상태 -> 펼치기 아이콘(왼쪽 화살표)
+            togglePanelButton.textContent = '◀';
+            console.log('리사이즈: 패널 접힘 상태 - 왼쪽 화살표(◀) 표시: 패널 펼치기 동작');
+        } else {
+            // 패널이 펼쳐진 상태 -> 접기 아이콘(오른쪽 화살표)
+            togglePanelButton.textContent = '▶';
+            console.log('리사이즈: 패널 펼침 상태 - 오른쪽 화살표(▶) 표시: 패널 접기 동작');
+        }
         
         // 데스크톱에서 사이드 패널이 접혀있으면 지도 크기 조절
         if (mapContainer) {

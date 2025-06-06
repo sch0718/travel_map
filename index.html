@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 지도 웹앱</title>
-    <!-- CSS 파일 연결 -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <!-- CSS 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
+    <link rel="stylesheet" href="css/style.css?v=1.0.1">
+    <link rel="stylesheet" href="css/responsive.css?v=1.0.1">
     <!-- 카카오 맵 API -->
     <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
 </head>
@@ -32,7 +32,7 @@
         <!-- 사이드 패널 -->
         <div class="side-panel">
             <div class="panel-toggle">
-                <button id="toggle-panel">◀</button>
+                <button id="toggle-panel">▶</button>
             </div>
             <div class="panel-content">
                 <!-- 테마/여행 정보 -->
@@ -87,9 +87,9 @@
         <div class="handle-bar"></div>
     </div>
 
-    <!-- JavaScript 파일 연결 -->
-    <script src="js/data.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/ui.js"></script>
+    <!-- JavaScript 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
+    <script src="js/data.js?v=1.0.1"></script>
+    <script src="js/map.js?v=1.0.1"></script>
+    <script src="js/ui.js?v=1.0.1"></script>
 </body>
 </html> 

@@ -237,7 +237,7 @@ function createMarkerImage(place, trip = null, order = null) {
     if (order !== null) {
         // 숫자 마커를 생성하기 위한 HTML Content 사용
         const content = `<div style="
-            background: #FF8859; 
+            background: #3490dc; 
             color: white; 
             padding: 5px 10px; 
             border-radius: 50%; 
@@ -416,7 +416,7 @@ function showTripPath(trip, dayIndex) {
     const polyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 3,
-        strokeColor: '#db4040',
+        strokeColor: '#3490dc',
         strokeOpacity: 0.7,
         strokeStyle: 'solid'
     });

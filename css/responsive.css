@@ -119,10 +119,7 @@
         transform: translateX(calc(100% - 24px));
     }
 
-    /* 패널 접힘 상태에서의 토글 버튼 방향 변경 */
-    .side-panel.collapsed .panel-toggle button {
-        transform: rotate(180deg);
-    }
+    /* 패널 접힘 상태에서의 토글 버튼 방향 변경 - JavaScript에서 처리하므로 제거 */
 }
 
 /* 태블릿 세로 모드에서의 사이드 패널 처리 */
