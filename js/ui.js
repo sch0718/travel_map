@@ -509,12 +509,17 @@ function showTripDay(trip, dayIndex) {
             toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
         });
         
-        // 장소 아이템 클릭 시 지도에 표시 (토글 버튼 제외)
-        placeItem.addEventListener('click', (e) => {
-            // 토글 버튼 클릭이 아닌 경우에만 지도에 표시
-            if (e.target !== toggleButton) {
-                moveToPlace(place.id);
-            }
+        // 장소 아이템 클릭 이벤트 (제목 부분만)
+        const titleElement = placeItem.querySelector('.place-title');
+        titleElement.addEventListener('click', function() {
+            // 선택된 장소 스타일 적용
+            document.querySelectorAll('.place-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            placeItem.classList.add('selected');
+            
+            // 지도에서 해당 장소로 이동
+            moveToPlace(place.id);
         });
         
         placesList.appendChild(placeItem);
@@ -616,8 +621,7 @@ function updatePlacesList(places, trip = null) {
             placeItem.classList.add('selected');
             
             // 지도에서 해당 장소로 이동
-            panToPlace(place);
-            showPlaceMarkerInfo(place);
+            moveToPlace(place.id);
         });
         
         placesList.appendChild(placeItem);
