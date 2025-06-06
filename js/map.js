@@ -201,8 +201,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         selectedMarker.setZIndex(10);
                     }
                     
-                    // 장소 정보 패널 표시
-                    showPlaceInfoPanel(place);
+                    // 마커 요소의 위치 계산
+                    const markerRect = markerElement.getBoundingClientRect();
+                    const mapContainer = document.getElementById('map');
+                    const mapRect = mapContainer.getBoundingClientRect();
+                    
+                    // 마커 중심 위치 계산
+                    const markerPosition = {
+                        x: markerRect.left + markerRect.width / 2 - mapRect.left,
+                        y: markerRect.top - mapRect.top
+                    };
+                    
+                    // 장소 정보 패널 표시 (마커 위치 전달)
+                    showPlaceInfoPanel(place, markerPosition);
                 }
             }
         }
@@ -260,8 +271,12 @@ function addMarker(place, trip = null) {
             selectedMarker = marker;
             selectedMarker.setZIndex(10);
             
-            // 장소 정보 패널 표시
-            showPlaceInfoPanel(place);
+            // 마커의 화면상 위치 계산
+            const projection = map.getProjection();
+            const markerPosition = projection.containerPointFromCoords(marker.getPosition());
+            
+            // 장소 정보 패널 표시 (마커 위치 전달)
+            showPlaceInfoPanel(place, markerPosition);
         });
         
         // 마커 배열에 추가
@@ -436,8 +451,27 @@ function moveToPlace(placeId) {
     // 해당 마커 찾기
     const marker = markers.find(m => m.place.id === place.id);
     if (marker) {
-        // 마커 클릭 이벤트 트리거 (장소 정보 패널 표시)
-        kakao.maps.event.trigger(marker, 'click');
+        // 이전 선택 마커 처리
+        if (selectedMarker) {
+            selectedMarker.setZIndex(1);
+        }
+        
+        // 현재 마커를 선택된 마커로 설정
+        selectedMarker = marker;
+        selectedMarker.setZIndex(10);
+        
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        const markerPosition = projection.containerPointFromCoords(
+            marker.getPosition ? marker.getPosition() : 
+            new kakao.maps.LatLng(place.location.lat, place.location.lng)
+        );
+        
+        // 장소 정보 패널 표시 (마커 위치 전달)
+        showPlaceInfoPanel(place, markerPosition);
+    } else {
+        // 마커를 찾을 수 없는 경우 패널만 표시
+        showPlaceInfoPanel(place);
     }
 }
 

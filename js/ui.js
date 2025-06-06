@@ -631,8 +631,9 @@ function updatePlacesList(places, trip = null) {
 /**
  * 장소 정보 패널 표시 함수
  * @param {Object} place - 장소 데이터
+ * @param {Object} markerPosition - 마커의 화면상 좌표 (선택적)
  */
-function showPlaceInfoPanel(place) {
+function showPlaceInfoPanel(place, markerPosition) {
     // 장소 정보 패널 내용 업데이트
     const titleElement = document.getElementById('place-title');
     titleElement.textContent = place.title;
@@ -673,6 +674,60 @@ function showPlaceInfoPanel(place) {
     const placeInfoHeader = document.querySelector('.place-info-header');
     placeInfoHeader.style.borderBottom = `2px solid var(--primary-color)`;
     placeInfoHeader.style.backgroundColor = `var(--primary-color)10`;
+    
+    // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
+    placeInfoPanel.style.display = 'block';
+    
+    // 마커 위치가 제공된 경우 위치 조정
+    if (markerPosition) {
+        // 지도 컨테이너의 크기와 위치
+        const mapContainer = document.getElementById('map');
+        const mapRect = mapContainer.getBoundingClientRect();
+        
+        // 팝업의 크기
+        const panelWidth = placeInfoPanel.offsetWidth;
+        const panelHeight = placeInfoPanel.offsetHeight;
+        
+        // 마커 위치가 지도의 어느 영역에 있는지 확인 (좌상, 우상, 좌하, 우하)
+        const isRightHalf = markerPosition.x > mapRect.width / 2;
+        const isBottomHalf = markerPosition.y > mapRect.height / 2;
+        
+        // 팝업 위치 계산
+        let left, top;
+        
+        // 가로 위치 계산
+        if (isRightHalf) {
+            // 마커가 오른쪽 영역에 있으면 팝업은 마커 왼쪽에 표시
+            left = markerPosition.x - panelWidth - 20;
+        } else {
+            // 마커가 왼쪽 영역에 있으면 팝업은 마커 오른쪽에 표시
+            left = markerPosition.x + 20;
+        }
+        
+        // 세로 위치 계산
+        if (isBottomHalf) {
+            // 마커가 하단 영역에 있으면 팝업 하단과 마커 하단을 맞춤
+            top = markerPosition.y - panelHeight + 108; // 마커 높이 고려
+        } else {
+            // 마커가 상단 영역에 있으면 팝업 상단과 마커 상단을 맞춤
+            top = markerPosition.y + 68;
+        }
+        
+        // 팝업이 지도 영역을 벗어나지 않도록 보정
+        if (left < 0) left = 0;
+        if (top < 0) top = 0;
+        if (left + panelWidth > mapRect.width) left = mapRect.width - panelWidth;
+        if (top + panelHeight > mapRect.height) top = mapRect.height - panelHeight;
+        
+        // 계산된 위치로 팝업 위치 설정
+        placeInfoPanel.style.left = left + 'px';
+        placeInfoPanel.style.top = top + 'px';
+    } else {
+        // 마커 위치가 제공되지 않은 경우 중앙 배치
+        placeInfoPanel.style.left = '50%';
+        placeInfoPanel.style.top = '50%';
+        placeInfoPanel.style.transform = 'translate(-50%, -50%)';
+    }
     
     // 패널 표시
     placeInfoPanel.style.display = 'block';
