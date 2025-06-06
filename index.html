@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여행 지도 웹앱</title>
+    <!-- CSS 파일 연결 -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- 카카오 맵 API -->
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
+</head>
+<body>
+    <!-- 헤더 영역 -->
+    <header class="header">
+        <div class="app-title">여행 지도</div>
+        <div class="theme-selector">
+            <select id="theme-select">
+                <option value="">테마/여행 선택</option>
+                <!-- 테마 옵션은 JavaScript로 동적 생성 -->
+            </select>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="장소 검색...">
+            <button id="search-button">검색</button>
+        </div>
+        <button id="settings-button" class="settings-button">설정</button>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="container">
+        <!-- 지도 영역 -->
+        <div id="map" class="map-container"></div>
+
+        <!-- 사이드 패널 -->
+        <div class="side-panel">
+            <div class="panel-toggle">
+                <button id="toggle-panel">◀</button>
+            </div>
+            <div class="panel-content">
+                <!-- 테마/여행 정보 -->
+                <div class="theme-info">
+                    <h2 id="theme-title">테마 제목</h2>
+                    <p id="theme-description">테마 설명</p>
+                </div>
+
+                <!-- 카테고리 필터 -->
+                <div class="category-filter">
+                    <h3>카테고리</h3>
+                    <div id="category-list">
+                        <!-- 카테고리는 JavaScript로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- 장소 목록 -->
+                <div class="place-list">
+                    <h3>장소 목록</h3>
+                    <ul id="places">
+                        <!-- 장소 목록은 JavaScript로 동적 생성 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 장소 정보 패널 (기본적으로 숨김) -->
+    <div id="place-info-panel" class="place-info-panel">
+        <div class="place-info-header">
+            <h3 id="place-title">장소명</h3>
+            <button id="close-place-info">✕</button>
+        </div>
+        <div class="place-info-content">
+            <p id="place-address">주소</p>
+            <div id="place-labels">
+                <!-- 라벨/태그는 JavaScript로 동적 생성 -->
+            </div>
+            <p id="place-description">설명</p>
+            <div class="place-links">
+                <a id="naver-map-link" href="#" target="_blank">네이버 지도</a>
+                <a id="kakao-map-link" href="#" target="_blank">카카오 지도</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모바일용 하단 패널 핸들 -->
+    <div id="mobile-panel-handle" class="mobile-panel-handle">
+        <div class="handle-bar"></div>
+    </div>
+
+    <!-- JavaScript 파일 연결 -->
+    <script src="js/data.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html> 

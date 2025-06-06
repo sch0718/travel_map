@@ -1,0 +1,104 @@
+{
+  "themes": [
+    {
+      "id": "theme1",
+      "title": "제주도 가볼만한 곳",
+      "description": "제주도 여행 시 꼭 방문해야 할 대표적인 관광 명소들을 모았습니다.",
+      "places": ["place1", "place2", "place3", "place6", "place7", "place8"],
+      "created": "2023-07-15",
+      "modified": "2023-08-20",
+      "categories": [
+        {
+          "name": "관광 유형",
+          "values": ["관광지", "자연", "해변", "산", "동굴"]
+        },
+        {
+          "name": "활동",
+          "values": ["등산", "수영", "산책", "카약"]
+        }
+      ]
+    },
+    {
+      "id": "theme2",
+      "title": "제주도 맛집 탐방",
+      "description": "제주도의 맛있는 음식을 즐길 수 있는 맛집들을 소개합니다.",
+      "places": ["place5", "place10"],
+      "created": "2023-06-10",
+      "modified": "2023-09-05",
+      "categories": [
+        {
+          "name": "음식 종류",
+          "values": ["해산물", "흑돼지", "고기"]
+        },
+        {
+          "name": "위치",
+          "values": ["시장", "시내"]
+        }
+      ]
+    },
+    {
+      "id": "theme3",
+      "title": "제주도 교통 및 숙박",
+      "description": "제주도 여행 시 필요한 교통 정보와 숙박 정보를 모았습니다.",
+      "places": ["place4", "place9"],
+      "created": "2023-05-01",
+      "modified": "2023-07-10",
+      "categories": [
+        {
+          "name": "시설 유형",
+          "values": ["교통", "숙소"]
+        },
+        {
+          "name": "등급",
+          "values": ["고급"]
+        }
+      ]
+    },
+    {
+      "id": "theme4",
+      "title": "제주도 유네스코 세계유산",
+      "description": "제주도에 있는 유네스코 세계자연유산에 등재된 명소들을 소개합니다.",
+      "places": ["place1", "place6", "place7"],
+      "created": "2023-08-15",
+      "modified": "2023-08-15",
+      "categories": [
+        {
+          "name": "유형",
+          "values": ["유네스코", "자연"]
+        },
+        {
+          "name": "지형",
+          "values": ["산", "동굴", "분화구"]
+        }
+      ]
+    },
+    {
+      "id": "theme5",
+      "title": "제주도 4일 여행 코스",
+      "description": "제주도를 4일 동안 효율적으로 여행할 수 있는 일정입니다. 제주 서부에서 시작하여 서남부, 남동부, 동부를 거쳐 공항까지 일정이 구성되어 있습니다.",
+      "places": [
+        "place4", "place11", "place12", "place3", "place13", "place14", "place15", 
+        "place16", "place17", "place18", "place19", "place20", "place21", "place22", 
+        "place23", "place24", "place25", "place26", "place27", "place28", "place29", 
+        "place30", "place31", "place32", "place33", "place34", "place35", "place36", 
+        "place1", "place37"
+      ],
+      "created": "2024-06-12",
+      "modified": "2024-06-12",
+      "categories": [
+        {
+          "name": "코스 지역",
+          "values": ["서부", "서남부", "남부", "동부", "중문"]
+        },
+        {
+          "name": "일차별 코스",
+          "values": ["1일차", "2일차", "3일차", "4일차"]
+        },
+        {
+          "name": "여행 테마",
+          "values": ["관광", "맛집", "카페", "해변", "자연경관"]
+        }
+      ]
+    }
+  ]
+} 

@@ -1,0 +1,146 @@
+/* 반응형 스타일 */
+
+/* 태블릿 (768px~1023px) */
+@media (max-width: 1023px) {
+    :root {
+        --side-panel-width: 250px;
+    }
+
+    .app-title {
+        font-size: 1.2rem;
+    }
+
+    .search-container {
+        width: 150px;
+    }
+}
+
+/* 모바일 (320px~767px) */
+@media (max-width: 767px) {
+    :root {
+        --header-height: 50px;
+    }
+
+    .header {
+        padding: 0 0.5rem;
+    }
+
+    .app-title {
+        font-size: 1rem;
+    }
+
+    .theme-selector {
+        margin-right: 0.5rem;
+    }
+
+    .search-container {
+        display: none;
+    }
+
+    /* 사이드 패널을 화면 하단에서 위로 올라오는 형태로 변경 */
+    .side-panel {
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 60%;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 -2px 4px var(--shadow-color);
+    }
+
+    .side-panel.show {
+        transform: translateY(0);
+    }
+
+    .panel-toggle {
+        display: none;
+    }
+
+    /* 모바일용 하단 패널 핸들 표시 */
+    .mobile-panel-handle {
+        display: block;
+    }
+
+    /* 장소 정보 패널 모바일 스타일 */
+    .place-info-panel {
+        width: 90%;
+        max-width: 350px;
+        max-height: 70vh;
+    }
+}
+
+/* 모바일 가로 모드 (568px 이하 & 가로 모드) */
+@media (max-height: 568px) and (orientation: landscape) {
+    .side-panel {
+        height: 70%;
+    }
+
+    .place-info-panel {
+        max-height: 90vh;
+    }
+}
+
+/* 아주 작은 화면 (320px 이하) */
+@media (max-width: 320px) {
+    .app-title {
+        font-size: 0.9rem;
+    }
+
+    .theme-selector select {
+        max-width: 120px;
+    }
+
+    .side-panel {
+        height: 70%;
+    }
+}
+
+/* 대형 화면 (1600px 이상) */
+@media (min-width: 1600px) {
+    :root {
+        --side-panel-width: 350px;
+    }
+
+    .container {
+        max-width: 1800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* 특정 화면 비율에 따른 사이드 패널 상태 */
+@media (min-width: 1024px) {
+    /* 사이드 패널 접힘 상태 */
+    .side-panel.collapsed {
+        transform: translateX(calc(100% - 24px));
+    }
+
+    /* 패널 접힘 상태에서의 토글 버튼 방향 변경 */
+    .side-panel.collapsed .panel-toggle button {
+        transform: rotate(180deg);
+    }
+}
+
+/* 태블릿 세로 모드에서의 사이드 패널 처리 */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+    /* 기본적으로 사이드 패널은 숨겨져 있음 */
+    .side-panel {
+        transform: translateX(100%);
+    }
+
+    .side-panel.show {
+        transform: translateX(0);
+    }
+
+    /* 사이드 패널 토글 버튼 표시 */
+    .panel-toggle {
+        position: absolute;
+        left: -24px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+} 
