@@ -7,6 +7,7 @@
       "places": ["place1", "place2", "place3", "place6", "place7", "place8"],
       "created": "2023-07-15",
       "modified": "2023-08-20",
+      "color": "#4285F4",
       "categories": [
         {
           "name": "관광 유형",
@@ -25,6 +26,7 @@
       "places": ["place5", "place10"],
       "created": "2023-06-10",
       "modified": "2023-09-05",
+      "color": "#EA4335",
       "categories": [
         {
           "name": "음식 종류",
@@ -43,6 +45,7 @@
       "places": ["place4", "place9"],
       "created": "2023-05-01",
       "modified": "2023-07-10",
+      "color": "#FBBC05",
       "categories": [
         {
           "name": "시설 유형",
@@ -61,6 +64,7 @@
       "places": ["place1", "place6", "place7"],
       "created": "2023-08-15",
       "modified": "2023-08-15",
+      "color": "#34A853",
       "categories": [
         {
           "name": "유형",
@@ -85,6 +89,7 @@
       ],
       "created": "2024-06-12",
       "modified": "2024-06-12",
+      "color": "#673AB7",
       "categories": [
         {
           "name": "코스 지역",

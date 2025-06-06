@@ -173,6 +173,54 @@ function updateMapMarkers(places, trip = null) {
 }
 
 /**
+ * 문서 로드 완료 후 실행할 이벤트 등록
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // 커스텀 마커 클릭 이벤트 처리 (이벤트 위임)
+    document.addEventListener('click', function(e) {
+        // 커스텀 마커 버튼 클릭 확인
+        if (e.target.closest('.custom-marker')) {
+            const markerElement = e.target.closest('.custom-marker');
+            const placeId = markerElement.getAttribute('data-place-id');
+            
+            if (placeId) {
+                const place = getPlaceById(placeId);
+                if (place) {
+                    // 이전 선택 마커 처리
+                    if (selectedMarker) {
+                        selectedMarker.setZIndex(1);
+                    }
+                    
+                    // 현재 마커 찾기
+                    const currentMarker = markers.find(marker => 
+                        marker.place && marker.place.id === placeId
+                    );
+                    
+                    if (currentMarker) {
+                        selectedMarker = currentMarker;
+                        selectedMarker.setZIndex(10);
+                    }
+                    
+                    // 마커 요소의 위치 계산
+                    const markerRect = markerElement.getBoundingClientRect();
+                    const mapContainer = document.getElementById('map');
+                    const mapRect = mapContainer.getBoundingClientRect();
+                    
+                    // 마커 중심 위치 계산
+                    const markerPosition = {
+                        x: markerRect.left + markerRect.width / 2 - mapRect.left,
+                        y: markerRect.top - mapRect.top
+                    };
+                    
+                    // 장소 정보 패널 표시 (마커 위치 전달)
+                    showPlaceInfoPanel(place, markerPosition);
+                }
+            }
+        }
+    });
+});
+
+/**
  * 마커 추가 함수
  * 단일 장소에 대한 마커를 생성하고 지도에 추가합니다.
  * @param {Object} place - 장소 데이터
@@ -182,43 +230,60 @@ function addMarker(place, trip = null) {
     // 장소 위치 좌표
     const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
     
-    // 마커 이미지 설정
-    const markerImage = createMarkerImage(place, trip);
+    // 마커 이미지 또는 커스텀 오버레이 생성
+    const markerObj = createMarkerImage(place, trip);
     
-    // 마커 생성
-    const marker = new kakao.maps.Marker({
-        position: position,
-        image: markerImage,
-        title: place.title,
-        clickable: true
-    });
-    
-    // 마커에 장소 데이터 저장
-    marker.place = place;
-    
-    // 마커를 지도에 표시
-    marker.setMap(map);
-    
-    // 마커 클릭 이벤트 설정
-    kakao.maps.event.addListener(marker, 'click', function() {
-        // 선택된 마커가 있으면 원래 스타일로 복원
-        if (selectedMarker) {
-            selectedMarker.setZIndex(1);
-            // 원래 마커 스타일로 복원하는 코드 (필요시 구현)
-        }
+    // markerObj가 커스텀 오버레이인지 확인
+    if (markerObj instanceof kakao.maps.CustomOverlay) {
+        // 커스텀 오버레이 경우
+        markerObj.setMap(map);
         
-        // 현재 마커를 선택된 마커로 설정
-        selectedMarker = marker;
-        selectedMarker.setZIndex(10);
+        // 마커에 장소 데이터 저장
+        markerObj.place = place;
         
-        // 장소 정보 패널 표시
-        showPlaceInfoPanel(place);
-    });
-    
-    // 마커 배열에 추가
-    markers.push(marker);
-    
-    return marker;
+        // 마커 객체를 markers 배열에 추가
+        markers.push(markerObj);
+        
+        return markerObj;
+    } else {
+        // 기존 마커 이미지 경우 (kakao.maps.MarkerImage)
+        const marker = new kakao.maps.Marker({
+            position: position,
+            image: markerObj,
+            title: place.title,
+            clickable: true
+        });
+        
+        // 마커에 장소 데이터 저장
+        marker.place = place;
+        
+        // 마커를 지도에 표시
+        marker.setMap(map);
+        
+        // 마커 클릭 이벤트 설정
+        kakao.maps.event.addListener(marker, 'click', function() {
+            // 선택된 마커가 있으면 원래 스타일로 복원
+            if (selectedMarker) {
+                selectedMarker.setZIndex(1);
+            }
+            
+            // 현재 마커를 선택된 마커로 설정
+            selectedMarker = marker;
+            selectedMarker.setZIndex(10);
+            
+            // 마커의 화면상 위치 계산
+            const projection = map.getProjection();
+            const markerPosition = projection.containerPointFromCoords(marker.getPosition());
+            
+            // 장소 정보 패널 표시 (마커 위치 전달)
+            showPlaceInfoPanel(place, markerPosition);
+        });
+        
+        // 마커 배열에 추가
+        markers.push(marker);
+        
+        return marker;
+    }
 }
 
 /**
@@ -226,32 +291,42 @@ function addMarker(place, trip = null) {
  * 장소 데이터를 기반으로 적절한 마커 이미지를 생성합니다.
  * @param {Object} place - 장소 데이터
  * @param {Object} trip - 여행 일정 객체 (선택적)
- * @returns {kakao.maps.MarkerImage} - 마커 이미지 객체
+ * @param {number} order - 마커에 표시할 순서 번호 (선택적)
+ * @returns {kakao.maps.MarkerImage|kakao.maps.CustomOverlay} - 마커 이미지 객체 또는 커스텀 오버레이
  */
 function createMarkerImage(place, trip = null, order = null) {
-    // 기본 마커 이미지 URL (카카오 맵 기본 마커 사용)
-    let imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-    let imageSize = new kakao.maps.Size(24, 35);
+    // 테마 색상 가져오기 (여행 모드가 아닌 경우에만)
+    let markerColor = 'var(--primary-color)'; // 기본 색상
+    
+    if (!trip && dataStore.currentTheme) {
+        markerColor = getThemeColor(dataStore.currentTheme.id);
+    } else if (trip) {
+        // 여행 모드일 경우 여행 색상 사용
+        markerColor = 'var(--active-day-color)'; // 여행 모드 기본 색상
+    }
     
     // 여행 일정 마커인 경우 숫자 표시
     if (order !== null) {
         // 숫자 마커를 생성하기 위한 HTML Content 사용
-        const content = `<div style="
-            background: #3490dc; 
+        const content = `<button class="custom-marker" data-place-id="${place.id}" style="
+            background: ${markerColor}; 
             color: white; 
-            padding: 5px 10px; 
             border-radius: 50%; 
             font-weight: bold; 
             text-align: center; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             border: 2px solid white;
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 14px;
-        ">${order}</div>`;
+            cursor: pointer;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        ">${order}</button>`;
         
         // 커스텀 오버레이 사용 (MarkerImage 대신)
         return new kakao.maps.CustomOverlay({
@@ -261,19 +336,54 @@ function createMarkerImage(place, trip = null, order = null) {
         });
     }
     
-    // 카테고리별 마커 이미지 설정 (MVP에서는 단순화)
+    // 테마 기반 마커 생성 (커스텀 오버레이로 구현)
+    // 장소 유형에 따라 아이콘 결정
+    let icon = '📍'; // 기본 아이콘
+    
     if (place.labels.includes('숙소')) {
-        imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+        icon = '🏨';
     } else if (place.labels.includes('맛집') || place.labels.includes('음식')) {
-        imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+        icon = '🍽️';
     } else if (place.labels.includes('관광지')) {
-        imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+        icon = '🏞️';
+    } else if (place.labels.includes('카페')) {
+        icon = '☕';
+    } else if (place.labels.includes('해변') || place.labels.includes('바다')) {
+        icon = '🏖️';
+    } else if (place.labels.includes('산')) {
+        icon = '⛰️';
+    } else if (place.labels.includes('공항') || place.labels.includes('교통')) {
+        icon = '🚗';
     }
     
-    // 마커 이미지 생성
-    const markerImage = new kakao.maps.MarkerImage(imageUrl, imageSize);
+    // 마커를 HTML로 생성 - 버튼 요소로 만들어 클릭 이벤트 처리 쉽게
+    const content = `<button class="custom-marker" data-place-id="${place.id}" style="
+        background: ${markerColor};
+        width: 36px; 
+        height: 36px;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg) translate(-50%, -100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        border: 2px solid white;
+        cursor: pointer;
+        position: absolute;
+        z-index: 3;
+    ">
+        <span style="
+            transform: rotate(45deg);
+            font-size: 16px;
+        ">${icon}</span>
+    </button>`;
     
-    return markerImage;
+    // 커스텀 오버레이 생성
+    return new kakao.maps.CustomOverlay({
+        content: content,
+        position: new kakao.maps.LatLng(place.location.lat, place.location.lng),
+        zIndex: 3
+    });
 }
 
 /**
@@ -341,55 +451,65 @@ function moveToPlace(placeId) {
     // 해당 마커 찾기
     const marker = markers.find(m => m.place.id === place.id);
     if (marker) {
-        // 마커 클릭 이벤트 트리거 (장소 정보 패널 표시)
-        kakao.maps.event.trigger(marker, 'click');
+        // 이전 선택 마커 처리
+        if (selectedMarker) {
+            selectedMarker.setZIndex(1);
+        }
+        
+        // 현재 마커를 선택된 마커로 설정
+        selectedMarker = marker;
+        selectedMarker.setZIndex(10);
+        
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        const markerPosition = projection.containerPointFromCoords(
+            marker.getPosition ? marker.getPosition() : 
+            new kakao.maps.LatLng(place.location.lat, place.location.lng)
+        );
+        
+        // 장소 정보 패널 표시 (마커 위치 전달)
+        showPlaceInfoPanel(place, markerPosition);
+    } else {
+        // 마커를 찾을 수 없는 경우 패널만 표시
+        showPlaceInfoPanel(place);
     }
 }
 
 /**
- * 여행 경로 표시 함수
- * 여행 일정의 장소들을 선으로 연결하여 표시합니다.
+ * 여행 일정 경로 표시 함수
+ * 특정 일차의 여행 경로를 지도에 표시합니다.
  * @param {Object} trip - 여행 일정 객체
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripPath(trip, dayIndex) {
-    // 기존 마커와 선 제거
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
+    // 기존 마커 제거
     removeAllMarkers();
     
-    // 기존 경로 선 제거
-    if (window.currentPolyline) {
-        window.currentPolyline.setMap(null);
-    }
-    
-    // 여행 데이터가 없거나 해당 일차가 없으면 종료
-    if (!trip || !trip.days[dayIndex]) {
-        console.error('유효하지 않은 여행 일정 또는 일차');
-        return;
-    }
-    
-    // 해당 일차의 장소 데이터 (순서대로 정렬)
-    const dayPlaces = [...trip.days[dayIndex].places].sort((a, b) => a.order - b.order);
-    
-    // 장소가 2개 미만이면 경로를 그릴 수 없음
-    if (dayPlaces.length < 2) {
-        console.log('경로를 그릴 장소가 충분하지 않습니다.');
-        
-        // 단일 장소라도 마커는 표시
-        if (dayPlaces.length === 1) {
-            const place = getPlaceById(dayPlaces[0].placeId);
-            if (place) {
-                // 숫자 마커 생성
-                const overlay = createMarkerImage(place, trip, dayPlaces[0].order);
-                overlay.setMap(map);
-                markers.push(overlay);
-            }
-        }
-        
-        return;
-    }
-    
-    // 경로를 위한 좌표 배열 생성
+    // 경로 표시를 위한 좌표 배열
     const linePath = [];
+    
+    // 해당 일차 정보 가져오기
+    const day = trip.days[dayIndex];
+    if (!day) {
+        console.error('존재하지 않는 일차:', dayIndex);
+        return;
+    }
+    
+    // 해당 일차의 장소 정보 가져오기
+    const dayPlaces = day.places;
+    if (!dayPlaces || dayPlaces.length === 0) {
+        console.log('해당 일차에 방문할 장소가 없습니다.');
+        return;
+    }
     
     // 장소 순서대로 좌표 추가 및 마커 생성
     dayPlaces.forEach(dayPlace => {
@@ -398,14 +518,12 @@ function showTripPath(trip, dayIndex) {
             // 경로에 좌표 추가
             linePath.push(new kakao.maps.LatLng(place.location.lat, place.location.lng));
             
-            // 숫자 마커 생성
+            // 숫자 마커 생성 (커스텀 오버레이)
             const overlay = createMarkerImage(place, trip, dayPlace.order);
             overlay.setMap(map);
             
-            // 마커 클릭 이벤트 (기존 마커 대신 오버레이에 적용)
-            kakao.maps.event.addListener(overlay, 'click', function() {
-                showPlaceInfoPanel(place);
-            });
+            // 마커에 장소 데이터 저장
+            overlay.place = place;
             
             // 마커 배열에 추가
             markers.push(overlay);

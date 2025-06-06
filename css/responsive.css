@@ -13,6 +13,11 @@
     .search-container {
         width: 150px;
     }
+    
+    /* 태블릿에서 라벨 스타일 조정 */
+    .place-labels {
+        max-height: 2.8rem;
+    }
 }
 
 /* 모바일 (320px~767px) */
@@ -71,6 +76,16 @@
         max-width: 350px;
         max-height: 70vh;
     }
+    
+    /* 모바일에서 라벨 스타일 조정 */
+    .place-labels {
+        max-height: 2.3rem;
+    }
+    
+    .place-label-small {
+        font-size: 0.7rem;
+        padding: 1px 4px;
+    }
 }
 
 /* 모바일 가로 모드 (568px 이하 & 가로 모드) */
@@ -114,9 +129,9 @@
 
 /* 특정 화면 비율에 따른 사이드 패널 상태 */
 @media (min-width: 1024px) {
-    /* 사이드 패널 접힘 상태 */
+    /* 사이드 패널 접힘 상태 - 완전히 숨김 */
     .side-panel.collapsed {
-        transform: translateX(calc(100% - 24px));
+        transform: translateX(100%);
     }
 
     /* 패널 접힘 상태에서의 토글 버튼 방향 변경 - JavaScript에서 처리하므로 제거 */

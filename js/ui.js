@@ -155,6 +155,15 @@ function handleThemeChange() {
         return;
     }
     
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (typeof selectedMarker !== 'undefined' && selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
     // 테마 또는 여행 일정 ID 추출
     const [type, id] = selectedValue.split(':');
     
@@ -233,8 +242,20 @@ function updateCategoryFilters(theme) {
  */
 function updateThemeInfo(theme) {
     // 테마 정보 업데이트
-    document.getElementById('theme-title').textContent = theme.title;
+    const themeTitle = document.getElementById('theme-title');
+    themeTitle.textContent = theme.title;
+    themeTitle.style.borderLeft = `4px solid var(--primary-color)`;
+    themeTitle.style.paddingLeft = '10px';
+    
     document.getElementById('theme-description').textContent = theme.description;
+    
+    // 테마 헤더 배경색 살짝 반영 (투명도 낮게)
+    const themeInfo = document.querySelector('.theme-info');
+    themeInfo.style.borderBottom = `2px solid var(--primary-color)`;
+    themeInfo.style.backgroundColor = `var(--primary-color)10`;
+    
+    // 장소 목록 제목을 '장소'로 설정
+    document.getElementById('places-list-title').textContent = '장소';
 }
 
 /**
@@ -360,6 +381,15 @@ function deg2rad(deg) {
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripDay(trip, dayIndex) {
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (typeof selectedMarker !== 'undefined' && selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
     // 탭 활성화 상태 변경
     const dayTabs = document.querySelectorAll('.day-tab');
     dayTabs.forEach((tab, i) => {
@@ -397,27 +427,100 @@ function showTripDay(trip, dayIndex) {
         
         // 다음 장소와의 이동 정보 계산
         let distanceInfo = '';
+        let transportationIcon = '';
+        
         if (index < sortedPlaces.length - 1) {
             const nextPlace = getPlaceById(sortedPlaces[index + 1].placeId);
-            if (nextPlace && dayPlace.distance) {
-                distanceInfo = `
-                    <div class="place-distance">
-                        ${dayPlace.distance || ''} ${dayPlace.duration || ''}
-                    </div>
-                `;
+            if (nextPlace) {
+                // 이동수단 정보가 있는 경우
+                if (dayPlace.transportation) {
+                    const transportation = getTransportationById(dayPlace.transportation);
+                    if (transportation) {
+                        transportationIcon = `
+                            <div class="transportation-icon">
+                                <iconify-icon icon="${transportation.iconifyIcon}" width="20" height="20"></iconify-icon>
+                                <span>${transportation.type}</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                // 거리 정보가 있는 경우
+                if (dayPlace.distance) {
+                    distanceInfo = `
+                        <div class="place-distance">
+                            ${transportationIcon}
+                            <span>${dayPlace.distance || ''} ${dayPlace.duration || ''}</span>
+                        </div>
+                    `;
+                } else if (transportationIcon) {
+                    // 거리 정보는 없지만 이동수단 정보는 있는 경우
+                    distanceInfo = `
+                        <div class="place-distance">
+                            ${transportationIcon}
+                        </div>
+                    `;
+                }
             }
         }
         
-        placeItem.innerHTML = `
+        // 기본 요약 정보
+        const basicInfoHTML = `
             <div class="place-order">${dayPlace.order}</div>
             <div class="place-time">${dayPlace.timeEstimate || ''}</div>
             <div class="place-title">${place.title}</div>
-            <div class="place-memo">${dayPlace.memo || ''}</div>
+            ${dayPlace.memo ? `<div class="place-memo">${dayPlace.memo}</div>` : ''}
             ${distanceInfo}
         `;
         
-        // 장소 클릭 이벤트
-        placeItem.addEventListener('click', () => moveToPlace(place.id));
+        // 상세 정보 (펼쳤을 때만 보임)
+        const detailsHTML = `
+            <div class="place-details">
+                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
+                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
+                ${place.labels && place.labels.length > 0 ? `
+                    <div class="place-labels">
+                        ${place.labels.map(label => 
+                            `<span class="place-label-small">${label}</span>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                ${place.urls ? `
+                    <div class="place-links">
+                        ${place.urls.naver ? `<a href="${place.urls.naver}" target="_blank">네이버 지도</a>` : ''}
+                        ${place.urls.kakao ? `<a href="${place.urls.kakao}" target="_blank">카카오 지도</a>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        // 전체 HTML 구성
+        placeItem.innerHTML = `
+            ${basicInfoHTML}
+            <button class="toggle-details">↓</button>
+            ${detailsHTML}
+        `;
+        
+        // 확장/축소 토글 버튼 이벤트
+        const toggleButton = placeItem.querySelector('.toggle-details');
+        toggleButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
+            placeItem.classList.toggle('expanded');
+            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+        });
+        
+        // 장소 아이템 클릭 이벤트 (제목 부분만)
+        const titleElement = placeItem.querySelector('.place-title');
+        titleElement.addEventListener('click', function() {
+            // 선택된 장소 스타일 적용
+            document.querySelectorAll('.place-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            placeItem.classList.add('selected');
+            
+            // 지도에서 해당 장소로 이동
+            moveToPlace(place.id);
+        });
         
         placesList.appendChild(placeItem);
     });
@@ -453,17 +556,73 @@ function updatePlacesList(places, trip = null) {
     places.forEach(place => {
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item';
-        placeItem.innerHTML = `
-            <div class="place-title">${place.title}</div>
-            <div class="place-labels">
-                ${place.labels.slice(0, 3).map(label => 
+        
+        // 장소 아이템에 테마 색상 테두리 적용
+        placeItem.style.borderLeft = `3px solid var(--primary-color)`;
+        
+        // 라벨 HTML 생성 - 요약 시 보이는 라벨
+        const labelsHTML = place.labels.length > 0 
+            ? `<div class="place-labels">
+                ${place.labels.map(label => 
                     `<span class="place-label-small">${label}</span>`
                 ).join('')}
+               </div>`
+            : '';
+        
+        // 상세 정보 HTML - 펼쳤을 때만 보임
+        const detailsHTML = `
+            <div class="place-details">
+                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
+                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
+                ${place.urls ? `
+                    <div class="place-links">
+                        ${place.urls.naver ? `<a href="${place.urls.naver}" target="_blank">네이버 지도</a>` : ''}
+                        ${place.urls.kakao ? `<a href="${place.urls.kakao}" target="_blank">카카오 지도</a>` : ''}
+                    </div>
+                ` : ''}
             </div>
         `;
         
-        // 장소 클릭 이벤트
-        placeItem.addEventListener('click', () => moveToPlace(place.id));
+        // 기본 HTML 구성 (요약 정보)
+        placeItem.innerHTML = `
+            <div class="place-title">${place.title}</div>
+            ${labelsHTML}
+            <button class="toggle-details">↓</button>
+            ${detailsHTML}
+        `;
+        
+        // 확장/축소 토글 버튼 이벤트
+        const toggleButton = placeItem.querySelector('.toggle-details');
+        toggleButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 전파 방지
+            const details = this.nextElementSibling;
+            
+            // 펼침 상태 클래스로 확인하여 토글
+            const isExpanded = placeItem.classList.contains('expanded');
+            
+            if (isExpanded) {
+                // 접기
+                placeItem.classList.remove('expanded');
+                this.textContent = '↓';
+            } else {
+                // 펼치기
+                placeItem.classList.add('expanded');
+                this.textContent = '↑';
+            }
+        });
+        
+        // 장소 아이템 클릭 이벤트 (제목 부분만)
+        const titleElement = placeItem.querySelector('.place-title');
+        titleElement.addEventListener('click', function() {
+            // 선택된 장소 스타일 적용
+            document.querySelectorAll('.place-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            placeItem.classList.add('selected');
+            
+            // 지도에서 해당 장소로 이동
+            moveToPlace(place.id);
+        });
         
         placesList.appendChild(placeItem);
     });
@@ -472,10 +631,13 @@ function updatePlacesList(places, trip = null) {
 /**
  * 장소 정보 패널 표시 함수
  * @param {Object} place - 장소 데이터
+ * @param {Object} markerPosition - 마커의 화면상 좌표 (선택적)
  */
-function showPlaceInfoPanel(place) {
+function showPlaceInfoPanel(place, markerPosition) {
     // 장소 정보 패널 내용 업데이트
-    document.getElementById('place-title').textContent = place.title;
+    const titleElement = document.getElementById('place-title');
+    titleElement.textContent = place.title;
+    
     document.getElementById('place-address').textContent = place.address;
     document.getElementById('place-description').textContent = place.description;
     
@@ -506,6 +668,65 @@ function showPlaceInfoPanel(place) {
         kakaoLink.style.display = 'inline-block';
     } else {
         kakaoLink.style.display = 'none';
+    }
+    
+    // 패널 헤더 색상 설정
+    const placeInfoHeader = document.querySelector('.place-info-header');
+    placeInfoHeader.style.borderBottom = `2px solid var(--primary-color)`;
+    placeInfoHeader.style.backgroundColor = `var(--primary-color)10`;
+    
+    // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
+    placeInfoPanel.style.display = 'block';
+    
+    // 마커 위치가 제공된 경우 위치 조정
+    if (markerPosition) {
+        // 지도 컨테이너의 크기와 위치
+        const mapContainer = document.getElementById('map');
+        const mapRect = mapContainer.getBoundingClientRect();
+        
+        // 팝업의 크기
+        const panelWidth = placeInfoPanel.offsetWidth;
+        const panelHeight = placeInfoPanel.offsetHeight;
+        
+        // 마커 위치가 지도의 어느 영역에 있는지 확인 (좌상, 우상, 좌하, 우하)
+        const isRightHalf = markerPosition.x > mapRect.width / 2;
+        const isBottomHalf = markerPosition.y > mapRect.height / 2;
+        
+        // 팝업 위치 계산
+        let left, top;
+        
+        // 가로 위치 계산
+        if (isRightHalf) {
+            // 마커가 오른쪽 영역에 있으면 팝업은 마커 왼쪽에 표시
+            left = markerPosition.x - panelWidth - 20;
+        } else {
+            // 마커가 왼쪽 영역에 있으면 팝업은 마커 오른쪽에 표시
+            left = markerPosition.x + 20;
+        }
+        
+        // 세로 위치 계산
+        if (isBottomHalf) {
+            // 마커가 하단 영역에 있으면 팝업 하단과 마커 하단을 맞춤
+            top = markerPosition.y - panelHeight + 108; // 마커 높이 고려
+        } else {
+            // 마커가 상단 영역에 있으면 팝업 상단과 마커 상단을 맞춤
+            top = markerPosition.y + 68;
+        }
+        
+        // 팝업이 지도 영역을 벗어나지 않도록 보정
+        if (left < 0) left = 0;
+        if (top < 0) top = 0;
+        if (left + panelWidth > mapRect.width) left = mapRect.width - panelWidth;
+        if (top + panelHeight > mapRect.height) top = mapRect.height - panelHeight;
+        
+        // 계산된 위치로 팝업 위치 설정
+        placeInfoPanel.style.left = left + 'px';
+        placeInfoPanel.style.top = top + 'px';
+    } else {
+        // 마커 위치가 제공되지 않은 경우 중앙 배치
+        placeInfoPanel.style.left = '50%';
+        placeInfoPanel.style.top = '50%';
+        placeInfoPanel.style.transform = 'translate(-50%, -50%)';
     }
     
     // 패널 표시
@@ -548,68 +769,51 @@ function toggleSidePanel() {
             
             // 패널 토글 후 바로 초기 스타일 설정 - CSS만으로는 해결이 안되는 경우를 위한 보험
             if (sidePanel.classList.contains('collapsed')) {
-                // 패널이 접힌 경우, 지도 영역을 거의 전체 화면으로 확장
-                mapContainer.style.width = 'calc(100% - 24px)';
+                // 패널이 접힌 경우, 지도 영역을 전체 화면으로 확장
+                mapContainer.style.width = '100%';
             } else {
                 // 패널이 펼쳐진 경우, 지도 영역을 축소
                 mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
             }
             
-            // CSS transition 시간보다 약간 길게 딜레이 설정
+            // CSS transition이 완료될 때까지 기다린 후 지도 크기 조정
             setTimeout(() => {
-                // 지도 객체가 있는지 확인
-                if (typeof map !== 'undefined' && map) {
-                    console.log('지도 리레이아웃 실행');
-                    
-                    // 강제 리플로우 트리거를 위한 스타일 변경 및 원복
-                    const currentWidth = mapContainer.offsetWidth;
-                    mapContainer.style.width = (currentWidth - 1) + 'px';
-                    void mapContainer.offsetWidth; // 강제 리플로우
-                    
-                    // 원래 설정한 스타일로 되돌리기
-                    if (sidePanel.classList.contains('collapsed')) {
-                        mapContainer.style.width = 'calc(100% - 24px)';
-                    } else {
-                        mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
-                    }
-                    
-                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                if (map) {
                     map.relayout();
                     
-                    // 현재 표시 중인 마커들이 모두 보이도록 지도 범위 재조정
+                    // 모든 마커가 보이도록 지도 범위 조정
                     if (markers && markers.length > 0) {
                         setMapBounds(markers.map(marker => marker.place));
                     }
                 }
-            }, 400);
+            }, 300); // 패널 전환 애니메이션 시간(300ms)과 동일하게 설정
         }
-    } 
+    }
     // 태블릿에서 사이드 패널 표시/숨김
     else if (window.innerWidth >= 768) {
-        const wasShown = sidePanel.classList.contains('show');
         sidePanel.classList.toggle('show');
         
-        // 사이드 패널 표시 상태가 변경되었을 때만 relayout 호출
-        if (wasShown !== sidePanel.classList.contains('show')) {
-            setTimeout(() => {
-                if (typeof map !== 'undefined' && map) {
-                    console.log('태블릿 지도 리레이아웃 실행');
-                    
-                    // 지도 컨테이너 강제 리레이아웃
-                    const mapContainer = document.getElementById('map');
-                    if (mapContainer) {
-                        // 강제 리플로우 트리거
-                        const currentWidth = mapContainer.offsetWidth;
-                        mapContainer.style.width = (currentWidth - 1) + 'px';
-                        void mapContainer.offsetWidth; // 강제 리플로우
-                        mapContainer.style.width = ''; // 원래 스타일로 복원
-                    }
-                    
-                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
-                    map.relayout();
-                }
-            }, 400);
+        // 지도 컨테이너 요소 가져오기
+        const mapContainer = document.getElementById('map');
+        
+        // 사이드 패널 상태에 따라 지도 크기 조절
+        if (sidePanel.classList.contains('show')) {
+            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+        } else {
+            mapContainer.style.width = '100%';
         }
+        
+        // 지도 크기 조정
+        setTimeout(() => {
+            if (map) {
+                map.relayout();
+                
+                // 모든 마커가 보이도록 지도 범위 조정
+                if (markers && markers.length > 0) {
+                    setMapBounds(markers.map(marker => marker.place));
+                }
+            }
+        }, 300);
     }
 }
 
@@ -698,7 +902,7 @@ function handleResize() {
         // 데스크톱에서 사이드 패널이 접혀있으면 지도 크기 조절
         if (mapContainer) {
             if (sidePanel.classList.contains('collapsed')) {
-                mapContainer.style.width = 'calc(100% - 24px)';
+                mapContainer.style.width = '100%';
             } else {
                 mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
             }
@@ -736,7 +940,7 @@ function handleResize() {
                         }
                     } else {
                         if (sidePanel.classList.contains('collapsed')) {
-                            mapContainer.style.width = 'calc(100% - 24px)';
+                            mapContainer.style.width = '100%';
                         } else {
                             mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
                         }
