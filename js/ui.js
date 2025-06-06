@@ -258,6 +258,12 @@ function updateTripInfo(trip) {
         const dayTab = document.createElement('button');
         dayTab.className = 'day-tab';
         dayTab.textContent = `${day.day}일차`;
+        
+        // 1일차일 경우 기본적으로 활성화
+        if (index === 0) {
+            dayTab.classList.add('active');
+        }
+        
         dayTab.addEventListener('click', () => showTripDay(trip, index));
         dayTabs.appendChild(dayTab);
     });
@@ -268,6 +274,9 @@ function updateTripInfo(trip) {
     if (trip.days.length > 0) {
         showTripDay(trip, 0);
     }
+    
+    // 장소 목록에 일정 일차만 표시하도록 UI 업데이트
+    document.getElementById('places-list-title').textContent = '일정';
 }
 
 /**
@@ -650,6 +659,30 @@ function handleResize() {
                 map.relayout();
             }, 100);
         }
+    }
+}
+
+/**
+ * 현재 여행 일정 설정 함수
+ * @param {string} tripId - 여행 일정 ID
+ */
+function setCurrentTrip(tripId) {
+    // 기존 마커와 경로 제거
+    removeAllMarkers();
+    
+    // 여행 일정 ID로 여행 일정 객체 찾기
+    const trip = dataStore.trips.find(t => t.id === tripId);
+    if (!trip) {
+        console.error('존재하지 않는 여행 일정:', tripId);
+        return;
+    }
+    
+    // 여행 정보 UI 업데이트
+    updateTripInfo(trip);
+    
+    // 첫 번째 일차 표시
+    if (trip.days.length > 0) {
+        showTripDay(trip, 0);
     }
 }
 

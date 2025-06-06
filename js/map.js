@@ -228,10 +228,38 @@ function addMarker(place, trip = null) {
  * @param {Object} trip - 여행 일정 객체 (선택적)
  * @returns {kakao.maps.MarkerImage} - 마커 이미지 객체
  */
-function createMarkerImage(place, trip = null) {
+function createMarkerImage(place, trip = null, order = null) {
     // 기본 마커 이미지 URL (카카오 맵 기본 마커 사용)
     let imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
     let imageSize = new kakao.maps.Size(24, 35);
+    
+    // 여행 일정 마커인 경우 숫자 표시
+    if (order !== null) {
+        // 숫자 마커를 생성하기 위한 HTML Content 사용
+        const content = `<div style="
+            background: #FF8859; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 50%; 
+            font-weight: bold; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        ">${order}</div>`;
+        
+        // 커스텀 오버레이 사용 (MarkerImage 대신)
+        return new kakao.maps.CustomOverlay({
+            content: content,
+            position: new kakao.maps.LatLng(place.location.lat, place.location.lng),
+            zIndex: 5
+        });
+    }
     
     // 카테고리별 마커 이미지 설정 (MVP에서는 단순화)
     if (place.labels.includes('숙소')) {
@@ -261,6 +289,12 @@ function removeAllMarkers() {
     // 마커 배열 초기화
     markers = [];
     selectedMarker = null;
+    
+    // 경로 선 제거
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+        window.currentPolyline = null;
+    }
 }
 
 /**
@@ -319,29 +353,62 @@ function moveToPlace(placeId) {
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripPath(trip, dayIndex) {
+    // 기존 마커와 선 제거
+    removeAllMarkers();
+    
+    // 기존 경로 선 제거
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+    }
+    
     // 여행 데이터가 없거나 해당 일차가 없으면 종료
     if (!trip || !trip.days[dayIndex]) {
         console.error('유효하지 않은 여행 일정 또는 일차');
         return;
     }
     
-    // 해당 일차의 장소 데이터
-    const dayPlaces = trip.days[dayIndex].places;
+    // 해당 일차의 장소 데이터 (순서대로 정렬)
+    const dayPlaces = [...trip.days[dayIndex].places].sort((a, b) => a.order - b.order);
     
     // 장소가 2개 미만이면 경로를 그릴 수 없음
     if (dayPlaces.length < 2) {
         console.log('경로를 그릴 장소가 충분하지 않습니다.');
+        
+        // 단일 장소라도 마커는 표시
+        if (dayPlaces.length === 1) {
+            const place = getPlaceById(dayPlaces[0].placeId);
+            if (place) {
+                // 숫자 마커 생성
+                const overlay = createMarkerImage(place, trip, dayPlaces[0].order);
+                overlay.setMap(map);
+                markers.push(overlay);
+            }
+        }
+        
         return;
     }
     
     // 경로를 위한 좌표 배열 생성
     const linePath = [];
     
-    // 장소 순서대로 좌표 추가
+    // 장소 순서대로 좌표 추가 및 마커 생성
     dayPlaces.forEach(dayPlace => {
         const place = getPlaceById(dayPlace.placeId);
         if (place) {
+            // 경로에 좌표 추가
             linePath.push(new kakao.maps.LatLng(place.location.lat, place.location.lng));
+            
+            // 숫자 마커 생성
+            const overlay = createMarkerImage(place, trip, dayPlace.order);
+            overlay.setMap(map);
+            
+            // 마커 클릭 이벤트 (기존 마커 대신 오버레이에 적용)
+            kakao.maps.event.addListener(overlay, 'click', function() {
+                showPlaceInfoPanel(place);
+            });
+            
+            // 마커 배열에 추가
+            markers.push(overlay);
         }
     });
     
@@ -356,6 +423,9 @@ function showTripPath(trip, dayIndex) {
     
     // 경로 선을 지도에 표시
     polyline.setMap(map);
+    
+    // 현재 경로 선 저장 (나중에 제거하기 위해)
+    window.currentPolyline = polyline;
     
     // 모든 장소가 보이도록 지도 범위 조정
     const places = dayPlaces.map(dayPlace => getPlaceById(dayPlace.placeId)).filter(Boolean);

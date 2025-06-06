@@ -193,11 +193,10 @@ function setCurrentTrip(tripId) {
     // 여행 일정 정보 업데이트
     updateTripInfo(trip);
     
-    // 장소 목록 업데이트 (일정별로 정렬)
-    updatePlacesList(dataStore.filteredPlaces, trip);
-    
-    // 지도 마커 업데이트
-    updateMapMarkers(dataStore.filteredPlaces, trip);
+    // 첫번째 일차의 경로 표시 - 기본값
+    if (trip.days.length > 0) {
+        showTripDay(trip, 0);
+    }
 }
 
 /**
