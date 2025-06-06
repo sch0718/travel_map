@@ -448,6 +448,15 @@ function moveToPlace(placeId) {
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripPath(trip, dayIndex) {
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
     // 기존 마커 제거
     removeAllMarkers();
     

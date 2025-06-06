@@ -155,6 +155,15 @@ function handleThemeChange() {
         return;
     }
     
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (typeof selectedMarker !== 'undefined' && selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
     // 테마 또는 여행 일정 ID 추출
     const [type, id] = selectedValue.split(':');
     
@@ -372,6 +381,15 @@ function deg2rad(deg) {
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripDay(trip, dayIndex) {
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (typeof selectedMarker !== 'undefined' && selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
     // 탭 활성화 상태 변경
     const dayTabs = document.querySelectorAll('.day-tab');
     dayTabs.forEach((tab, i) => {
