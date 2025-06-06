@@ -233,8 +233,17 @@ function updateCategoryFilters(theme) {
  */
 function updateThemeInfo(theme) {
     // 테마 정보 업데이트
-    document.getElementById('theme-title').textContent = theme.title;
+    const themeTitle = document.getElementById('theme-title');
+    themeTitle.textContent = theme.title;
+    themeTitle.style.borderLeft = `4px solid var(--primary-color)`;
+    themeTitle.style.paddingLeft = '10px';
+    
     document.getElementById('theme-description').textContent = theme.description;
+    
+    // 테마 헤더 배경색 살짝 반영 (투명도 낮게)
+    const themeInfo = document.querySelector('.theme-info');
+    themeInfo.style.borderBottom = `2px solid var(--primary-color)`;
+    themeInfo.style.backgroundColor = `var(--primary-color)10`;
     
     // 장소 목록 제목을 '장소'로 설정
     document.getElementById('places-list-title').textContent = '장소';
@@ -525,6 +534,9 @@ function updatePlacesList(places, trip = null) {
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item';
         
+        // 장소 아이템에 테마 색상 테두리 적용
+        placeItem.style.borderLeft = `3px solid var(--primary-color)`;
+        
         // 라벨 HTML 생성 - 요약 시 보이는 라벨
         const labelsHTML = place.labels.length > 0 
             ? `<div class="place-labels">
@@ -558,18 +570,36 @@ function updatePlacesList(places, trip = null) {
         
         // 확장/축소 토글 버튼 이벤트
         const toggleButton = placeItem.querySelector('.toggle-details');
-        toggleButton.addEventListener('click', (e) => {
-            e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
-            placeItem.classList.toggle('expanded');
-            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+        toggleButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 전파 방지
+            const details = this.nextElementSibling;
+            
+            // 펼침 상태 클래스로 확인하여 토글
+            const isExpanded = placeItem.classList.contains('expanded');
+            
+            if (isExpanded) {
+                // 접기
+                placeItem.classList.remove('expanded');
+                this.textContent = '↓';
+            } else {
+                // 펼치기
+                placeItem.classList.add('expanded');
+                this.textContent = '↑';
+            }
         });
         
-        // 장소 아이템 클릭 시 지도에 표시 (토글 버튼 제외)
-        placeItem.addEventListener('click', (e) => {
-            // 토글 버튼 클릭이 아닌 경우에만 지도에 표시
-            if (e.target !== toggleButton) {
-                moveToPlace(place.id);
-            }
+        // 장소 아이템 클릭 이벤트 (제목 부분만)
+        const titleElement = placeItem.querySelector('.place-title');
+        titleElement.addEventListener('click', function() {
+            // 선택된 장소 스타일 적용
+            document.querySelectorAll('.place-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            placeItem.classList.add('selected');
+            
+            // 지도에서 해당 장소로 이동
+            panToPlace(place);
+            showPlaceMarkerInfo(place);
         });
         
         placesList.appendChild(placeItem);
@@ -582,7 +612,9 @@ function updatePlacesList(places, trip = null) {
  */
 function showPlaceInfoPanel(place) {
     // 장소 정보 패널 내용 업데이트
-    document.getElementById('place-title').textContent = place.title;
+    const titleElement = document.getElementById('place-title');
+    titleElement.textContent = place.title;
+    
     document.getElementById('place-address').textContent = place.address;
     document.getElementById('place-description').textContent = place.description;
     
@@ -615,6 +647,11 @@ function showPlaceInfoPanel(place) {
         kakaoLink.style.display = 'none';
     }
     
+    // 패널 헤더 색상 설정
+    const placeInfoHeader = document.querySelector('.place-info-header');
+    placeInfoHeader.style.borderBottom = `2px solid var(--primary-color)`;
+    placeInfoHeader.style.backgroundColor = `var(--primary-color)10`;
+    
     // 패널 표시
     placeInfoPanel.style.display = 'block';
 }
@@ -637,7 +674,7 @@ function toggleSidePanel() {
     if (window.innerWidth >= 1024) {
         sidePanel.classList.toggle('collapsed');
         
-                    // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
+        // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
         if (sidePanel.classList.contains('collapsed')) {
             // 패널이 접힌 상태(패널이 보이지 않음) -> 패널을 펼치는 아이콘(왼쪽 화살표)
             togglePanelButton.textContent = '◀';
@@ -662,61 +699,44 @@ function toggleSidePanel() {
                 mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
             }
             
-            // CSS transition 시간보다 약간 길게 딜레이 설정
+            // CSS transition이 완료될 때까지 기다린 후 지도 크기 조정
             setTimeout(() => {
-                // 지도 객체가 있는지 확인
-                if (typeof map !== 'undefined' && map) {
-                    console.log('지도 리레이아웃 실행');
-                    
-                    // 강제 리플로우 트리거를 위한 스타일 변경 및 원복
-                    const currentWidth = mapContainer.offsetWidth;
-                    mapContainer.style.width = (currentWidth - 1) + 'px';
-                    void mapContainer.offsetWidth; // 강제 리플로우
-                    
-                    // 원래 설정한 스타일로 되돌리기
-                    if (sidePanel.classList.contains('collapsed')) {
-                        mapContainer.style.width = '100%';
-                    } else {
-                        mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
-                    }
-                    
-                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                if (map) {
                     map.relayout();
                     
-                    // 현재 표시 중인 마커들이 모두 보이도록 지도 범위 재조정
+                    // 모든 마커가 보이도록 지도 범위 조정
                     if (markers && markers.length > 0) {
                         setMapBounds(markers.map(marker => marker.place));
                     }
                 }
-            }, 400);
+            }, 300); // 패널 전환 애니메이션 시간(300ms)과 동일하게 설정
         }
-    } 
+    }
     // 태블릿에서 사이드 패널 표시/숨김
     else if (window.innerWidth >= 768) {
-        const wasShown = sidePanel.classList.contains('show');
         sidePanel.classList.toggle('show');
         
-        // 사이드 패널 표시 상태가 변경되었을 때만 relayout 호출
-        if (wasShown !== sidePanel.classList.contains('show')) {
-            setTimeout(() => {
-                if (typeof map !== 'undefined' && map) {
-                    console.log('태블릿 지도 리레이아웃 실행');
-                    
-                    // 지도 컨테이너 강제 리레이아웃
-                    const mapContainer = document.getElementById('map');
-                    if (mapContainer) {
-                        // 강제 리플로우 트리거
-                        const currentWidth = mapContainer.offsetWidth;
-                        mapContainer.style.width = (currentWidth - 1) + 'px';
-                        void mapContainer.offsetWidth; // 강제 리플로우
-                        mapContainer.style.width = ''; // 원래 스타일로 복원
-                    }
-                    
-                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
-                    map.relayout();
-                }
-            }, 400);
+        // 지도 컨테이너 요소 가져오기
+        const mapContainer = document.getElementById('map');
+        
+        // 사이드 패널 상태에 따라 지도 크기 조절
+        if (sidePanel.classList.contains('show')) {
+            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+        } else {
+            mapContainer.style.width = '100%';
         }
+        
+        // 지도 크기 조정
+        setTimeout(() => {
+            if (map) {
+                map.relayout();
+                
+                // 모든 마커가 보이도록 지도 범위 조정
+                if (markers && markers.length > 0) {
+                    setMapBounds(markers.map(marker => marker.place));
+                }
+            }
+        }, 300);
     }
 }
 

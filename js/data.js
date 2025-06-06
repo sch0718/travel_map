@@ -11,7 +11,30 @@ const dataStore = {
     currentTheme: null,
     currentTrip: null,
     filteredPlaces: [],
-    transportations: []
+    transportations: [],
+    // 기본 테마 색상 팔레트 - 눈에 편하고 예쁘며 널리 사용되는 20가지 색상
+    themeColors: [
+        "#4285F4", // 구글 블루
+        "#EA4335", // 구글 레드
+        "#FBBC05", // 구글 옐로우
+        "#34A853", // 구글 그린
+        "#673AB7", // 딥 퍼플
+        "#3F51B5", // 인디고
+        "#2196F3", // 라이트 블루
+        "#03A9F4", // 시안
+        "#00BCD4", // 틸
+        "#009688", // 틸 그린
+        "#4CAF50", // 그린
+        "#8BC34A", // 라이트 그린
+        "#CDDC39", // 라임
+        "#FFEB3B", // 옐로우
+        "#FFC107", // 앰버
+        "#FF9800", // 오렌지
+        "#FF5722", // 딥 오렌지
+        "#795548", // 브라운
+        "#9E9E9E", // 그레이
+        "#607D8B"  // 블루 그레이
+    ]
 };
 
 /**
@@ -366,6 +389,24 @@ function showError(message) {
  */
 function getTransportationById(id) {
     return dataStore.transportations.find(t => t.id === id);
+}
+
+/**
+ * 테마 색상 가져오기
+ * @param {string} themeId - 테마 ID
+ * @returns {string} - 색상 코드
+ */
+function getThemeColor(themeId) {
+    const theme = getThemeById(themeId);
+    
+    // 테마에 지정된 색상이 있으면 사용
+    if (theme && theme.color) {
+        return theme.color;
+    }
+    
+    // 없으면 기본 색상 중 하나를 ID를 기반으로 반환
+    const colorIndex = themeId ? parseInt(themeId.replace(/\D/g, '')) % dataStore.themeColors.length : 0;
+    return dataStore.themeColors[colorIndex] || dataStore.themeColors[0];
 }
 
 // 데이터 모듈 초기화 (DOM 로드 후)
