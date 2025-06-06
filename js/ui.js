@@ -781,12 +781,17 @@ function toggleSidePanel() {
                 if (map) {
                     map.relayout();
                     
-                    // 모든 마커가 보이도록 지도 범위 조정
+                    // 마커가 있으면 모두 보이도록 지도 범위 조정
                     if (markers && markers.length > 0) {
                         setMapBounds(markers.map(marker => marker.place));
                     }
+                    
+                    // 선택된 마커가 있고 팝업이 열려있으면 팝업 위치 업데이트
+                    if (typeof updateInfoPanelPosition === 'function') {
+                        updateInfoPanelPosition();
+                    }
                 }
-            }, 300); // 패널 전환 애니메이션 시간(300ms)과 동일하게 설정
+            }, 300);
         }
     }
     // 태블릿에서 사이드 패널 표시/숨김
@@ -808,9 +813,14 @@ function toggleSidePanel() {
             if (map) {
                 map.relayout();
                 
-                // 모든 마커가 보이도록 지도 범위 조정
+                // 마커가 있으면 모두 보이도록 지도 범위 조정
                 if (markers && markers.length > 0) {
                     setMapBounds(markers.map(marker => marker.place));
+                }
+                
+                // 선택된 마커가 있고 팝업이 열려있으면 팝업 위치 업데이트
+                if (typeof updateInfoPanelPosition === 'function') {
+                    updateInfoPanelPosition();
                 }
             }
         }, 300);
@@ -954,6 +964,11 @@ function handleResize() {
                 if (markers && markers.length > 0) {
                     setMapBounds(markers.map(marker => marker.place));
                 }
+                
+                // 선택된 마커가 있고 팝업이 열려있으면 팝업 위치 업데이트
+                if (typeof updateInfoPanelPosition === 'function') {
+                    updateInfoPanelPosition();
+                }
             }
         }, 400);
     } else {
@@ -961,6 +976,11 @@ function handleResize() {
         if (typeof map !== 'undefined' && map) {
             setTimeout(() => {
                 map.relayout();
+                
+                // 선택된 마커가 있고 팝업이 열려있으면 팝업 위치 업데이트
+                if (typeof updateInfoPanelPosition === 'function') {
+                    updateInfoPanelPosition();
+                }
             }, 100);
         }
     }
