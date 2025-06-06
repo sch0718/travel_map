@@ -1,0 +1,173 @@
+# 빌드 및 컴파일 결과
+*.tsbuildinfo
+.docusaurus
+.next
+.nuxt
+.svelte-kit
+.vuepress/dist
+build/
+build/Release
+dist
+out
+
+# 의존성 관리
+bower_components/
+jspm_packages/
+node_modules/
+web_modules/
+.pnp.*
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+package-lock.json
+
+# 환경 설정
+.env
+.env.*
+!.env.example
+.env.development.local
+.env.development.override
+.env.local
+.env.local.override
+.env.production.local
+.env.test.local
+local-config.json
+
+# IDE 및 에디터
+*.sublime*
+*.swp
+*.swo
+.idea/
+.vscode
+.vscode-test
+
+# 로그 및 디버깅
+*.log
+error.log
+lerna-debug.log*
+logs
+npm-debug.log*
+npm-error.log
+.pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS 관련
+.AppleDouble
+.DS_*
+.DS_Store
+.LSOverride
+psd
+sketch
+thumb
+
+# 테스트 및 분석
+*.lcov
+__snapshots__/
+benchmarks-results/
+coverage
+coverage-report/
+.nyc_output
+.nyc_output/
+profiling-results/
+reports/
+test-report.xml
+test-results/
+
+# 프레임워크 및 라이브러리
+## React
+__reacttemp
+.hot-update.js
+.hot-update.json
+.react-refresh-caches/
+react-profiling/
+
+## MUI
+mui-theme-cache/
+
+## Gatsby
+.cache/
+# Comment in the public line if your project uses Gatsby and not Next.js
+# public
+
+## PWA
+**/public/precache-manifest.*.js
+**/public/sw.js
+**/public/workbox-*.js
+
+## Storybook
+storybook-static/
+
+# 도구 및 유틸리티
+## 번들러/빌드 도구
+.cache
+.fusebox/
+.parcel-cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.webpack/
+
+## 린팅/포맷팅
+.eslintcache
+.stylelintcache
+
+## 테스트
+cypress/screenshots/
+cypress/videos/
+vitest.config.ts.timestamp-*
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+## 배포
+.sentryclirc
+.sentry.properties
+.serverless/
+.vercel-dev/
+deploy-backups/
+deploy-logs/
+deployment-*.json
+release-notes/
+
+## 번들 분석
+.bundlewatch.config.json
+bundle-analyzer-report.html
+stats.html
+
+# 기타
+**/*.back.*
+**/*.backup.*
+*.pid
+*.pid.lock
+*.seed
+*.tgz
+.dynamodb/
+.grunt
+.lock-wscript
+.node_repl_history
+.npm
+.nvmrc
+.tern-port
+.yarn-integrity
+lib-cov
+pids
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Cursor 관련
+.cursorconfig
+.cursorignore
+.cursorignoresettings
+.cursorignoresettings.json
+.cursorrules
+.cursorrulesettings
+.cursor/rules
+
+# Cursor개인 설정
+.cursor/mcp.json
+.cursor/tasks
