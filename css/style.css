@@ -150,28 +150,40 @@ h1, h2, h3 {
 
 /* 패널 토글 버튼 */
 .panel-toggle {
-    width: 24px;
+    width: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--primary-color);
     z-index: 11; /* 지도보다 위에 표시되도록 높은 z-index 설정 */
-    position: relative; /* 상대 위치 설정 */
+    position: absolute; /* 절대 위치로 변경 */
+    left: -20px; /* 패널 왼쪽으로 이동 */
+    top: 50%; /* 수직 중앙 정렬 */
+    transform: translateY(-50%); /* 수직 중앙 정렬 보정 */
+    height: 60px; /* 버튼 높이 설정 */
+    border-radius: 4px 0 0 4px; /* 왼쪽만 라운드 처리 */
+}
+
+/* 사이드 패널이 접혔을 때 토글 버튼 위치 조정 */
+.side-panel.collapsed .panel-toggle {
+    left: -20px; /* 패널 외부에 버튼 유지 */
 }
 
 .panel-toggle button {
     background-color: transparent;
     padding: 4px;
+    width: 100%;
+    height: 100%;
 }
 
 /* 사이드 패널 접힘 상태 */
 .side-panel.collapsed {
-    transform: translateX(calc(100% - 24px));
+    transform: translateX(100%);
 }
 
 /* 사이드 패널이 접혔을 때 지도 컨테이너 너비 조정 */
 .side-panel.collapsed ~ .map-container {
-    width: calc(100% - 24px); /* 토글 버튼 너비만 제외 */
+    width: 100%; /* 전체 너비 사용 */
 }
 
 .panel-content {
@@ -207,6 +219,14 @@ h1, h2, h3 {
 /* 장소 목록 */
 .place-list {
     margin-bottom: 1rem;
+}
+
+.place-list li {
+    margin-bottom: 0.75rem;
+    background-color: var(--background-color);
+    border-radius: 6px;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px var(--shadow-color);
 }
 
 /* 여행 일정 버튼 스타일 */
@@ -252,6 +272,54 @@ h1, h2, h3 {
 
 .place-item.selected {
     border-left: 4px solid var(--primary-color);
+}
+
+/* 장소 요약/상세 정보 토글 버튼 */
+.place-item .toggle-details {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    background-color: transparent;
+    color: var(--light-text-color);
+    padding: 2px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.place-item .toggle-details:hover {
+    background-color: var(--light-background);
+}
+
+/* 접힌 상태(기본)에서는 장소 설명과 추가 정보 숨김 */
+.place-item .place-details {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+
+/* 펼쳐진 상태에서는 모든 정보 표시 */
+.place-item.expanded .place-details {
+    display: block;
+}
+
+/* 장소 설명 */
+.place-item .place-description {
+    font-size: 0.9rem;
+    color: var(--light-text-color);
+    margin-bottom: 0.5rem;
+}
+
+/* 장소 주소 */
+.place-item .place-address {
+    font-size: 0.85rem;
+    color: var(--light-text-color);
+    margin-bottom: 0.5rem;
 }
 
 /* 장소 시간 표시 */
@@ -400,4 +468,52 @@ h1, h2, h3 {
     background-color: white;
     margin: 8px auto;
     border-radius: 2px;
+}
+
+/* 장소 목록의 라벨 스타일 */
+.place-labels {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    gap: 4px;
+    max-height: 3.5rem;
+    overflow-y: auto;
+}
+
+.place-label-small {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+/* 여행 일정 리스트 항목 */
+.place-item.trip-place {
+    padding-left: 1.5rem; /* 순서 표시 아이콘 공간 확보 */
+}
+
+.place-item.trip-place .toggle-details {
+    top: 15px; /* 위치 조정 */
+}
+
+/* 여행 일정 일차 정보 */
+.day-info {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: var(--light-background);
+    border-radius: 6px;
+}
+
+.day-info h4 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.day-info p {
+    font-size: 0.9rem;
+    color: var(--light-text-color);
 } 

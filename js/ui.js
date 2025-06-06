@@ -235,6 +235,9 @@ function updateThemeInfo(theme) {
     // 테마 정보 업데이트
     document.getElementById('theme-title').textContent = theme.title;
     document.getElementById('theme-description').textContent = theme.description;
+    
+    // 장소 목록 제목을 '장소'로 설정
+    document.getElementById('places-list-title').textContent = '장소';
 }
 
 /**
@@ -434,16 +437,58 @@ function showTripDay(trip, dayIndex) {
             }
         }
         
-        placeItem.innerHTML = `
+        // 기본 요약 정보
+        const basicInfoHTML = `
             <div class="place-order">${dayPlace.order}</div>
             <div class="place-time">${dayPlace.timeEstimate || ''}</div>
             <div class="place-title">${place.title}</div>
-            <div class="place-memo">${dayPlace.memo || ''}</div>
+            ${dayPlace.memo ? `<div class="place-memo">${dayPlace.memo}</div>` : ''}
             ${distanceInfo}
         `;
         
-        // 장소 클릭 이벤트
-        placeItem.addEventListener('click', () => moveToPlace(place.id));
+        // 상세 정보 (펼쳤을 때만 보임)
+        const detailsHTML = `
+            <div class="place-details">
+                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
+                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
+                ${place.labels && place.labels.length > 0 ? `
+                    <div class="place-labels">
+                        ${place.labels.map(label => 
+                            `<span class="place-label-small">${label}</span>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                ${place.urls ? `
+                    <div class="place-links">
+                        ${place.urls.naver ? `<a href="${place.urls.naver}" target="_blank">네이버 지도</a>` : ''}
+                        ${place.urls.kakao ? `<a href="${place.urls.kakao}" target="_blank">카카오 지도</a>` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+        
+        // 전체 HTML 구성
+        placeItem.innerHTML = `
+            ${basicInfoHTML}
+            <button class="toggle-details">↓</button>
+            ${detailsHTML}
+        `;
+        
+        // 확장/축소 토글 버튼 이벤트
+        const toggleButton = placeItem.querySelector('.toggle-details');
+        toggleButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
+            placeItem.classList.toggle('expanded');
+            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+        });
+        
+        // 장소 아이템 클릭 시 지도에 표시 (토글 버튼 제외)
+        placeItem.addEventListener('click', (e) => {
+            // 토글 버튼 클릭이 아닌 경우에만 지도에 표시
+            if (e.target !== toggleButton) {
+                moveToPlace(place.id);
+            }
+        });
         
         placesList.appendChild(placeItem);
     });
@@ -479,17 +524,53 @@ function updatePlacesList(places, trip = null) {
     places.forEach(place => {
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item';
-        placeItem.innerHTML = `
-            <div class="place-title">${place.title}</div>
-            <div class="place-labels">
-                ${place.labels.slice(0, 3).map(label => 
+        
+        // 라벨 HTML 생성 - 요약 시 보이는 라벨
+        const labelsHTML = place.labels.length > 0 
+            ? `<div class="place-labels">
+                ${place.labels.map(label => 
                     `<span class="place-label-small">${label}</span>`
                 ).join('')}
+               </div>`
+            : '';
+        
+        // 상세 정보 HTML - 펼쳤을 때만 보임
+        const detailsHTML = `
+            <div class="place-details">
+                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
+                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
+                ${place.urls ? `
+                    <div class="place-links">
+                        ${place.urls.naver ? `<a href="${place.urls.naver}" target="_blank">네이버 지도</a>` : ''}
+                        ${place.urls.kakao ? `<a href="${place.urls.kakao}" target="_blank">카카오 지도</a>` : ''}
+                    </div>
+                ` : ''}
             </div>
         `;
         
-        // 장소 클릭 이벤트
-        placeItem.addEventListener('click', () => moveToPlace(place.id));
+        // 기본 HTML 구성 (요약 정보)
+        placeItem.innerHTML = `
+            <div class="place-title">${place.title}</div>
+            ${labelsHTML}
+            <button class="toggle-details">↓</button>
+            ${detailsHTML}
+        `;
+        
+        // 확장/축소 토글 버튼 이벤트
+        const toggleButton = placeItem.querySelector('.toggle-details');
+        toggleButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
+            placeItem.classList.toggle('expanded');
+            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+        });
+        
+        // 장소 아이템 클릭 시 지도에 표시 (토글 버튼 제외)
+        placeItem.addEventListener('click', (e) => {
+            // 토글 버튼 클릭이 아닌 경우에만 지도에 표시
+            if (e.target !== toggleButton) {
+                moveToPlace(place.id);
+            }
+        });
         
         placesList.appendChild(placeItem);
     });
@@ -556,7 +637,7 @@ function toggleSidePanel() {
     if (window.innerWidth >= 1024) {
         sidePanel.classList.toggle('collapsed');
         
-        // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
+                    // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
         if (sidePanel.classList.contains('collapsed')) {
             // 패널이 접힌 상태(패널이 보이지 않음) -> 패널을 펼치는 아이콘(왼쪽 화살표)
             togglePanelButton.textContent = '◀';
@@ -574,8 +655,8 @@ function toggleSidePanel() {
             
             // 패널 토글 후 바로 초기 스타일 설정 - CSS만으로는 해결이 안되는 경우를 위한 보험
             if (sidePanel.classList.contains('collapsed')) {
-                // 패널이 접힌 경우, 지도 영역을 거의 전체 화면으로 확장
-                mapContainer.style.width = 'calc(100% - 24px)';
+                // 패널이 접힌 경우, 지도 영역을 전체 화면으로 확장
+                mapContainer.style.width = '100%';
             } else {
                 // 패널이 펼쳐진 경우, 지도 영역을 축소
                 mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
@@ -594,7 +675,7 @@ function toggleSidePanel() {
                     
                     // 원래 설정한 스타일로 되돌리기
                     if (sidePanel.classList.contains('collapsed')) {
-                        mapContainer.style.width = 'calc(100% - 24px)';
+                        mapContainer.style.width = '100%';
                     } else {
                         mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
                     }
@@ -724,7 +805,7 @@ function handleResize() {
         // 데스크톱에서 사이드 패널이 접혀있으면 지도 크기 조절
         if (mapContainer) {
             if (sidePanel.classList.contains('collapsed')) {
-                mapContainer.style.width = 'calc(100% - 24px)';
+                mapContainer.style.width = '100%';
             } else {
                 mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
             }
@@ -762,7 +843,7 @@ function handleResize() {
                         }
                     } else {
                         if (sidePanel.classList.contains('collapsed')) {
-                            mapContainer.style.width = 'calc(100% - 24px)';
+                            mapContainer.style.width = '100%';
                         } else {
                             mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
                         }
