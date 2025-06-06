@@ -114,12 +114,21 @@ h1, h2, h3 {
     display: flex;
     height: calc(100vh - var(--header-height));
     margin-top: var(--header-height);
+    overflow: hidden; /* 넘치는 내용 숨김 */
+    position: relative; /* 자식 요소의 위치 기준점 */
+    width: 100%; /* 명시적 너비 설정 */
 }
 
 /* 지도 컨테이너 */
 .map-container {
-    flex: 1;
     height: 100%;
+    transition: width 0.3s ease; /* 너비 변경에 초점을 맞춘 전환 효과 */
+    min-width: 0; /* flex 아이템이 내용물에 의해 축소되는 것을 방지 */
+    position: relative; /* 자식 요소의 기준점 */
+    z-index: 1; /* 사이드 패널보다 낮은 z-index */
+    will-change: width; /* 브라우저에게 width 속성이 변경될 것임을 알림 */
+    /* flex: 1 대신 명시적 너비 설정 */
+    width: calc(100% - var(--side-panel-width)); /* 기본 상태: 사이드 패널 너비를 제외한 너비 */
 }
 
 /* 사이드 패널 */
@@ -130,19 +139,37 @@ h1, h2, h3 {
     box-shadow: -2px 0 4px var(--shadow-color);
     display: flex;
     transition: transform 0.3s ease;
+    flex-shrink: 0; /* 패널 크기 고정 */
+    z-index: 10; /* 지도 위에 표시되도록 */
+    position: absolute; /* 절대 위치로 변경 */
+    right: 0; /* 오른쪽에 고정 */
+    top: 0; /* 상단에 고정 */
 }
 
+/* 패널 토글 버튼 */
 .panel-toggle {
     width: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: var(--primary-color);
+    z-index: 11; /* 지도보다 위에 표시되도록 높은 z-index 설정 */
+    position: relative; /* 상대 위치 설정 */
 }
 
 .panel-toggle button {
     background-color: transparent;
     padding: 4px;
+}
+
+/* 사이드 패널 접힘 상태 */
+.side-panel.collapsed {
+    transform: translateX(calc(100% - 24px));
+}
+
+/* 사이드 패널이 접혔을 때 지도 컨테이너 너비 조정 */
+.side-panel.collapsed ~ .map-container {
+    width: calc(100% - 24px); /* 토글 버튼 너비만 제외 */
 }
 
 .panel-content {

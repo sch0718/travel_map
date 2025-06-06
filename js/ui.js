@@ -426,6 +426,9 @@ function hidePlaceInfoPanel() {
  * 사이드 패널 토글 함수
  */
 function toggleSidePanel() {
+    // 토글 전에 원래 상태 저장
+    const wasCollapsed = sidePanel.classList.contains('collapsed');
+    
     // 데스크톱에서 사이드 패널 접기/펼치기
     if (window.innerWidth >= 1024) {
         sidePanel.classList.toggle('collapsed');
@@ -436,10 +439,76 @@ function toggleSidePanel() {
         } else {
             togglePanelButton.textContent = '◀';
         }
+        
+        // 사이드 패널 전환 후 CSS transition이 완료될 때 지도 영역 리사이즈 트리거
+        if (wasCollapsed !== sidePanel.classList.contains('collapsed')) {
+            // 지도 컨테이너 요소 가져오기
+            const mapContainer = document.getElementById('map');
+            
+            // 패널 토글 후 바로 초기 스타일 설정 - CSS만으로는 해결이 안되는 경우를 위한 보험
+            if (sidePanel.classList.contains('collapsed')) {
+                // 패널이 접힌 경우, 지도 영역을 거의 전체 화면으로 확장
+                mapContainer.style.width = 'calc(100% - 24px)';
+            } else {
+                // 패널이 펼쳐진 경우, 지도 영역을 축소
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            }
+            
+            // CSS transition 시간보다 약간 길게 딜레이 설정
+            setTimeout(() => {
+                // 지도 객체가 있는지 확인
+                if (typeof map !== 'undefined' && map) {
+                    console.log('지도 리레이아웃 실행');
+                    
+                    // 강제 리플로우 트리거를 위한 스타일 변경 및 원복
+                    const currentWidth = mapContainer.offsetWidth;
+                    mapContainer.style.width = (currentWidth - 1) + 'px';
+                    void mapContainer.offsetWidth; // 강제 리플로우
+                    
+                    // 원래 설정한 스타일로 되돌리기
+                    if (sidePanel.classList.contains('collapsed')) {
+                        mapContainer.style.width = 'calc(100% - 24px)';
+                    } else {
+                        mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                    }
+                    
+                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                    map.relayout();
+                    
+                    // 현재 표시 중인 마커들이 모두 보이도록 지도 범위 재조정
+                    if (markers && markers.length > 0) {
+                        setMapBounds(markers.map(marker => marker.place));
+                    }
+                }
+            }, 400);
+        }
     } 
     // 태블릿에서 사이드 패널 표시/숨김
     else if (window.innerWidth >= 768) {
+        const wasShown = sidePanel.classList.contains('show');
         sidePanel.classList.toggle('show');
+        
+        // 사이드 패널 표시 상태가 변경되었을 때만 relayout 호출
+        if (wasShown !== sidePanel.classList.contains('show')) {
+            setTimeout(() => {
+                if (typeof map !== 'undefined' && map) {
+                    console.log('태블릿 지도 리레이아웃 실행');
+                    
+                    // 지도 컨테이너 강제 리레이아웃
+                    const mapContainer = document.getElementById('map');
+                    if (mapContainer) {
+                        // 강제 리플로우 트리거
+                        const currentWidth = mapContainer.offsetWidth;
+                        mapContainer.style.width = (currentWidth - 1) + 'px';
+                        void mapContainer.offsetWidth; // 강제 리플로우
+                        mapContainer.style.width = ''; // 원래 스타일로 복원
+                    }
+                    
+                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                    map.relayout();
+                }
+            }, 400);
+        }
     }
 }
 
@@ -475,6 +544,11 @@ function hideMobilePanel() {
  */
 function handleResize() {
     const width = window.innerWidth;
+    const prevWidth = window.prevWidth || width;
+    window.prevWidth = width;
+    
+    // 지도 컨테이너 요소 가져오기
+    const mapContainer = document.getElementById('map');
     
     // 모바일 화면 (768px 미만)
     if (width < 768) {
@@ -482,12 +556,26 @@ function handleResize() {
         sidePanel.classList.remove('collapsed');
         sidePanel.classList.remove('show');
         mobilePanelHandle.style.display = 'block';
+        
+        // 모바일에서는 지도가 전체 너비 차지
+        if (mapContainer) {
+            mapContainer.style.width = '100%';
+        }
     } 
     // 태블릿 화면 (768px 이상 1024px 미만)
     else if (width < 1024) {
         // 사이드 패널 기본적으로 숨김, 토글 버튼으로 표시
         sidePanel.classList.remove('collapsed');
         mobilePanelHandle.style.display = 'none';
+        
+        // 태블릿에서 사이드 패널이 보이면 지도 크기 조절
+        if (mapContainer) {
+            if (sidePanel.classList.contains('show')) {
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            } else {
+                mapContainer.style.width = '100%';
+            }
+        }
     } 
     // 데스크톱 화면 (1024px 이상)
     else {
@@ -497,6 +585,71 @@ function handleResize() {
         
         // 토글 버튼 텍스트 초기화
         togglePanelButton.textContent = '◀';
+        
+        // 데스크톱에서 사이드 패널이 접혀있으면 지도 크기 조절
+        if (mapContainer) {
+            if (sidePanel.classList.contains('collapsed')) {
+                mapContainer.style.width = 'calc(100% - 24px)';
+            } else {
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            }
+        }
+    }
+    
+    // 화면 크기 변경이 중요한 범위(breakpoint 근처)에서 발생했을 때만 리레이아웃 수행
+    // 레이아웃이 실제로 변경되었는지 확인 (모바일/태블릿/데스크탑 전환)
+    const isBreakpointChange = 
+        (prevWidth < 768 && width >= 768) || 
+        (prevWidth >= 768 && width < 768) ||
+        (prevWidth < 1024 && width >= 1024) || 
+        (prevWidth >= 1024 && width < 1024);
+    
+    if (isBreakpointChange) {
+        console.log('화면 크기 변경으로 지도 리레이아웃 실행');
+        
+        // 화면 크기 변경 후 약간의 지연을 두고 지도 리레이아웃 실행
+        setTimeout(() => {
+            if (typeof map !== 'undefined' && map) {
+                // 강제 리플로우 트리거
+                if (mapContainer) {
+                    const currentWidth = mapContainer.offsetWidth;
+                    mapContainer.style.width = (currentWidth - 1) + 'px';
+                    void mapContainer.offsetWidth; // 강제 리플로우
+                    
+                    // 현재 모드에 맞게 스타일 다시 설정
+                    if (width < 768) {
+                        mapContainer.style.width = '100%';
+                    } else if (width < 1024) {
+                        if (sidePanel.classList.contains('show')) {
+                            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                        } else {
+                            mapContainer.style.width = '100%';
+                        }
+                    } else {
+                        if (sidePanel.classList.contains('collapsed')) {
+                            mapContainer.style.width = 'calc(100% - 24px)';
+                        } else {
+                            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                        }
+                    }
+                }
+                
+                // 지도 리레이아웃 실행
+                map.relayout();
+                
+                // 마커가 있으면 모두 보이도록 지도 범위 조정
+                if (markers && markers.length > 0) {
+                    setMapBounds(markers.map(marker => marker.place));
+                }
+            }
+        }, 400);
+    } else {
+        // 브레이크포인트 변경이 아닌 일반적인 크기 변경의 경우 간단히 relayout만 호출
+        if (typeof map !== 'undefined' && map) {
+            setTimeout(() => {
+                map.relayout();
+            }, 100);
+        }
     }
 }
 
