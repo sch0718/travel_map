@@ -3,10 +3,10 @@
  * 카카오 맵 API를 사용하여 지도를 초기화하고 마커를 표시하는 기능을 제공합니다.
  */
 
-// 지도 관련 변수
-let map; // 카카오 맵 객체
-let markers = []; // 지도에 표시된 마커 배열
-let selectedMarker = null; // 현재 선택된 마커
+// 지도 관련 변수 (전역 스코프로 변경)
+var map; // 카카오 맵 객체
+var markers = []; // 지도에 표시된 마커 배열
+var selectedMarker = null; // 현재 선택된 마커
 
 /**
  * 지도 초기화 함수
@@ -16,22 +16,88 @@ function initMap() {
     // 지도를 표시할 div 요소 가져오기
     const container = document.getElementById('map');
     
-    // 지도의 초기 옵션 설정
-    const options = {
-        center: new kakao.maps.LatLng(33.3617, 126.5292), // 한라산 중심
-        level: 9 // 확대 레벨 (1~14, 숫자가 클수록 축소)
-    };
+    // 지도 컨테이너가 보이는 상태인지 확인
+    if (container) {
+        // 지도 생성 전 컨테이너 크기 확인 및 처리
+        ensureContainerSize(container);
+        
+        // 지도의 초기 옵션 설정
+        const options = {
+            center: new kakao.maps.LatLng(33.3617, 126.5292), // 한라산 중심
+            level: 9 // 확대 레벨 (1~14, 숫자가 클수록 축소)
+        };
+        
+        // 지도 생성
+        map = new kakao.maps.Map(container, options);
+        
+        // 지도 컨트롤 추가
+        addMapControls();
+        
+        // 지도 이벤트 리스너 설정
+        setMapEventListeners();
+        
+        // 지도 생성 후 약간의 지연을 두고 relayout 호출하여 초기 렌더링 보장
+        setTimeout(() => {
+            if (map) {
+                console.log('초기 지도 리레이아웃 실행');
+                forceMapRelayout();
+            }
+        }, 100);
+        
+        console.log('지도 초기화 완료');
+    } else {
+        console.error('지도 컨테이너 요소를 찾을 수 없습니다.');
+    }
+}
+
+/**
+ * 지도 강제 리레이아웃 함수
+ * 지도 컨테이너의 크기를 강제로 변경하고 다시 원래대로 돌려서 리렌더링을 보장합니다.
+ */
+function forceMapRelayout() {
+    if (!map) return;
     
-    // 지도 생성
-    map = new kakao.maps.Map(container, options);
+    const container = document.getElementById('map');
+    if (!container) return;
     
-    // 지도 컨트롤 추가
-    addMapControls();
+    // 원래 크기 저장
+    const originalWidth = container.style.width;
+    const originalHeight = container.style.height;
     
-    // 지도 이벤트 리스너 설정
-    setMapEventListeners();
+    // 컨테이너 영역 강제 새로고침을 위한 크기 변경
+    container.style.width = '100%';
+    container.style.height = '100%';
     
-    console.log('지도 초기화 완료');
+    // 강제 리플로우 발생
+    void container.offsetWidth;
+    
+    // 지도 리레이아웃 호출
+    map.relayout();
+    
+    // 현재 표시 중인 마커들이 모두 보이도록 지도 범위 재조정
+    if (markers && markers.length > 0) {
+        setMapBounds(markers.map(marker => marker.place));
+    }
+}
+
+/**
+ * 지도 컨테이너 크기 확인 및 처리 함수
+ * 컨테이너 크기가 0이면 기본 크기를 설정합니다.
+ * @param {HTMLElement} container - 지도 컨테이너 요소
+ */
+function ensureContainerSize(container) {
+    // 컨테이너 크기가 0이면 기본 크기 설정
+    const rect = container.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+        console.warn('지도 컨테이너 크기가 0입니다. 기본 크기를 설정합니다.');
+        // 기본 크기 설정
+        if (rect.width === 0) {
+            container.style.width = '100%';
+        }
+        if (rect.height === 0) {
+            container.style.height = '400px';
+        }
+    }
 }
 
 /**
@@ -162,10 +228,38 @@ function addMarker(place, trip = null) {
  * @param {Object} trip - 여행 일정 객체 (선택적)
  * @returns {kakao.maps.MarkerImage} - 마커 이미지 객체
  */
-function createMarkerImage(place, trip = null) {
+function createMarkerImage(place, trip = null, order = null) {
     // 기본 마커 이미지 URL (카카오 맵 기본 마커 사용)
     let imageUrl = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
     let imageSize = new kakao.maps.Size(24, 35);
+    
+    // 여행 일정 마커인 경우 숫자 표시
+    if (order !== null) {
+        // 숫자 마커를 생성하기 위한 HTML Content 사용
+        const content = `<div style="
+            background: #3490dc; 
+            color: white; 
+            padding: 5px 10px; 
+            border-radius: 50%; 
+            font-weight: bold; 
+            text-align: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: 2px solid white;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        ">${order}</div>`;
+        
+        // 커스텀 오버레이 사용 (MarkerImage 대신)
+        return new kakao.maps.CustomOverlay({
+            content: content,
+            position: new kakao.maps.LatLng(place.location.lat, place.location.lng),
+            zIndex: 5
+        });
+    }
     
     // 카테고리별 마커 이미지 설정 (MVP에서는 단순화)
     if (place.labels.includes('숙소')) {
@@ -195,6 +289,12 @@ function removeAllMarkers() {
     // 마커 배열 초기화
     markers = [];
     selectedMarker = null;
+    
+    // 경로 선 제거
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+        window.currentPolyline = null;
+    }
 }
 
 /**
@@ -253,29 +353,62 @@ function moveToPlace(placeId) {
  * @param {number} dayIndex - 일차 인덱스
  */
 function showTripPath(trip, dayIndex) {
+    // 기존 마커와 선 제거
+    removeAllMarkers();
+    
+    // 기존 경로 선 제거
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+    }
+    
     // 여행 데이터가 없거나 해당 일차가 없으면 종료
     if (!trip || !trip.days[dayIndex]) {
         console.error('유효하지 않은 여행 일정 또는 일차');
         return;
     }
     
-    // 해당 일차의 장소 데이터
-    const dayPlaces = trip.days[dayIndex].places;
+    // 해당 일차의 장소 데이터 (순서대로 정렬)
+    const dayPlaces = [...trip.days[dayIndex].places].sort((a, b) => a.order - b.order);
     
     // 장소가 2개 미만이면 경로를 그릴 수 없음
     if (dayPlaces.length < 2) {
         console.log('경로를 그릴 장소가 충분하지 않습니다.');
+        
+        // 단일 장소라도 마커는 표시
+        if (dayPlaces.length === 1) {
+            const place = getPlaceById(dayPlaces[0].placeId);
+            if (place) {
+                // 숫자 마커 생성
+                const overlay = createMarkerImage(place, trip, dayPlaces[0].order);
+                overlay.setMap(map);
+                markers.push(overlay);
+            }
+        }
+        
         return;
     }
     
     // 경로를 위한 좌표 배열 생성
     const linePath = [];
     
-    // 장소 순서대로 좌표 추가
+    // 장소 순서대로 좌표 추가 및 마커 생성
     dayPlaces.forEach(dayPlace => {
         const place = getPlaceById(dayPlace.placeId);
         if (place) {
+            // 경로에 좌표 추가
             linePath.push(new kakao.maps.LatLng(place.location.lat, place.location.lng));
+            
+            // 숫자 마커 생성
+            const overlay = createMarkerImage(place, trip, dayPlace.order);
+            overlay.setMap(map);
+            
+            // 마커 클릭 이벤트 (기존 마커 대신 오버레이에 적용)
+            kakao.maps.event.addListener(overlay, 'click', function() {
+                showPlaceInfoPanel(place);
+            });
+            
+            // 마커 배열에 추가
+            markers.push(overlay);
         }
     });
     
@@ -283,13 +416,16 @@ function showTripPath(trip, dayIndex) {
     const polyline = new kakao.maps.Polyline({
         path: linePath,
         strokeWeight: 3,
-        strokeColor: '#db4040',
+        strokeColor: '#3490dc',
         strokeOpacity: 0.7,
         strokeStyle: 'solid'
     });
     
     // 경로 선을 지도에 표시
     polyline.setMap(map);
+    
+    // 현재 경로 선 저장 (나중에 제거하기 위해)
+    window.currentPolyline = polyline;
     
     // 모든 장소가 보이도록 지도 범위 조정
     const places = dayPlaces.map(dayPlace => getPlaceById(dayPlace.placeId)).filter(Boolean);

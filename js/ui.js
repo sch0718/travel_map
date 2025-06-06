@@ -252,22 +252,106 @@ function updateTripInfo(trip) {
     
     // 일자별 탭 생성
     const dayTabs = document.createElement('div');
-    dayTabs.className = 'day-tabs';
+    dayTabs.className = 'day-buttons';
     
     trip.days.forEach((day, index) => {
         const dayTab = document.createElement('button');
         dayTab.className = 'day-tab';
         dayTab.textContent = `${day.day}일차`;
-        dayTab.addEventListener('click', () => showTripDay(trip, index));
+        
+        // 1일차일 경우 기본적으로 활성화
+        if (index === 0) {
+            dayTab.classList.add('active');
+        }
+        
+        dayTab.addEventListener('click', () => {
+            // 클릭한 탭 활성화 및 다른 탭 비활성화
+            document.querySelectorAll('.day-tab').forEach(tab => tab.classList.remove('active'));
+            dayTab.classList.add('active');
+            
+            showTripDay(trip, index);
+        });
         dayTabs.appendChild(dayTab);
     });
     
     categoryList.appendChild(dayTabs);
     
+    // 이동 거리와 시간 정보 추가
+    calculateTripDistances(trip);
+    
     // 기본적으로 첫 번째 일차 표시
     if (trip.days.length > 0) {
         showTripDay(trip, 0);
     }
+    
+    // 장소 목록에 일정 일차만 표시하도록 UI 업데이트
+    document.getElementById('places-list-title').textContent = '일정';
+}
+
+/**
+ * 여행 일정의 장소 간 이동 거리와 시간 계산
+ * @param {Object} trip - 여행 일정 객체
+ */
+function calculateTripDistances(trip) {
+    trip.days.forEach(day => {
+        const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
+        
+        sortedPlaces.forEach((place, index) => {
+            if (index < sortedPlaces.length - 1) {
+                const nextPlace = sortedPlaces[index + 1];
+                const currentPlace = getPlaceById(place.placeId);
+                const nextPlaceObj = getPlaceById(nextPlace.placeId);
+                
+                if (currentPlace && nextPlaceObj) {
+                    // 두 장소 간의 직선 거리 계산 (km)
+                    const distance = calculateDistance(
+                        currentPlace.location.lat, 
+                        currentPlace.location.lng,
+                        nextPlaceObj.location.lat, 
+                        nextPlaceObj.location.lng
+                    );
+                    
+                    // 거리에 따른 소요 시간 추정 (차량 이동 기준, 시속 40km 가정)
+                    const durationMinutes = Math.round(distance / 40 * 60);
+                    
+                    // 이동 정보 저장
+                    place.distance = `약 ${distance.toFixed(1)}km`;
+                    place.duration = `(${Math.floor(durationMinutes / 60) > 0 ? 
+                        Math.floor(durationMinutes / 60) + '시간 ' : ''}${durationMinutes % 60}분)`;
+                }
+            }
+        });
+    });
+}
+
+/**
+ * 두 지점 간의 거리 계산 (Haversine 공식)
+ * @param {number} lat1 - 첫 번째 지점의 위도
+ * @param {number} lon1 - 첫 번째 지점의 경도
+ * @param {number} lat2 - 두 번째 지점의 위도
+ * @param {number} lon2 - 두 번째 지점의 경도
+ * @returns {number} - km 단위 거리
+ */
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // 지구 반경 (km)
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
+    const distance = R * c; // 킬로미터 단위
+    return distance;
+}
+
+/**
+ * 각도를 라디안으로 변환
+ * @param {number} deg - 각도
+ * @returns {number} - 라디안
+ */
+function deg2rad(deg) {
+    return deg * (Math.PI / 180);
 }
 
 /**
@@ -304,19 +388,32 @@ function showTripDay(trip, dayIndex) {
     // 일차의 장소 목록 (방문 순서대로 정렬)
     const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
     
-    sortedPlaces.forEach(dayPlace => {
+    sortedPlaces.forEach((dayPlace, index) => {
         const place = getPlaceById(dayPlace.placeId);
         if (!place) return;
         
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item trip-place';
+        
+        // 다음 장소와의 이동 정보 계산
+        let distanceInfo = '';
+        if (index < sortedPlaces.length - 1) {
+            const nextPlace = getPlaceById(sortedPlaces[index + 1].placeId);
+            if (nextPlace && dayPlace.distance) {
+                distanceInfo = `
+                    <div class="place-distance">
+                        ${dayPlace.distance || ''} ${dayPlace.duration || ''}
+                    </div>
+                `;
+            }
+        }
+        
         placeItem.innerHTML = `
             <div class="place-order">${dayPlace.order}</div>
-            <div class="place-content">
-                <div class="place-title">${place.title}</div>
-                <div class="place-time">${dayPlace.timeEstimate || ''}</div>
-                <div class="place-memo">${dayPlace.memo || ''}</div>
-            </div>
+            <div class="place-time">${dayPlace.timeEstimate || ''}</div>
+            <div class="place-title">${place.title}</div>
+            <div class="place-memo">${dayPlace.memo || ''}</div>
+            ${distanceInfo}
         `;
         
         // 장소 클릭 이벤트
@@ -426,20 +523,93 @@ function hidePlaceInfoPanel() {
  * 사이드 패널 토글 함수
  */
 function toggleSidePanel() {
+    // 토글 전에 원래 상태 저장
+    const wasCollapsed = sidePanel.classList.contains('collapsed');
+    
     // 데스크톱에서 사이드 패널 접기/펼치기
     if (window.innerWidth >= 1024) {
         sidePanel.classList.toggle('collapsed');
         
-        // 토글 버튼 방향 변경
+        // 토글 버튼 방향 변경 - 현재 상태에 맞는 아이콘으로 표시
         if (sidePanel.classList.contains('collapsed')) {
-            togglePanelButton.textContent = '▶';
-        } else {
+            // 패널이 접힌 상태(패널이 보이지 않음) -> 패널을 펼치는 아이콘(왼쪽 화살표)
             togglePanelButton.textContent = '◀';
+            console.log('패널 접힘 상태 - 왼쪽 화살표(◀) 표시: 패널 펼치기 동작');
+        } else {
+            // 패널이 펼쳐진 상태(패널이 보임) -> 패널을 접는 아이콘(오른쪽 화살표)
+            togglePanelButton.textContent = '▶';
+            console.log('패널 펼침 상태 - 오른쪽 화살표(▶) 표시: 패널 접기 동작');
+        }
+        
+        // 사이드 패널 전환 후 CSS transition이 완료될 때 지도 영역 리사이즈 트리거
+        if (wasCollapsed !== sidePanel.classList.contains('collapsed')) {
+            // 지도 컨테이너 요소 가져오기
+            const mapContainer = document.getElementById('map');
+            
+            // 패널 토글 후 바로 초기 스타일 설정 - CSS만으로는 해결이 안되는 경우를 위한 보험
+            if (sidePanel.classList.contains('collapsed')) {
+                // 패널이 접힌 경우, 지도 영역을 거의 전체 화면으로 확장
+                mapContainer.style.width = 'calc(100% - 24px)';
+            } else {
+                // 패널이 펼쳐진 경우, 지도 영역을 축소
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            }
+            
+            // CSS transition 시간보다 약간 길게 딜레이 설정
+            setTimeout(() => {
+                // 지도 객체가 있는지 확인
+                if (typeof map !== 'undefined' && map) {
+                    console.log('지도 리레이아웃 실행');
+                    
+                    // 강제 리플로우 트리거를 위한 스타일 변경 및 원복
+                    const currentWidth = mapContainer.offsetWidth;
+                    mapContainer.style.width = (currentWidth - 1) + 'px';
+                    void mapContainer.offsetWidth; // 강제 리플로우
+                    
+                    // 원래 설정한 스타일로 되돌리기
+                    if (sidePanel.classList.contains('collapsed')) {
+                        mapContainer.style.width = 'calc(100% - 24px)';
+                    } else {
+                        mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                    }
+                    
+                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                    map.relayout();
+                    
+                    // 현재 표시 중인 마커들이 모두 보이도록 지도 범위 재조정
+                    if (markers && markers.length > 0) {
+                        setMapBounds(markers.map(marker => marker.place));
+                    }
+                }
+            }, 400);
         }
     } 
     // 태블릿에서 사이드 패널 표시/숨김
     else if (window.innerWidth >= 768) {
+        const wasShown = sidePanel.classList.contains('show');
         sidePanel.classList.toggle('show');
+        
+        // 사이드 패널 표시 상태가 변경되었을 때만 relayout 호출
+        if (wasShown !== sidePanel.classList.contains('show')) {
+            setTimeout(() => {
+                if (typeof map !== 'undefined' && map) {
+                    console.log('태블릿 지도 리레이아웃 실행');
+                    
+                    // 지도 컨테이너 강제 리레이아웃
+                    const mapContainer = document.getElementById('map');
+                    if (mapContainer) {
+                        // 강제 리플로우 트리거
+                        const currentWidth = mapContainer.offsetWidth;
+                        mapContainer.style.width = (currentWidth - 1) + 'px';
+                        void mapContainer.offsetWidth; // 강제 리플로우
+                        mapContainer.style.width = ''; // 원래 스타일로 복원
+                    }
+                    
+                    // 지도 객체에 resize 이벤트 발생시켜 지도 영역 다시 그리기
+                    map.relayout();
+                }
+            }, 400);
+        }
     }
 }
 
@@ -475,6 +645,11 @@ function hideMobilePanel() {
  */
 function handleResize() {
     const width = window.innerWidth;
+    const prevWidth = window.prevWidth || width;
+    window.prevWidth = width;
+    
+    // 지도 컨테이너 요소 가져오기
+    const mapContainer = document.getElementById('map');
     
     // 모바일 화면 (768px 미만)
     if (width < 768) {
@@ -482,12 +657,26 @@ function handleResize() {
         sidePanel.classList.remove('collapsed');
         sidePanel.classList.remove('show');
         mobilePanelHandle.style.display = 'block';
+        
+        // 모바일에서는 지도가 전체 너비 차지
+        if (mapContainer) {
+            mapContainer.style.width = '100%';
+        }
     } 
     // 태블릿 화면 (768px 이상 1024px 미만)
     else if (width < 1024) {
         // 사이드 패널 기본적으로 숨김, 토글 버튼으로 표시
         sidePanel.classList.remove('collapsed');
         mobilePanelHandle.style.display = 'none';
+        
+        // 태블릿에서 사이드 패널이 보이면 지도 크기 조절
+        if (mapContainer) {
+            if (sidePanel.classList.contains('show')) {
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            } else {
+                mapContainer.style.width = '100%';
+            }
+        }
     } 
     // 데스크톱 화면 (1024px 이상)
     else {
@@ -495,8 +684,105 @@ function handleResize() {
         sidePanel.classList.remove('show');
         mobilePanelHandle.style.display = 'none';
         
-        // 토글 버튼 텍스트 초기화
-        togglePanelButton.textContent = '◀';
+        // 토글 버튼 텍스트 초기화 - 패널 상태에 맞는 아이콘으로 설정
+        if (sidePanel.classList.contains('collapsed')) {
+            // 패널이 접힌 상태 -> 펼치기 아이콘(왼쪽 화살표)
+            togglePanelButton.textContent = '◀';
+            console.log('리사이즈: 패널 접힘 상태 - 왼쪽 화살표(◀) 표시: 패널 펼치기 동작');
+        } else {
+            // 패널이 펼쳐진 상태 -> 접기 아이콘(오른쪽 화살표)
+            togglePanelButton.textContent = '▶';
+            console.log('리사이즈: 패널 펼침 상태 - 오른쪽 화살표(▶) 표시: 패널 접기 동작');
+        }
+        
+        // 데스크톱에서 사이드 패널이 접혀있으면 지도 크기 조절
+        if (mapContainer) {
+            if (sidePanel.classList.contains('collapsed')) {
+                mapContainer.style.width = 'calc(100% - 24px)';
+            } else {
+                mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+            }
+        }
+    }
+    
+    // 화면 크기 변경이 중요한 범위(breakpoint 근처)에서 발생했을 때만 리레이아웃 수행
+    // 레이아웃이 실제로 변경되었는지 확인 (모바일/태블릿/데스크탑 전환)
+    const isBreakpointChange = 
+        (prevWidth < 768 && width >= 768) || 
+        (prevWidth >= 768 && width < 768) ||
+        (prevWidth < 1024 && width >= 1024) || 
+        (prevWidth >= 1024 && width < 1024);
+    
+    if (isBreakpointChange) {
+        console.log('화면 크기 변경으로 지도 리레이아웃 실행');
+        
+        // 화면 크기 변경 후 약간의 지연을 두고 지도 리레이아웃 실행
+        setTimeout(() => {
+            if (typeof map !== 'undefined' && map) {
+                // 강제 리플로우 트리거
+                if (mapContainer) {
+                    const currentWidth = mapContainer.offsetWidth;
+                    mapContainer.style.width = (currentWidth - 1) + 'px';
+                    void mapContainer.offsetWidth; // 강제 리플로우
+                    
+                    // 현재 모드에 맞게 스타일 다시 설정
+                    if (width < 768) {
+                        mapContainer.style.width = '100%';
+                    } else if (width < 1024) {
+                        if (sidePanel.classList.contains('show')) {
+                            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                        } else {
+                            mapContainer.style.width = '100%';
+                        }
+                    } else {
+                        if (sidePanel.classList.contains('collapsed')) {
+                            mapContainer.style.width = 'calc(100% - 24px)';
+                        } else {
+                            mapContainer.style.width = 'calc(100% - var(--side-panel-width))';
+                        }
+                    }
+                }
+                
+                // 지도 리레이아웃 실행
+                map.relayout();
+                
+                // 마커가 있으면 모두 보이도록 지도 범위 조정
+                if (markers && markers.length > 0) {
+                    setMapBounds(markers.map(marker => marker.place));
+                }
+            }
+        }, 400);
+    } else {
+        // 브레이크포인트 변경이 아닌 일반적인 크기 변경의 경우 간단히 relayout만 호출
+        if (typeof map !== 'undefined' && map) {
+            setTimeout(() => {
+                map.relayout();
+            }, 100);
+        }
+    }
+}
+
+/**
+ * 현재 여행 일정 설정 함수
+ * @param {string} tripId - 여행 일정 ID
+ */
+function setCurrentTrip(tripId) {
+    // 기존 마커와 경로 제거
+    removeAllMarkers();
+    
+    // 여행 일정 ID로 여행 일정 객체 찾기
+    const trip = dataStore.trips.find(t => t.id === tripId);
+    if (!trip) {
+        console.error('존재하지 않는 여행 일정:', tripId);
+        return;
+    }
+    
+    // 여행 정보 UI 업데이트
+    updateTripInfo(trip);
+    
+    // 첫 번째 일차 표시
+    if (trip.days.length > 0) {
+        showTripDay(trip, 0);
     }
 }
 
