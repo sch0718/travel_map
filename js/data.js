@@ -139,9 +139,14 @@ async function loadMapFiles() {
     try {
         console.log('맵 파일 로드 시작');
         
+        // 베이스 URL 동적 결정 (GitHub Pages와 로컬 환경 모두 지원)
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        console.log('현재 베이스 URL:', baseUrl);
+        
         // data/maps 디렉토리의 콘텐츠 요청 시도
         try {
-            const response = await fetch('data/maps/');
+            // 기존 로직을 유지하되, 베이스 URL을 사용하도록 수정
+            const response = await fetch(`${baseUrl}/data/maps/`);
             
             if (response.ok) {
                 // HTML 응답에서 파일 목록 추출 (디렉토리 목록 활성화된 서버)
@@ -156,7 +161,7 @@ async function loadMapFiles() {
                 
                 if (mapFiles.length > 0) {
                     console.log('디렉토리 목록에서 발견된 JSON 파일:', mapFiles);
-                    await loadMapFilesFromList(mapFiles);
+                    await loadMapFilesFromList(mapFiles, baseUrl);
                     return;
                 } else {
                     console.log('디렉토리에서 JSON 파일을 찾을 수 없습니다.');
@@ -168,9 +173,9 @@ async function loadMapFiles() {
             console.log('디렉토리 스캔 오류:', dirError.message);
         }
         
-        // 서버가 디렉토리 목록을 제공하지 않는 경우, 직접 파일 로드를 시도하지 않음
+        // 서버가 디렉토리 목록을 제공하지 않는 경우
         console.error('맵 데이터를 로드할 수 없습니다.');
-        throw new Error('맵 데이터를 로드할 수 없습니다. 서버가 디렉토리 목록을 제공하도록 설정하거나 웹 서버를 사용하세요.');
+        throw new Error('맵 데이터를 로드할 수 없습니다. GitHub Pages에서는 디렉토리 목록을 제공하지 않습니다. 로컬 웹 서버에서 테스트하거나, 인덱스 파일을 사용하세요.');
         
     } catch (error) {
         console.error('맵 데이터 로드 오류:', error);
@@ -181,14 +186,21 @@ async function loadMapFiles() {
 /**
  * 파일 목록에서 맵 파일 로드
  * @param {Array<string>} mapFiles - 로드할 맵 파일 목록
+ * @param {string} baseUrl - 기본 URL
  */
-async function loadMapFilesFromList(mapFiles) {
+async function loadMapFilesFromList(mapFiles, baseUrl) {
+    // 베이스 URL이 없으면 동적으로 결정
+    if (!baseUrl) {
+        baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+    }
+    
     // 각 파일 로드
     const filePromises = mapFiles.map(async file => {
         try {
             // 파일 경로 정규화 (URL에서 파일명만 추출)
             const fileName = file.split('/').pop();
-            const filePath = `data/maps/${fileName}`;
+            // 절대 경로 사용
+            const filePath = `${baseUrl}/data/maps/${fileName}`;
             console.log('파일 로드 시도:', filePath);
             
             const fileResponse = await fetch(filePath);
@@ -240,7 +252,10 @@ async function loadMapFilesFromList(mapFiles) {
  */
 async function loadTransportations() {
     try {
-        const response = await fetch('data/system/transportations.json');
+        // 베이스 URL 동적 결정
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        
+        const response = await fetch(`${baseUrl}/data/system/transportations.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -258,7 +273,10 @@ async function loadTransportations() {
  */
 async function loadLabels() {
     try {
-        const response = await fetch('data/system/labels.json');
+        // 베이스 URL 동적 결정
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        
+        const response = await fetch(`${baseUrl}/data/system/labels.json`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

@@ -41,9 +41,6 @@ function initUI() {
     // 이벤트 리스너 설정
     setupEventListeners();
     
-    // 테마 선택기 초기화
-    initThemeSelector();
-    
     // 초기 화면 설정
     handleResize();
     
@@ -54,6 +51,44 @@ function initUI() {
     setupMutationObserver();
     
     console.log('UI 초기화 완료');
+}
+
+/**
+ * 테마/여행 선택기 초기화 함수
+ */
+function initThemeSelector() {
+    // 모든 옵션 및 옵션그룹 제거 후 기본 옵션 추가
+    themeSelect.innerHTML = '<option value="">테마/여행 선택</option>';
+    
+    // 테마 옵션 추가 (days 필드가 없는 맵은 테마)
+    if (dataStore.themes && dataStore.themes.length > 0) {
+        const themesOptgroup = document.createElement('optgroup');
+        themesOptgroup.label = '테마';
+        
+        dataStore.themes.forEach(theme => {
+            const option = document.createElement('option');
+            option.value = `${theme.id}`;
+            option.textContent = theme.title;
+            themesOptgroup.appendChild(option);
+        });
+        
+        themeSelect.appendChild(themesOptgroup);
+    }
+    
+    // 여행 일정 옵션 추가 (days 필드가 있는 맵은 여행)
+    if (dataStore.trips && dataStore.trips.length > 0) {
+        const tripsOptgroup = document.createElement('optgroup');
+        tripsOptgroup.label = '여행 일정';
+        
+        dataStore.trips.forEach(trip => {
+            const option = document.createElement('option');
+            option.value = `${trip.id}`;
+            option.textContent = trip.title;
+            tripsOptgroup.appendChild(option);
+        });
+        
+        themeSelect.appendChild(tripsOptgroup);
+    }
 }
 
 /**
@@ -127,46 +162,6 @@ function setupTouchEvents() {
         else if (swipeDistance < -50) {
             hideMobilePanel();
         }
-    }
-}
-
-/**
- * 테마/여행 선택기 초기화 함수
- */
-function initThemeSelector() {
-    // 기존 옵션 제거 (첫 번째 기본 옵션 제외)
-    while (themeSelect.options.length > 1) {
-        themeSelect.remove(1);
-    }
-    
-    // 테마 옵션 추가 (days 필드가 없는 맵은 테마)
-    if (dataStore.themes.length > 0) {
-        const themesOptgroup = document.createElement('optgroup');
-        themesOptgroup.label = '테마';
-        
-        dataStore.themes.forEach(theme => {
-            const option = document.createElement('option');
-            option.value = `${theme.id}`;
-            option.textContent = theme.title;
-            themesOptgroup.appendChild(option);
-        });
-        
-        themeSelect.appendChild(themesOptgroup);
-    }
-    
-    // 여행 일정 옵션 추가 (days 필드가 있는 맵은 여행)
-    if (dataStore.trips.length > 0) {
-        const tripsOptgroup = document.createElement('optgroup');
-        tripsOptgroup.label = '여행 일정';
-        
-        dataStore.trips.forEach(trip => {
-            const option = document.createElement('option');
-            option.value = `${trip.id}`;
-            option.textContent = trip.title;
-            tripsOptgroup.appendChild(option);
-        });
-        
-        themeSelect.appendChild(tripsOptgroup);
     }
 }
 
