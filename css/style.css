@@ -10,7 +10,7 @@
     --border-color: #e2e8f0; /* 테두리 색상 */
     --shadow-color: rgba(0, 0, 0, 0.1); /* 그림자 색상 */
     --header-height: 60px; /* 헤더 높이 */
-    --side-panel-width: 300px; /* 사이드 패널 너비 */
+    --side-panel-width: 350px; /* 사이드 패널 너비 */
     --active-day-color: #3490dc; /* 활성화된 일차 색상 */
     --inactive-day-color: #a0aec0; /* 비활성화된 일차 색상 */
 }
@@ -27,6 +27,8 @@ body {
     color: var(--text-color);
     background-color: var(--background-color);
     line-height: 1.5;
+    overflow-x: hidden;
+    position: relative;
 }
 
 a {
@@ -111,6 +113,65 @@ h1, h2, h3 {
     border: 1px solid white;
 }
 
+/* 테마/여행 선택 버튼 스타일 */
+.view-mode-selector {
+    display: flex;
+    margin-right: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.view-mode-btn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    margin: 0;
+    transition: all 0.3s ease;
+    position: relative;
+    opacity: 0.7;
+}
+
+.view-mode-btn.active {
+    background-color: white;
+    color: var(--primary-color);
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+    opacity: 1;
+}
+
+.view-mode-btn:not(.active)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.view-mode-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.view-mode-btn:hover:not(.active) {
+    background-color: rgba(255, 255, 255, 0.3);
+    opacity: 0.9;
+}
+
 /* 메인 콘텐츠 영역 */
 .container {
     display: flex;
@@ -191,6 +252,9 @@ h1, h2, h3 {
     flex: 1;
     padding: 1rem;
     overflow-y: auto;
+    position: relative; /* 툴팁의 기준점 */
+    overflow-x: hidden; /* 가로 스크롤 방지 */
+    will-change: scroll-position; /* 스크롤 최적화 */
 }
 
 /* 테마 정보 */
@@ -331,14 +395,13 @@ h1, h2, h3 {
     font-size: 1rem;
     font-weight: bold;
     color: var(--primary-color);
-    margin-bottom: 0.25rem;
+    margin-right: 10px;
 }
 
 /* 장소 제목 */
 .place-title {
     font-size: 1.1rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
     color: var(--text-color);
 }
 
@@ -439,20 +502,137 @@ h1, h2, h3 {
     margin: 0.5rem 0;
 }
 
-.place-label {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
+/* 라벨 컨테이너 스타일 통합 - 스크롤 관련 개선 */
+.place-labels {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0.5rem 0;
+    gap: 4px;
+    max-width: 100%;
+    scrollbar-width: none; /* Firefox에서 스크롤바 숨김 */
+    -ms-overflow-style: none; /* IE와 Edge에서 스크롤바 숨김 */
+    white-space: normal; /* 텍스트 줄바꿈 허용 */
+    overflow: visible; /* 툴팁이 넘쳐도 잘리지 않도록 */
 }
 
-.place-links {
-    margin-top: 1rem;
+.place-labels::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera에서 스크롤바 숨김 */
+}
+
+/* 통합된 라벨 스타일 - 개선 */
+.place-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    position: relative;
+    cursor: help;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border-left-width: 3px;
+    border-left-style: solid;
+    overflow: visible; /* 툴팁이 넘쳐도 잘리지 않도록 */
+}
+
+.place-label .label-icon {
+    margin-right: 4px;
+    font-size: 1rem;
     display: flex;
-    gap: 1rem;
+    align-items: center;
+}
+
+/* 작은 라벨 변형 */
+.place-label.small {
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    border-left-width: 2px;
+}
+
+.place-label.small .label-icon {
+    font-size: 0.9rem;
+    margin-right: 3px;
+}
+
+/* 툴팁 스타일 통합 */
+.place-label .label-tooltip {
+    visibility: hidden;
+    position: fixed;
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: normal;
+    z-index: 10000; /* 매우 높은 z-index 값 설정 */
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0.2s;
+    margin-bottom: 5px;
+    pointer-events: none;
+    width: max-content;
+    max-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* 화살표 추가 */
+.place-label .label-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.place-label:hover .label-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* 동적으로 생성되는 툴팁 스타일 */
+body > .label-tooltip,
+body > .label-tooltip-clone {
+    position: fixed;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: normal;
+    z-index: 10000;
+    pointer-events: none;
+    width: max-content;
+    max-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* 동적 툴팁 화살표 */
+body > .label-tooltip::after,
+body > .label-tooltip-clone::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* 새로운 툴팁 포지셔닝 함수를 위한 JS 지원 - 실제 위치는 JS에서 계산 */
+.place-label {
+    position: relative;
 }
 
 /* 모바일용 하단 패널 핸들 */
@@ -478,33 +658,9 @@ h1, h2, h3 {
     border-radius: 2px;
 }
 
-/* 장소 목록의 라벨 스타일 */
-.place-labels {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-    gap: 4px;
-    max-height: 3.5rem;
-    overflow-y: auto;
-}
-
-.place-label-small {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1px 6px;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    display: inline-block;
-    white-space: nowrap;
-}
-
 /* 여행 일정 리스트 항목 */
 .place-item.trip-place {
     padding-left: 1.5rem; /* 순서 표시 아이콘 공간 확보 */
-}
-
-.place-item.trip-place .toggle-details {
-    top: 15px; /* 위치 조정 */
 }
 
 /* 여행 일정 일차 정보 */
@@ -524,4 +680,56 @@ h1, h2, h3 {
 .day-info p {
     font-size: 0.9rem;
     color: var(--light-text-color);
+}
+
+/* 전역 툴팁 컨테이너 스타일 */
+#global-tooltip-container {
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
+/* 전역 툴팁 스타일 */
+.global-tooltip {
+    position: fixed;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: normal;
+    z-index: 10000;
+    pointer-events: none;
+    max-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* 장소 아이콘 스타일 */
+.place-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+/* 정보 패널의 장소 아이콘 스타일 */
+#place-title .place-icon {
+    font-size: 20px;
+    margin-right: 8px;
+}
+
+/* 장소 정보 행(시간과 제목을 한 줄에 표시) */
+.place-info-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
 } 

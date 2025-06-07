@@ -13,12 +13,17 @@ let togglePanelButton;
 let sidePanel;
 let placeInfoPanel;
 let mobilePanelHandle;
+let viewModeSelector;
+let themeViewBtn;
+let tripViewBtn;
 
 /**
  * UI 초기화 함수
  * UI 요소 캐싱 및 이벤트 리스너 설정
  */
 function initUI() {
+    console.log('UI 초기화 중...');
+    
     // DOM 요소 캐싱
     themeSelect = document.getElementById('theme-select');
     categoryList = document.getElementById('category-list');
@@ -29,9 +34,24 @@ function initUI() {
     sidePanel = document.querySelector('.side-panel');
     placeInfoPanel = document.getElementById('place-info-panel');
     mobilePanelHandle = document.getElementById('mobile-panel-handle');
+    viewModeSelector = document.getElementById('view-mode-selector');
+    themeViewBtn = document.getElementById('theme-view-btn');
+    tripViewBtn = document.getElementById('trip-view-btn');
     
     // 이벤트 리스너 설정
     setupEventListeners();
+    
+    // 테마 선택기 초기화
+    initThemeSelector();
+    
+    // 초기 화면 설정
+    handleResize();
+    
+    // 라벨 툴팁 설정
+    setupLabelTooltips();
+    
+    // 변경 이벤트를 위한 옵저버 설정
+    setupMutationObserver();
     
     console.log('UI 초기화 완료');
 }
@@ -66,8 +86,14 @@ function setupEventListeners() {
     // 반응형 처리를 위한 리사이즈 이벤트
     window.addEventListener('resize', handleResize);
     
-    // 초기 화면 크기에 맞게 UI 조정
-    handleResize();
+    // 테마/여행 보기 모드 선택 버튼 이벤트
+    themeViewBtn.addEventListener('click', () => {
+        setViewModeUI('theme');
+    });
+    
+    tripViewBtn.addEventListener('click', () => {
+        setViewModeUI('trip');
+    });
 }
 
 /**
@@ -113,14 +139,14 @@ function initThemeSelector() {
         themeSelect.remove(1);
     }
     
-    // 테마 옵션 추가
+    // 테마 옵션 추가 (days 필드가 없는 맵은 테마)
     if (dataStore.themes.length > 0) {
         const themesOptgroup = document.createElement('optgroup');
         themesOptgroup.label = '테마';
         
         dataStore.themes.forEach(theme => {
             const option = document.createElement('option');
-            option.value = `theme:${theme.id}`;
+            option.value = `${theme.id}`;
             option.textContent = theme.title;
             themesOptgroup.appendChild(option);
         });
@@ -128,14 +154,14 @@ function initThemeSelector() {
         themeSelect.appendChild(themesOptgroup);
     }
     
-    // 여행 일정 옵션 추가
+    // 여행 일정 옵션 추가 (days 필드가 있는 맵은 여행)
     if (dataStore.trips.length > 0) {
         const tripsOptgroup = document.createElement('optgroup');
         tripsOptgroup.label = '여행 일정';
         
         dataStore.trips.forEach(trip => {
             const option = document.createElement('option');
-            option.value = `trip:${trip.id}`;
+            option.value = `${trip.id}`;
             option.textContent = trip.title;
             tripsOptgroup.appendChild(option);
         });
@@ -164,14 +190,21 @@ function handleThemeChange() {
     // 장소 정보 패널 닫기
     hidePlaceInfoPanel();
     
-    // 테마 또는 여행 일정 ID 추출
-    const [type, id] = selectedValue.split(':');
+    // 선택된 ID로 테마와 여행 객체 찾기
+    const selectedTheme = getThemeById(selectedValue);
+    const selectedTrip = getTripById(selectedValue);
     
-    // 테마 또는 여행 일정에 따라 처리
-    if (type === 'theme') {
-        setCurrentTheme(id);
-    } else if (type === 'trip') {
-        setCurrentTrip(id);
+    // days 필드 존재 여부로 테마/여행 구분
+    if (selectedTrip && selectedTrip.days) {
+        setCurrentTrip(selectedValue);
+        // 여행인 경우 보기 모드 선택기 표시
+        viewModeSelector.style.display = 'flex';
+        // 기본적으로 여행 모드 선택
+        setViewModeUI('trip');
+    } else if (selectedTheme) {
+        setCurrentTheme(selectedValue);
+        // 테마인 경우 보기 모드 선택기 숨김
+        viewModeSelector.style.display = 'none';
     }
 }
 
@@ -320,8 +353,9 @@ function calculateTripDistances(trip) {
         sortedPlaces.forEach((place, index) => {
             if (index < sortedPlaces.length - 1) {
                 const nextPlace = sortedPlaces[index + 1];
-                const currentPlace = getPlaceById(place.placeId);
-                const nextPlaceObj = getPlaceById(nextPlace.placeId);
+                // trip.places 배열에서 직접 장소 객체를 찾음
+                const currentPlace = trip.places.find(p => p.id === place.placeId);
+                const nextPlaceObj = trip.places.find(p => p.id === nextPlace.placeId);
                 
                 if (currentPlace && nextPlaceObj) {
                     // 두 장소 간의 직선 거리 계산 (km)
@@ -376,7 +410,7 @@ function deg2rad(deg) {
 }
 
 /**
- * 여행 일차 표시 함수
+ * 여행 일정의 특정 일차 표시 함수
  * @param {Object} trip - 여행 일정 객체
  * @param {number} dayIndex - 일차 인덱스
  */
@@ -419,7 +453,8 @@ function showTripDay(trip, dayIndex) {
     const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
     
     sortedPlaces.forEach((dayPlace, index) => {
-        const place = getPlaceById(dayPlace.placeId);
+        // trip.places 배열에서 해당 placeId를 가진 장소를 찾음
+        const place = trip.places.find(p => p.id === dayPlace.placeId);
         if (!place) return;
         
         const placeItem = document.createElement('li');
@@ -430,7 +465,7 @@ function showTripDay(trip, dayIndex) {
         let transportationIcon = '';
         
         if (index < sortedPlaces.length - 1) {
-            const nextPlace = getPlaceById(sortedPlaces[index + 1].placeId);
+            const nextPlace = trip.places.find(p => p.id === sortedPlaces[index + 1].placeId);
             if (nextPlace) {
                 // 이동수단 정보가 있는 경우
                 if (dayPlace.transportation) {
@@ -467,8 +502,10 @@ function showTripDay(trip, dayIndex) {
         // 기본 요약 정보
         const basicInfoHTML = `
             <div class="place-order">${dayPlace.order}</div>
-            <div class="place-time">${dayPlace.timeEstimate || ''}</div>
-            <div class="place-title">${place.title}</div>
+            <div class="place-info-row">
+                <div class="place-time">${dayPlace.timeEstimate || ''}</div>
+                <div class="place-title">${place.title}</div>
+            </div>
             ${dayPlace.memo ? `<div class="place-memo">${dayPlace.memo}</div>` : ''}
             ${distanceInfo}
         `;
@@ -479,11 +516,7 @@ function showTripDay(trip, dayIndex) {
                 ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
                 ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
                 ${place.labels && place.labels.length > 0 ? `
-                    <div class="place-labels">
-                        ${place.labels.map(label => 
-                            `<span class="place-label-small">${label}</span>`
-                        ).join('')}
-                    </div>
+                    <div class="place-labels-container"></div>
                 ` : ''}
                 ${place.urls ? `
                     <div class="place-links">
@@ -510,8 +543,8 @@ function showTripDay(trip, dayIndex) {
         });
         
         // 장소 아이템 클릭 이벤트 (제목 부분만)
-        const titleElement = placeItem.querySelector('.place-title');
-        titleElement.addEventListener('click', function() {
+        const placeTitle = placeItem.querySelector('.place-title');
+        placeTitle.addEventListener('click', function() {
             // 선택된 장소 스타일 적용
             document.querySelectorAll('.place-item').forEach(item => {
                 item.classList.remove('selected');
@@ -527,6 +560,56 @@ function showTripDay(trip, dayIndex) {
     
     // 지도에 경로 표시
     showTripPath(trip, dayIndex);
+    
+    // 라벨을 동적으로 추가
+    const labelsContainers = document.querySelectorAll('.place-labels-container');
+    labelsContainers.forEach((container, idx) => {
+        const placeId = sortedPlaces[idx].placeId;
+        const place = trip.places.find(p => p.id === placeId);
+        
+        if (place && place.labels && place.labels.length > 0) {
+            // 클래스 이름 변경하여 올바른 컨테이너 클래스 사용
+            container.className = 'place-labels';
+            
+            // 각 라벨에 대해 라벨 요소 생성하여 추가
+            place.labels.forEach(label => {
+                const labelElement = createLabelElement(label, true);
+                container.appendChild(labelElement);
+            });
+        }
+    });
+    
+    // 라벨 툴팁 이벤트 설정 (명시적 호출)
+    setTimeout(setupLabelTooltips, 100);
+}
+
+/**
+ * 장소의 라벨에 따라 적절한 아이콘을 반환하는 함수
+ * @param {Object} place - 장소 객체
+ * @returns {string} - 이모지 아이콘
+ */
+function getPlaceIcon(place) {
+    let icon = '📍'; // 기본 아이콘
+    
+    if (!place || !place.labels) return icon;
+    
+    if (place.labels.includes('숙소')) {
+        icon = '🏨';
+    } else if (place.labels.includes('맛집') || place.labels.includes('음식')) {
+        icon = '🍽️';
+    } else if (place.labels.includes('관광지')) {
+        icon = '🏞️';
+    } else if (place.labels.includes('카페')) {
+        icon = '☕';
+    } else if (place.labels.includes('해변') || place.labels.includes('바다')) {
+        icon = '🏖️';
+    } else if (place.labels.includes('산')) {
+        icon = '⛰️';
+    } else if (place.labels.includes('공항') || place.labels.includes('교통')) {
+        icon = '🚗';
+    }
+    
+    return icon;
 }
 
 /**
@@ -535,64 +618,105 @@ function showTripDay(trip, dayIndex) {
  * @param {Object} trip - 여행 일정 객체 (선택적)
  */
 function updatePlacesList(places, trip = null) {
-    // 여행 일정 모드인 경우 별도 처리
-    if (trip) {
-        return;
-    }
-    
     // 장소 목록 초기화
     placesList.innerHTML = '';
     
     // 장소가 없으면 메시지 표시
     if (!places || places.length === 0) {
-        const noPlaceItem = document.createElement('li');
-        noPlaceItem.className = 'no-places';
-        noPlaceItem.textContent = '표시할 장소가 없습니다.';
-        placesList.appendChild(noPlaceItem);
+        placesList.innerHTML = '<li class="no-places">표시할 장소가 없습니다.</li>';
         return;
     }
     
-    // 각 장소에 대한 항목 생성
+    // 각 장소에 대해 목록 항목 생성
     places.forEach(place => {
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item';
         
-        // 장소 아이템에 테마 색상 테두리 적용
-        placeItem.style.borderLeft = `3px solid var(--primary-color)`;
+        // 장소 순서 표시 (여행 일정에서 사용)
+        let orderIndex = null;
+        if (trip && trip.days) {
+            trip.days.some((day, dayIndex) => {
+                const orderInDay = day.places.findIndex(p => p === place.id);
+                if (orderInDay !== -1) {
+                    orderIndex = { day: dayIndex + 1, order: orderInDay + 1 };
+                    return true;
+                }
+                return false;
+            });
+            
+            if (orderIndex) {
+                placeItem.classList.add('trip-place');
+                
+                const orderElement = document.createElement('div');
+                orderElement.className = 'place-order';
+                orderElement.textContent = `${orderIndex.day}일차 - ${orderIndex.order}`;
+                placeItem.appendChild(orderElement);
+            }
+        }
         
-        // 라벨 HTML 생성 - 요약 시 보이는 라벨
-        const labelsHTML = place.labels.length > 0 
-            ? `<div class="place-labels">
-                ${place.labels.map(label => 
-                    `<span class="place-label-small">${label}</span>`
-                ).join('')}
-               </div>`
-            : '';
+        // 장소 제목
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'place-title';
         
-        // 상세 정보 HTML - 펼쳤을 때만 보임
-        const detailsHTML = `
-            <div class="place-details">
-                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
-                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
-                ${place.urls ? `
-                    <div class="place-links">
-                        ${place.urls.naver ? `<a href="${place.urls.naver}" target="_blank">네이버 지도</a>` : ''}
-                        ${place.urls.kakao ? `<a href="${place.urls.kakao}" target="_blank">카카오 지도</a>` : ''}
-                    </div>
-                ` : ''}
-            </div>
-        `;
+        // 테마 모드일 경우 (trip이 없는 경우) 아이콘 추가
+        if (!trip && dataStore.currentTheme) {
+            // 아이콘 스팬 생성
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'place-icon';
+            iconSpan.textContent = getPlaceIcon(place);
+            iconSpan.style.marginRight = '5px';
+            
+            // 제목에 아이콘 추가
+            titleDiv.appendChild(iconSpan);
+        }
         
-        // 기본 HTML 구성 (요약 정보)
-        placeItem.innerHTML = `
-            <div class="place-title">${place.title}</div>
-            ${labelsHTML}
-            <button class="toggle-details">↓</button>
-            ${detailsHTML}
-        `;
+        // 제목 텍스트 추가
+        const titleText = document.createTextNode(place.title);
+        titleDiv.appendChild(titleText);
+        placeItem.appendChild(titleDiv);
         
-        // 확장/축소 토글 버튼 이벤트
-        const toggleButton = placeItem.querySelector('.toggle-details');
+        // 라벨 표시
+        if (place.labels && place.labels.length > 0) {
+            const labelsContainer = document.createElement('div');
+            labelsContainer.className = 'place-labels';
+            
+            place.labels.forEach(label => {
+                const labelElement = createLabelElement(label, true);
+                labelsContainer.appendChild(labelElement);
+            });
+            
+            placeItem.appendChild(labelsContainer);
+        }
+        
+        // 상세 정보 토글 버튼
+        const toggleButton = document.createElement('button');
+        toggleButton.className = 'toggle-details';
+        toggleButton.textContent = '↓';
+        placeItem.appendChild(toggleButton);
+        
+        // 상세 정보 영역
+        const detailsElement = document.createElement('div');
+        detailsElement.className = 'place-details';
+        
+        // 주소
+        if (place.address) {
+            const addressElement = document.createElement('div');
+            addressElement.className = 'place-address';
+            addressElement.textContent = place.address;
+            detailsElement.appendChild(addressElement);
+        }
+        
+        // 설명
+        if (place.description) {
+            const descriptionElement = document.createElement('div');
+            descriptionElement.className = 'place-description';
+            descriptionElement.textContent = place.description;
+            detailsElement.appendChild(descriptionElement);
+        }
+        
+        placeItem.appendChild(detailsElement);
+        
+        // 상세 정보 토글 이벤트
         toggleButton.addEventListener('click', function(e) {
             e.stopPropagation(); // 부모 요소 클릭 이벤트 전파 방지
             const details = this.nextElementSibling;
@@ -612,8 +736,8 @@ function updatePlacesList(places, trip = null) {
         });
         
         // 장소 아이템 클릭 이벤트 (제목 부분만)
-        const titleElement = placeItem.querySelector('.place-title');
-        titleElement.addEventListener('click', function() {
+        const placeTitle = placeItem.querySelector('.place-title');
+        placeTitle.addEventListener('click', function() {
             // 선택된 장소 스타일 적용
             document.querySelectorAll('.place-item').forEach(item => {
                 item.classList.remove('selected');
@@ -626,6 +750,9 @@ function updatePlacesList(places, trip = null) {
         
         placesList.appendChild(placeItem);
     });
+    
+    // 라벨 툴팁 이벤트 설정
+    setupLabelTooltips();
 }
 
 /**
@@ -636,7 +763,23 @@ function updatePlacesList(places, trip = null) {
 function showPlaceInfoPanel(place, markerPosition) {
     // 장소 정보 패널 내용 업데이트
     const titleElement = document.getElementById('place-title');
-    titleElement.textContent = place.title;
+    titleElement.innerHTML = ''; // 내용 초기화
+    
+    // 테마 모드일 경우 아이콘 추가
+    if (dataStore.currentTheme && !dataStore.currentTrip) {
+        // 아이콘 스팬 생성
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'place-icon';
+        iconSpan.textContent = getPlaceIcon(place);
+        iconSpan.style.marginRight = '8px';
+        
+        // 제목에 아이콘 추가
+        titleElement.appendChild(iconSpan);
+    }
+    
+    // 제목 텍스트 추가
+    const titleText = document.createTextNode(place.title);
+    titleElement.appendChild(titleText);
     
     document.getElementById('place-address').textContent = place.address;
     document.getElementById('place-description').textContent = place.description;
@@ -645,12 +788,12 @@ function showPlaceInfoPanel(place, markerPosition) {
     const labelsContainer = document.getElementById('place-labels');
     labelsContainer.innerHTML = '';
     
-    place.labels.forEach(label => {
-        const labelElement = document.createElement('span');
-        labelElement.className = 'place-label';
-        labelElement.textContent = label;
-        labelsContainer.appendChild(labelElement);
-    });
+    if (place.labels && place.labels.length > 0) {
+        place.labels.forEach(label => {
+            const labelElement = createLabelElement(label, false);
+            labelsContainer.appendChild(labelElement);
+        });
+    }
     
     // 외부 링크 업데이트
     const naverLink = document.getElementById('naver-map-link');
@@ -678,7 +821,16 @@ function showPlaceInfoPanel(place, markerPosition) {
     // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
     placeInfoPanel.style.display = 'block';
     
-    // 마커 위치가 제공된 경우 위치 조정
+    // 장소 정보 패널 내부 클릭 이벤트가 지도로 전파되는 것을 방지
+    if (!placeInfoPanel._hasClickHandler) {
+        placeInfoPanel.addEventListener('click', function(e) {
+            // 이벤트 전파 방지
+            e.stopPropagation();
+        });
+        placeInfoPanel._hasClickHandler = true;
+    }
+    
+            // 마커 위치가 제공된 경우 위치 조정
     if (markerPosition) {
         // 지도 컨테이너의 크기와 위치
         const mapContainer = document.getElementById('map');
@@ -698,19 +850,49 @@ function showPlaceInfoPanel(place, markerPosition) {
         // 가로 위치 계산
         if (isRightHalf) {
             // 마커가 오른쪽 영역에 있으면 팝업은 마커 왼쪽에 표시
-            left = markerPosition.x - panelWidth - 20;
+            left = markerPosition.x - panelWidth - 10; // 간격 축소 (20px → 10px)
         } else {
             // 마커가 왼쪽 영역에 있으면 팝업은 마커 오른쪽에 표시
-            left = markerPosition.x + 20;
+            left = markerPosition.x + 10; // 간격 축소 (20px → 10px)
         }
         
-        // 세로 위치 계산
-        if (isBottomHalf) {
-            // 마커가 하단 영역에 있으면 팝업 하단과 마커 하단을 맞춤
-            top = markerPosition.y - panelHeight + 108; // 마커 높이 고려
+        // 마커 타입 감지 - 클릭된 마커의 DOM 요소를 확인
+        let isCustomNumberMarker = false;
+        
+        // 마커 타입을 확인하는 방법
+        // 1. place.order가 있으면 숫자 마커
+        // 2. dataStore.currentTrip이 있으면 숫자 마커 가능성 높음
+        // 3. DOM에서 클릭된 마커 요소를 확인
+        if (place.order !== undefined || (dataStore.currentTrip && dataStore.currentDay !== undefined)) {
+            isCustomNumberMarker = true;
         } else {
-            // 마커가 상단 영역에 있으면 팝업 상단과 마커 상단을 맞춤
-            top = markerPosition.y + 68;
+            // 선택적으로 DOM에서 확인 (성능상 필요한 경우만)
+            const markerElements = document.querySelectorAll('.custom-marker');
+            for (const elem of markerElements) {
+                if (elem.getAttribute('data-place-id') === place.id) {
+                    isCustomNumberMarker = /^\d+$/.test(elem.textContent.trim());
+                    break;
+                }
+            }
+        }
+        
+        // 세로 위치 계산 (마커 타입에 따라 최적화)
+        if (isBottomHalf) {
+            if (isCustomNumberMarker) {
+                // 숫자 마커의 경우 (크기: 30px)
+                top = markerPosition.y - panelHeight - 5; // 숫자 마커 바로 위에 표시
+            } else {
+                // 일반 마커의 경우 (높이: 36px)
+                top = markerPosition.y - panelHeight - 8; // 일반 마커 위에 표시
+            }
+        } else {
+            if (isCustomNumberMarker) {
+                // 숫자 마커의 경우
+                top = markerPosition.y + 20; // 숫자 마커 아래에 표시
+            } else {
+                // 일반 마커의 경우
+                top = markerPosition.y + 25; // 일반 마커 아래에 표시
+            }
         }
         
         // 팝업이 지도 영역을 벗어나지 않도록 보정
@@ -731,6 +913,9 @@ function showPlaceInfoPanel(place, markerPosition) {
     
     // 패널 표시
     placeInfoPanel.style.display = 'block';
+    
+    // 라벨 툴팁 이벤트 설정
+    setupLabelTooltips();
 }
 
 /**
@@ -991,24 +1176,431 @@ function handleResize() {
  * @param {string} tripId - 여행 일정 ID
  */
 function setCurrentTrip(tripId) {
-    // 기존 마커와 경로 제거
-    removeAllMarkers();
-    
-    // 여행 일정 ID로 여행 일정 객체 찾기
-    const trip = dataStore.trips.find(t => t.id === tripId);
-    if (!trip) {
-        console.error('존재하지 않는 여행 일정:', tripId);
-        return;
-    }
-    
-    // 여행 정보 UI 업데이트
-    updateTripInfo(trip);
-    
-    // 첫 번째 일차 표시
-    if (trip.days.length > 0) {
-        showTripDay(trip, 0);
+    try {
+        // 여행 ID로 여행 데이터 가져오기
+        const trip = getTripById(tripId);
+        if (!trip) {
+            throw new Error(`여행 데이터를 찾을 수 없습니다: ${tripId}`);
+        }
+        
+        console.log('여행 설정:', trip.title);
+        
+        // 여행 데이터 저장
+        dataStore.currentTrip = trip;
+        dataStore.currentTheme = null; // 테마 초기화
+        
+        // 여행에 맞게 UI 업데이트
+        updateTripInfo(trip);
+        
+        // 보기 모드 선택기 표시
+        viewModeSelector.style.display = 'flex';
+        
+        // 기본적으로 여행 모드 선택
+        setViewModeUI('trip');
+        
+        // 라벨 툴팁 이벤트 설정 (명시적 호출)
+        setTimeout(setupLabelTooltips, 100);
+    } catch (error) {
+        console.error('여행 설정 오류:', error);
+        showError('여행 데이터를 설정하는 중 오류가 발생했습니다.');
     }
 }
 
+/**
+ * 현재 테마 설정 함수
+ * @param {string} themeId - 테마 ID
+ */
+function setCurrentTheme(themeId) {
+    try {
+        // 테마 ID로 테마 데이터 가져오기
+        const theme = getThemeById(themeId);
+        if (!theme) {
+            throw new Error(`테마 데이터를 찾을 수 없습니다: ${themeId}`);
+        }
+        
+        console.log('테마 설정:', theme.title);
+        
+        // 테마 데이터 저장
+        dataStore.currentTheme = theme;
+        dataStore.currentTrip = null; // 여행 초기화
+        
+        // 테마에 맞게 UI 업데이트
+        updateThemeInfo(theme);
+        updateCategoryFilters(theme);
+        
+        // 테마의 모든 장소 지도에 표시
+        if (theme.places && theme.places.length > 0) {
+            updateMapMarkers(theme.places);
+            updatePlacesList(theme.places);
+            
+            // 라벨 툴팁 이벤트 설정 (명시적 호출)
+            setTimeout(setupLabelTooltips, 100);
+        } else {
+            showError('이 테마에는 장소 데이터가 없습니다.');
+        }
+        
+        // 보기 모드 선택기 숨김 (테마는 보기 모드가 없음)
+        viewModeSelector.style.display = 'none';
+    } catch (error) {
+        console.error('테마 설정 오류:', error);
+        showError('테마 데이터를 설정하는 중 오류가 발생했습니다.');
+    }
+}
+
+/**
+ * 보기 모드 UI 설정 함수
+ * @param {string} mode - 'theme' 또는 'trip'
+ */
+function setViewModeUI(mode) {
+    // 애니메이션 효과를 위한 클래스 추가/제거
+    if (mode === 'theme') {
+        // 테마 버튼 활성화
+        themeViewBtn.classList.add('active');
+        tripViewBtn.classList.remove('active');
+        
+        // 활성화 효과 추가
+        themeViewBtn.style.transition = 'all 0.3s ease';
+        themeViewBtn.style.transform = 'translateY(-1px)';
+        
+        // 비활성화 효과 추가
+        tripViewBtn.style.transition = 'all 0.3s ease';
+        tripViewBtn.style.transform = 'translateY(0)';
+    } else {
+        // 여행 버튼 활성화
+        themeViewBtn.classList.remove('active');
+        tripViewBtn.classList.add('active');
+        
+        // 활성화 효과 추가
+        tripViewBtn.style.transition = 'all 0.3s ease';
+        tripViewBtn.style.transform = 'translateY(-1px)';
+        
+        // 비활성화 효과 추가
+        themeViewBtn.style.transition = 'all 0.3s ease';
+        themeViewBtn.style.transform = 'translateY(0)';
+    }
+    
+    // 토스트 메시지 표시
+    const message = mode === 'theme' ? '테마 모드로 전환되었습니다.' : '여행 모드로 전환되었습니다.';
+    showToast(message);
+    
+    // 장소 정보 패널 닫기 (모드 변경 시 항상 팝업 닫기)
+    hidePlaceInfoPanel();
+    
+    // 데이터 모듈의 보기 모드 설정 함수 호출
+    setViewMode(mode);
+}
+
+/**
+ * 토스트 메시지 표시 함수
+ * @param {string} message - 표시할 메시지
+ * @param {number} duration - 메시지 표시 시간 (밀리초)
+ */
+function showToast(message, duration = 2000) {
+    // 기존 토스트 메시지 제거
+    const existingToast = document.getElementById('toast-message');
+    if (existingToast) {
+        document.body.removeChild(existingToast);
+    }
+    
+    // 새 토스트 메시지 생성
+    const toast = document.createElement('div');
+    toast.id = 'toast-message';
+    toast.textContent = message;
+    
+    // 스타일 설정
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    toast.style.color = 'white';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '4px';
+    toast.style.fontSize = '14px';
+    toast.style.zIndex = '9999';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease';
+    
+    // 문서에 추가
+    document.body.appendChild(toast);
+    
+    // 애니메이션 효과
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 10);
+    
+    // 자동 제거
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
+    }, duration);
+}
+
+/**
+ * 라벨 툴팁 설정 함수
+ * 라벨에 마우스를 올렸을 때 툴팁을 표시합니다.
+ */
+function setupLabelTooltips() {
+    // 디바운스 처리를 위한 타이머
+    let debounceTimer = null;
+    
+    // MutationObserver 생성
+    const observer = new MutationObserver(function() {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+        }
+        
+        debounceTimer = setTimeout(() => {
+            setupLabelTooltips();
+        }, 100);
+    });
+    
+    // 옵션 설정
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // 모든 라벨 요소에 이벤트 추가 - 더 구체적인 선택자 사용
+    document.querySelectorAll('.place-label').forEach(label => {
+        // 이미 이벤트가 설정되어 있다면 건너뛰기
+        if (label.dataset.hasTooltipEvent === 'true') return;
+        
+        // 마우스 진입 이벤트
+        label.addEventListener('mouseenter', function(e) {
+            const tooltipText = this.querySelector('.label-tooltip');
+            if (tooltipText) {
+                // 현재 마우스가 들어온 라벨 외에 다른 툴팁은 모두 숨기기
+                hideGlobalTooltip();
+                positionTooltip(this, tooltipText);
+            }
+        });
+        
+        // 마우스 이탈 이벤트
+        label.addEventListener('mouseleave', hideGlobalTooltip);
+        
+        // 클릭 이벤트에서 이벤트 전파 처리
+        label.addEventListener('click', function(e) {
+            // 클릭 이벤트를 통과시켜 부모 요소(팝업 등)에서 처리할 수 있도록 함
+            // 툴팁만 표시하고 이벤트 전파는 중단하지 않음
+        });
+        
+        // 이벤트 설정 표시
+        label.dataset.hasTooltipEvent = 'true';
+    });
+}
+
+/**
+ * 전역 툴팁 숨기기
+ */
+function hideGlobalTooltip() {
+    const container = document.getElementById('global-tooltip-container');
+    if (container) {
+        // 콘텐츠만 지우고 컨테이너는 유지
+        container.innerHTML = '';
+        
+        // 애니메이션 중이면 취소
+        if (window._tooltipHideTimeout) {
+            clearTimeout(window._tooltipHideTimeout);
+            window._tooltipHideTimeout = null;
+        }
+    }
+}
+
+/**
+ * 라벨 요소 생성 함수
+ * @param {string} labelName - 라벨 이름
+ * @param {boolean} isSmall - 작은 라벨 여부
+ * @returns {HTMLElement} - 생성된 라벨 요소
+ */
+function createLabelElement(labelName, isSmall = false) {
+    const labelInfo = getLabelInfo(labelName);
+    const labelElement = document.createElement('span');
+    
+    // 기본 클래스 및 사이즈 클래스 추가
+    labelElement.className = `place-label${isSmall ? ' small' : ''}`;
+    
+    // 라벨 스타일 적용
+    labelElement.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
+    labelElement.style.color = labelInfo.color;
+    labelElement.style.borderLeftColor = labelInfo.color;
+    
+    // 아이콘 요소 생성
+    const iconElement = document.createElement('span');
+    iconElement.className = 'label-icon';
+    iconElement.innerHTML = `<iconify-icon icon="${labelInfo.icon}"></iconify-icon>`;
+    
+    // 텍스트 요소 생성
+    const textElement = document.createElement('span');
+    textElement.textContent = labelName;
+    
+    // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
+    const tooltipElement = document.createElement('span');
+    tooltipElement.className = 'label-tooltip';
+    tooltipElement.textContent = labelInfo.description;
+    tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
+    
+    // 요소 조립
+    labelElement.appendChild(iconElement);
+    labelElement.appendChild(textElement);
+    labelElement.appendChild(tooltipElement);
+    
+    // 이벤트 설정 상태 추적 속성 추가
+    labelElement.dataset.hasTooltipEvent = 'false';
+    
+    return labelElement;
+}
+
+/**
+ * 툴팁 위치를 계산하고 설정하는 함수
+ * @param {HTMLElement} labelElement - 라벨 요소
+ * @param {HTMLElement} tooltipElement - 툴팁 요소
+ */
+function positionTooltip(labelElement, tooltipElement) {
+    if (!tooltipElement) return;
+    
+    // 전역 툴팁 컨테이너 생성 또는 가져오기
+    let tooltipContainer = document.getElementById('global-tooltip-container');
+    if (!tooltipContainer) {
+        tooltipContainer = document.createElement('div');
+        tooltipContainer.id = 'global-tooltip-container';
+        tooltipContainer.style.position = 'fixed';
+        tooltipContainer.style.zIndex = '10000';
+        tooltipContainer.style.pointerEvents = 'none';
+        document.body.appendChild(tooltipContainer);
+    }
+    
+    // 기존 툴팁 제거
+    tooltipContainer.innerHTML = '';
+    
+    // 라벨 요소의 위치와 크기 정보
+    const rect = labelElement.getBoundingClientRect();
+    
+    // 새로운 툴팁 생성
+    const newTooltip = document.createElement('div');
+    newTooltip.className = 'global-tooltip';
+    newTooltip.textContent = tooltipElement.textContent;
+    newTooltip.style.position = 'fixed';
+    newTooltip.style.backgroundColor = '#333';
+    newTooltip.style.color = '#fff';
+    newTooltip.style.padding = '6px 10px';
+    newTooltip.style.borderRadius = '4px';
+    newTooltip.style.fontSize = '0.8rem';
+    newTooltip.style.maxWidth = '200px';
+    newTooltip.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+    newTooltip.style.pointerEvents = 'none';
+    newTooltip.style.zIndex = '10000';
+    
+    // 화살표 추가
+    const arrow = document.createElement('div');
+    arrow.style.position = 'absolute';
+    arrow.style.width = '0';
+    arrow.style.height = '0';
+    newTooltip.appendChild(arrow);
+    
+    // 툴팁 컨테이너에 추가 (위치 계산을 위해)
+    tooltipContainer.appendChild(newTooltip);
+    
+    // 툴팁 크기 계산
+    const tooltipWidth = newTooltip.offsetWidth;
+    const tooltipHeight = newTooltip.offsetHeight;
+    
+    // 기본 위치 계산 (라벨 위)
+    let top = rect.top - 10 - tooltipHeight;
+    let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+    
+    // 화면 경계 확인
+    if (top < 10) { // 위쪽 경계
+        // 라벨 아래에 표시
+        top = rect.bottom + 10;
+        
+        // 화살표를 위쪽으로
+        arrow.style.bottom = 'auto';
+        arrow.style.top = '-8px';
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+        arrow.style.borderLeft = '8px solid transparent';
+        arrow.style.borderRight = '8px solid transparent';
+        arrow.style.borderBottom = '8px solid #333';
+    } else {
+        // 화살표를 아래쪽으로
+        arrow.style.top = 'auto';
+        arrow.style.bottom = '-8px';
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+        arrow.style.borderLeft = '8px solid transparent';
+        arrow.style.borderRight = '8px solid transparent';
+        arrow.style.borderTop = '8px solid #333';
+    }
+    
+    // 좌우 경계 확인
+    if (left < 10) { // 왼쪽 경계
+        left = 10;
+        arrow.style.left = Math.max(rect.left + rect.width / 2 - left, 10) + 'px';
+    } else if (left + tooltipWidth > window.innerWidth - 10) { // 오른쪽 경계
+        left = window.innerWidth - tooltipWidth - 10;
+        arrow.style.left = Math.min(rect.left + rect.width / 2 - left, tooltipWidth - 20) + 'px';
+    } else {
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+    }
+    
+    // 최종 위치 설정
+    newTooltip.style.top = top + 'px';
+    newTooltip.style.left = left + 'px';
+}
+
+/**
+ * DOM 변경을 감지하는 MutationObserver 설정
+ */
+function setupMutationObserver() {
+    // 기존 옵저버 제거
+    if (window._labelObserver) {
+        window._labelObserver.disconnect();
+    }
+    
+    // 디바운스 처리를 위한 타이머
+    let debounceTimer = null;
+    
+    // MutationObserver 생성
+    const observer = new MutationObserver(function() {
+        if (debounceTimer) {
+            clearTimeout(debounceTimer);
+        }
+        
+        debounceTimer = setTimeout(() => {
+            setupLabelTooltips();
+        }, 100);
+    });
+    
+    // 옵션 설정
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    // 옵저버 참조 저장
+    window._labelObserver = observer;
+}
+
 // UI 모듈 초기화 (DOM 로드 후)
-document.addEventListener('DOMContentLoaded', initUI); 
+document.addEventListener('DOMContentLoaded', initUI);
+
+// 페이지 로드 및 DOM 변경 시 라벨 이벤트 설정을 위한 함수 호출
+document.addEventListener('DOMContentLoaded', function() {
+    // 초기 설정
+    setupLabelTooltips();
+    
+    // MutationObserver 설정
+    setupMutationObserver();
+    
+    // 일정 시간 후 다시 호출 (비동기 로딩된 콘텐츠 처리)
+    setTimeout(setupLabelTooltips, 1000);
+});
+
+// 전역 스코프에서 getPlaceIcon 함수 사용 가능하도록 설정
+window.getPlaceIcon = getPlaceIcon; 

@@ -379,24 +379,8 @@ function createMarkerImage(place, trip = null, order = null) {
     }
     
     // 테마 기반 마커 생성 (커스텀 오버레이로 구현)
-    // 장소 유형에 따라 아이콘 결정
-    let icon = '📍'; // 기본 아이콘
-    
-    if (place.labels.includes('숙소')) {
-        icon = '🏨';
-    } else if (place.labels.includes('맛집') || place.labels.includes('음식')) {
-        icon = '🍽️';
-    } else if (place.labels.includes('관광지')) {
-        icon = '🏞️';
-    } else if (place.labels.includes('카페')) {
-        icon = '☕';
-    } else if (place.labels.includes('해변') || place.labels.includes('바다')) {
-        icon = '🏖️';
-    } else if (place.labels.includes('산')) {
-        icon = '⛰️';
-    } else if (place.labels.includes('공항') || place.labels.includes('교통')) {
-        icon = '🚗';
-    }
+    // 장소 유형에 따라 아이콘 결정 - getPlaceIcon 함수 사용
+    let icon = window.getPlaceIcon ? getPlaceIcon(place) : '📍';
     
     // 마커를 HTML로 생성 - 버튼 요소로 만들어 클릭 이벤트 처리 쉽게
     const content = `<button class="custom-marker" data-place-id="${place.id}" style="
@@ -553,9 +537,13 @@ function showTripPath(trip, dayIndex) {
         return;
     }
     
+    // 방문 순서대로 정렬
+    const sortedPlaces = [...dayPlaces].sort((a, b) => a.order - b.order);
+    
     // 장소 순서대로 좌표 추가 및 마커 생성
-    dayPlaces.forEach(dayPlace => {
-        const place = getPlaceById(dayPlace.placeId);
+    sortedPlaces.forEach(dayPlace => {
+        // trip.places 배열에서 직접 장소 정보 가져오기
+        const place = trip.places.find(p => p.id === dayPlace.placeId);
         if (place) {
             // 경로에 좌표 추가
             linePath.push(new kakao.maps.LatLng(place.location.lat, place.location.lng));
@@ -588,7 +576,9 @@ function showTripPath(trip, dayIndex) {
     window.currentPolyline = polyline;
     
     // 모든 장소가 보이도록 지도 범위 조정
-    const places = dayPlaces.map(dayPlace => getPlaceById(dayPlace.placeId)).filter(Boolean);
+    const places = sortedPlaces
+        .map(dayPlace => trip.places.find(p => p.id === dayPlace.placeId))
+        .filter(Boolean);
     setMapBounds(places);
 }
 

@@ -1,0 +1,15 @@
+{
+  "name": "travel_map",
+  "version": "1.0.0",
+  "description": "여행 지도 웹 애플리케이션",
+  "scripts": {
+    "validate:theme": "ajv validate -s data/schemas/theme-map.schema.json -d \"data/maps/theme_*.json\" --all-errors",
+    "validate:trip": "ajv validate -s data/schemas/trip-map.schema.json -d \"data/maps/trip_*.json\" --all-errors",
+    "validate:labels": "ajv validate -s data/schemas/labels.schema.json -d data/system/labels.json --all-errors",
+    "validate:all": "npm run validate:labels && npm run validate:theme && npm run validate:trip"
+  },
+  "devDependencies": {
+    "ajv-cli": "^5.0.0",
+    "ajv-formats": "^2.1.1"
+  }
+} 

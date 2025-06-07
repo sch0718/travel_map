@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/theme-map.schema.json",
+  "title": "테마 지도 스키마",
+  "description": "테마 지도 데이터 형식 정의",
+  "type": "object",
+  "required": ["id", "title", "description", "created", "modified", "color", "categories", "labels", "places"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "지도의 고유 식별자"
+    },
+    "title": {
+      "type": "string",
+      "description": "지도의 제목"
+    },
+    "description": {
+      "type": "string",
+      "description": "지도에 대한 설명"
+    },
+    "created": {
+      "type": "string",
+      "format": "date",
+      "description": "지도 생성 날짜 (YYYY-MM-DD)"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date",
+      "description": "지도 수정 날짜 (YYYY-MM-DD)"
+    },
+    "color": {
+      "type": "string",
+      "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
+      "description": "지도의 대표 색상 (HEX 코드)"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "$ref": "map-common.schema.json#/definitions/category"
+      },
+      "description": "지도에서 사용하는 카테고리 목록"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "$ref": "map-common.schema.json#/definitions/label"
+      },
+      "description": "지도에서 사용하는 라벨 목록"
+    },
+    "places": {
+      "type": "array",
+      "items": {
+        "$ref": "map-common.schema.json#/definitions/place"
+      },
+      "description": "지도에 포함된 장소 목록"
+    }
+  },
+  "additionalProperties": false
+} 

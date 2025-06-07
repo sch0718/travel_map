@@ -22,6 +22,15 @@
                 <!-- 테마 옵션은 JavaScript로 동적 생성 -->
             </select>
         </div>
+        <!-- 테마/여행 보기 모드 선택 버튼 추가 -->
+        <div id="view-mode-selector" class="view-mode-selector" style="display: none;">
+            <button id="theme-view-btn" class="view-mode-btn">
+                <iconify-icon icon="mdi:map-marker-multiple" style="margin-right: 4px;"></iconify-icon>테마
+            </button>
+            <button id="trip-view-btn" class="view-mode-btn active">
+                <iconify-icon icon="mdi:routes" style="margin-right: 4px;"></iconify-icon>여행
+            </button>
+        </div>
         <div class="search-container">
             <input type="text" id="search-input" placeholder="장소 검색...">
             <button id="search-button">검색</button>
