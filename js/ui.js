@@ -231,12 +231,15 @@ function updateCategoryFilters(theme) {
     
     // 라벨 정보 수집 및 카테고리화
     const uniqueLabels = new Set();
+    const labelCounts = {}; // 각 라벨이 사용된 횟수를 저장할 객체
     
-    // 모든 장소의 라벨 수집
+    // 모든 장소의 라벨 수집 및 사용 횟수 계산
     theme.places.forEach(place => {
         if (place.labels && Array.isArray(place.labels)) {
             place.labels.forEach(label => {
                 uniqueLabels.add(label);
+                // 라벨 사용 횟수 증가
+                labelCounts[label] = (labelCounts[label] || 0) + 1;
             });
         }
     });
@@ -268,8 +271,15 @@ function updateCategoryFilters(theme) {
     const valuesList = document.createElement('div');
     valuesList.className = 'category-values';
     
-    // 정렬된 라벨 목록 생성
-    const sortedLabels = Array.from(uniqueLabels).sort();
+    // 정렬된 라벨 목록 생성 (사용 빈도순으로 정렬, 동일 빈도일 경우 가나다순)
+    const sortedLabels = Array.from(uniqueLabels).sort((a, b) => {
+        // 사용 빈도가 다르면 빈도순으로 정렬 (내림차순)
+        if (labelCounts[b] !== labelCounts[a]) {
+            return labelCounts[b] - labelCounts[a];
+        }
+        // 사용 빈도가 같으면 가나다순으로 정렬
+        return a.localeCompare(b, 'ko');
+    });
     
     // 각 라벨에 대한 체크박스 생성
     sortedLabels.forEach(value => {
@@ -290,6 +300,9 @@ function updateCategoryFilters(theme) {
         const label = document.createElement('label');
         label.htmlFor = checkbox.id;
         label.textContent = value;
+        
+        // 개발용: 사용 횟수를 툴팁으로 표시 (나중에 제거 가능)
+        label.title = `${labelCounts[value]}개 장소에서 사용됨`;
         
         categoryItem.appendChild(checkbox);
         categoryItem.appendChild(label);
