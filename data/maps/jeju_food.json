@@ -1,0 +1,1924 @@
+{
+    "id": "jeju_food-2025.06.07",
+    "title": "제주도 맛집",
+    "description": "제주도 맛집 목록",
+    "created": "2025-06-07",
+    "modified": "2025-06-07",
+    "color": "#FFFFFF",
+    "labels": [],
+    "places": [
+        {
+            "id": "place-2ca86b93f5e7",
+            "title": "라타볼라 함덕본점",
+            "location": {
+                "lat": 33.5371724,
+                "lng": 126.6187293
+            },
+            "address": "제주 제주시 조천읍 신촌북3길 3 함덕본점 1층",
+            "description": "처음 보는 사람들과 음식을 나눠 먹으며 대화할 수 있는 소셜 다이닝 이탈리안 레스토랑입니다. 코스 요리로 제공됩니다.",
+            "urls": {
+                "naver": "https://naver.me/GMmgji4A"
+            },
+            "labels": [
+                "맛집",
+                "양식",
+                "이탈리안",
+                "코스요리",
+                "와인바",
+                "소셜 다이닝",
+                "쉐어 레스토랑",
+                "스테이크",
+                "파스타",
+                "라자냐"
+            ]
+        },
+        {
+            "id": "place-0e539f388391",
+            "title": "해녀의부엌 북촌점",
+            "location": {
+                "lat": 33.5499008,
+                "lng": 126.69344
+            },
+            "address": "제주 제주시 조천읍 북촌9길 31",
+            "description": "의미 있는 추억을 부르는 맛있는 음식",
+            "urls": {
+                "naver": "https://naver.me/5jJTNF2x"
+            },
+            "labels": [
+                "향토음식"
+            ]
+        },
+        {
+            "id": "place-3cb6b7b34a20",
+            "title": "월정항아리 갈치",
+            "location": {
+                "lat": 33.5514533,
+                "lng": 126.7022966
+            },
+            "address": "제주 제주시 조천읍 일주동로 1584 1층 월정항아리갈치",
+            "description": "풍성한 맛과 갈치구이의 조화",
+            "urls": {
+                "naver": "https://naver.me/5tJCaREv"
+            },
+            "labels": [
+                "해물,생선요리"
+            ]
+        },
+        {
+            "id": "place-c1d562f0b3a9",
+            "title": "런던베이글뮤지엄 제주점",
+            "location": {
+                "lat": 33.5535451,
+                "lng": 126.7154181
+            },
+            "address": "제주 제주시 구좌읍 동복로 85 제2동 1층",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/x3jFhsyC"
+            },
+            "labels": [
+                "베이커리"
+            ]
+        },
+        {
+            "id": "place-35d590d0cfa5",
+            "title": "곰막식당",
+            "location": {
+                "lat": 33.5568699,
+                "lng": 126.7206056
+            },
+            "address": "제주 제주시 구좌읍 구좌해안로 64",
+            "description": "맛있는 성게국수와 풍성한 양의 만남",
+            "urls": {
+                "naver": "https://naver.me/FgHDJiS6"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-38a75f884ffe",
+            "title": "배롱개",
+            "location": {
+                "lat": 33.557803,
+                "lng": 126.7944544
+            },
+            "address": "제주 제주시 구좌읍 해맞이해안로 434",
+            "description": "맛있는 음식과 아름다운 바다 전망의 만남",
+            "urls": {
+                "naver": "https://naver.me/xTTV9bmz"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-531adc01a53e",
+            "title": "도민상회 구좌월정리해수욕장점",
+            "location": {
+                "lat": 33.5550459,
+                "lng": 126.8002528
+            },
+            "address": "제주 제주시 구좌읍 행원로1길 32-3 도민상회 월정리 흑돼지 전문점",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/5WOQ6KxP"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-2747f30b2071",
+            "title": "구좌 우럭튀김 민경이네어등포식당",
+            "location": {
+                "lat": 33.5537389,
+                "lng": 126.8257551
+            },
+            "address": "제주 제주시 구좌읍 해맞이해안로 830 민경이네 어등포해녀촌",
+            "description": "신선한 재료로 만든 맛있는 우럭 튀김",
+            "urls": {
+                "naver": "https://naver.me/G0DXhXNu"
+            },
+            "labels": [
+                "해물,생선요리"
+            ]
+        },
+        {
+            "id": "place-55e9db2c49b3",
+            "title": "말젯문",
+            "location": {
+                "lat": 33.5384336,
+                "lng": 126.8352677
+            },
+            "address": "제주 제주시 구좌읍 계룡길 31 회색지붕 돌집",
+            "description": "맛있는 알밥과 다양한 메뉴의 만남",
+            "urls": {
+                "naver": "https://naver.me/5ne4o4zj"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-8236ffe85d47",
+            "title": "살찐고등어",
+            "location": {
+                "lat": 33.5265349,
+                "lng": 126.8847241
+            },
+            "address": "제주 제주시 구좌읍 해맞이해안로 1708",
+            "description": "맛있는 돈까스와 부드럽고 바삭한 고기",
+            "urls": {
+                "naver": "https://naver.me/GG7tRRGz"
+            },
+            "labels": [
+                "돈가스"
+            ]
+        },
+        {
+            "id": "place-37abeea1c83a",
+            "title": "채정하 구좌세화본점",
+            "location": {
+                "lat": 33.5238004,
+                "lng": 126.851408
+            },
+            "address": "제주 제주시 구좌읍 일주동로 3103",
+            "description": "맛있는 음식과 특선 갈비살의 조화",
+            "urls": {
+                "naver": "https://naver.me/Gn0fWylT"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-f9a96bb67ee6",
+            "title": "삼춘네국수 구좌월정리세화점",
+            "location": {
+                "lat": 33.5255898,
+                "lng": 126.8543552
+            },
+            "address": "제주 제주시 구좌읍 세평항로 26",
+            "description": "맛있는 반찬과 넓은 쾌적한 매장에서의 즐거움",
+            "urls": {
+                "naver": "https://naver.me/xDJuvrM6"
+            },
+            "labels": [
+                "향토음식"
+            ]
+        },
+        {
+            "id": "place-43f30bd8f9a1",
+            "title": "명진전복",
+            "location": {
+                "lat": 33.5325176,
+                "lng": 126.8501724
+            },
+            "address": "제주 제주시 구좌읍 해맞이해안로 1282",
+            "description": "맛있는 반찬과 전복솥밥의 환상적인 조화",
+            "urls": {
+                "naver": "https://naver.me/5ssTSURt"
+            },
+            "labels": [
+                "전복요리"
+            ]
+        },
+        {
+            "id": "place-661d8660878c",
+            "title": "미영이네 조천점",
+            "location": {
+                "lat": 33.5391541,
+                "lng": 126.6228005
+            },
+            "address": "제주 제주시 조천읍 신촌9길 53 . 1층",
+            "description": "신선한 고등어와 맛있는 음식의 하모니",
+            "urls": {
+                "naver": "https://naver.me/5qDj2sfg"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-d875a81c9a75",
+            "title": "오팬파이어",
+            "location": {
+                "lat": 33.4269266,
+                "lng": 126.6736656
+            },
+            "address": "제주 제주시 조천읍 남조로 1781 1층",
+            "description": "맛있는 특제 양념과 신선한 재료의 만남",
+            "urls": {
+                "naver": "https://naver.me/FBe2u9DP"
+            },
+            "labels": [
+                "양식"
+            ]
+        },
+        {
+            "id": "place-29e42f340c01",
+            "title": "모리노아루요",
+            "location": {
+                "lat": 33.4194062,
+                "lng": 126.4018229
+            },
+            "address": "제주 제주시 애월읍 하소로 769-58 모리노아루요",
+            "description": "맛있는 음식과 바삭한 부타동의 조화",
+            "urls": {
+                "naver": "https://naver.me/5yPn45ez"
+            },
+            "labels": [
+                "일식당"
+            ]
+        },
+        {
+            "id": "place-60284b25e6f0",
+            "title": "자연과사람들 밀면",
+            "location": {
+                "lat": 33.4603643,
+                "lng": 126.6607145
+            },
+            "address": "제주 제주시 조천읍 남조로 2185",
+            "description": "맛있는 물밀면과 다양한 음식의 향연",
+            "urls": {
+                "naver": "https://naver.me/55rmIF9F"
+            },
+            "labels": [
+                "냉면"
+            ]
+        },
+        {
+            "id": "place-6720d72f6adc",
+            "title": "맛나식당",
+            "location": {
+                "lat": 33.4485977,
+                "lng": 126.9160606
+            },
+            "address": "제주 서귀포시 성산읍 동류암로 41",
+            "description": "맛있는 갈치조림과 푸짐한 양의 만남",
+            "urls": {
+                "naver": "https://naver.me/xzxmC4op"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-606869c89858",
+            "title": "가시아방국수",
+            "location": {
+                "lat": 33.4386236,
+                "lng": 126.9180777
+            },
+            "address": "제주 서귀포시 성산읍 섭지코지로 10",
+            "description": "맛있는 국수와 부드러운 돔베고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/Gubwedke"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-1aa1e812151e",
+            "title": "편운산장",
+            "location": {
+                "lat": 33.4374001,
+                "lng": 126.8747635
+            },
+            "address": "제주 서귀포시 성산읍 서성일로 898-38",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/GeUXnwfp"
+            },
+            "labels": [
+                "펜션"
+            ]
+        },
+        {
+            "id": "place-1883fcfaf1d0",
+            "title": "옛날팥죽",
+            "location": {
+                "lat": 33.3886162,
+                "lng": 126.7989067
+            },
+            "address": "제주 서귀포시 표선면 성읍민속로 130",
+            "description": "맛있는 반찬과 특별한 팥죽의 조화",
+            "urls": {
+                "naver": "https://naver.me/xk1nS5wz"
+            },
+            "labels": [
+                "죽"
+            ]
+        },
+        {
+            "id": "place-7f45f12629ec",
+            "title": "표선수산마트",
+            "location": {
+                "lat": 33.325383,
+                "lng": 126.8359812
+            },
+            "address": "제주 서귀포시 표선면 표선중앙로110번길 3-4",
+            "description": "신선한 해산물과 정갈한 맛의 만남",
+            "urls": {
+                "naver": "https://naver.me/IGJy7Ben"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-3ce4367ae3e8",
+            "title": "신성할망식당",
+            "location": {
+                "lat": 33.491925,
+                "lng": 126.4991474
+            },
+            "address": "제주 제주시 신대로7길 23 놀이터, 무료주차장 앞",
+            "description": "맛있는 고기국수와 풍성한 김치·반찬",
+            "urls": {
+                "naver": "https://naver.me/F6l04QqI"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-61c211ddd329",
+            "title": "존맛식당",
+            "location": {
+                "lat": 33.5429713,
+                "lng": 126.6628518
+            },
+            "address": "제주 제주시 조천읍 신북로 493",
+            "description": "칼칼한 국물과 풍부한 양의 맛",
+            "urls": {
+                "naver": "https://naver.me/57VZhZHG"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-597e1d71f894",
+            "title": "금복촌",
+            "location": {
+                "lat": 33.500583,
+                "lng": 126.51525
+            },
+            "address": "제주 제주시 서광로7길 5",
+            "description": "다양한 맛있는 음식과 풍성한 양의 신선함",
+            "urls": {
+                "naver": "https://naver.me/Gj6XwTnr"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-f5fba873b6c2",
+            "title": "치저스",
+            "location": {
+                "lat": 33.4683691,
+                "lng": 126.7739076
+            },
+            "address": "제주 제주시 구좌읍 비자림로 1785",
+            "description": "맛있는 음식과 아기자기한 분위기의 조화",
+            "urls": {
+                "naver": "https://naver.me/xQe2rYfM"
+            },
+            "labels": [
+                "양식"
+            ]
+        },
+        {
+            "id": "place-82ee8ad90942",
+            "title": "월정항아리 칼국수",
+            "location": {
+                "lat": 33.5536781,
+                "lng": 126.7952162
+            },
+            "address": "제주 제주시 구좌읍 월정5길 38 1층",
+            "description": "신선한 해산물로 만든 맛있는 음식",
+            "urls": {
+                "naver": "https://naver.me/xk1nGgVJ"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-671d6686961d",
+            "title": "올래국수 본점",
+            "location": {
+                "lat": 33.4914975,
+                "lng": 126.4972882
+            },
+            "address": "제주 제주시 귀아랑길 24 올래국수",
+            "description": "시원한 육수 맛과 부드러운 고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/GipBTR7Y"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-612b6930d6a1",
+            "title": "안녕육지사람",
+            "location": {
+                "lat": 33.5147334,
+                "lng": 126.9571619
+            },
+            "address": "제주 제주시 우도면 우도해안길 796 안녕육지사람",
+            "description": "고소한 땅콩 소스가 더해진 맛있는 버거",
+            "urls": {
+                "naver": "https://naver.me/xwmqlLgD"
+            },
+            "labels": [
+                "카페,디저트"
+            ]
+        },
+        {
+            "id": "place-155db8d33bb0",
+            "title": "근쌀남",
+            "location": {
+                "lat": 33.4418678,
+                "lng": 126.2800903
+            },
+            "address": "제주 제주시 한림읍 귀덕5길 33 101호",
+            "description": "독특한 시판 팟타이 소스와 풍부한 볶음밥 재료",
+            "urls": {
+                "naver": "https://naver.me/x4F6KDJf"
+            },
+            "labels": [
+                "베트남음식"
+            ]
+        },
+        {
+            "id": "place-01234293e70c",
+            "title": "한라산아래첫마을영농조합법인",
+            "location": {
+                "lat": 33.3280578,
+                "lng": 126.3796846
+            },
+            "address": "제주 서귀포시 안덕면 산록남로 675",
+            "description": "담백하고 깔끔한 맛의 맛있는 비빔냉면과 만두",
+            "urls": {
+                "naver": "https://naver.me/GeURw2XA"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-86877b228fce",
+            "title": "삼강식당 본점",
+            "location": {
+                "lat": 33.2594758,
+                "lng": 126.5118117
+            },
+            "address": "제주 서귀포시 신서로102번길 53",
+            "description": "푸짐한 양의 맛있는 음식으로 만족 보장",
+            "urls": {
+                "naver": "https://naver.me/GRo4gnOl"
+            },
+            "labels": [
+                "오리요리"
+            ]
+        },
+        {
+            "id": "place-132dd557053c",
+            "title": "고기장 중문",
+            "location": {
+                "lat": 33.2567737,
+                "lng": 126.4309706
+            },
+            "address": "제주 서귀포시 일주서로 741 고기장 중문",
+            "description": "맛있는 고기와 소스의 환상 조화",
+            "urls": {
+                "naver": "https://naver.me/5eUPcnin"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-1c31cf199862",
+            "title": "제주태백산 본점",
+            "location": {
+                "lat": 33.494729,
+                "lng": 126.467196
+            },
+            "address": "제주 제주시 도공로 154-12 제주태백산 본점",
+            "description": "맛있는 음식과 품질 높은 고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/5IS9XAxj"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-3290ba1ca94b",
+            "title": "무위",
+            "location": {
+                "lat": 33.4840586,
+                "lng": 126.483084
+            },
+            "address": "제주 제주시 원노형남1길 25 1층 무위",
+            "description": "맛있는 음식과 아름다운 인테리어의 조화",
+            "urls": {
+                "naver": "https://naver.me/FafyhKKk"
+            },
+            "labels": [
+                "아시아음식"
+            ]
+        },
+        {
+            "id": "place-51d4bb162b42",
+            "title": "스시애월",
+            "location": {
+                "lat": 33.4521948,
+                "lng": 126.384271
+            },
+            "address": "제주 제주시 애월읍 장전로 57",
+            "description": "입에서 녹는 도로 초밥과 신선한 회의 향연",
+            "urls": {
+                "naver": "https://naver.me/GzE9R8ci"
+            },
+            "labels": [
+                "초밥,롤"
+            ]
+        },
+        {
+            "id": "place-bf856ea975b1",
+            "title": "거부갈비",
+            "location": {
+                "lat": 33.4863406,
+                "lng": 126.4888664
+            },
+            "address": "제주 제주시 제원4길 3 거부갈비",
+            "description": "맛있는 돔베갈비와 풍성한 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/FO9KRc4c"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-283609a2842f",
+            "title": "고기장",
+            "location": {
+                "lat": 33.5174944,
+                "lng": 126.4875085
+            },
+            "address": "제주 제주시 서해안로 446-1 고기장",
+            "description": "맛있는 고기와 특제 소스의 조화",
+            "urls": {
+                "naver": "https://naver.me/GoD7BCqH"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-3b37bec4d069",
+            "title": "넘은 봄",
+            "location": {
+                "lat": 33.5580107,
+                "lng": 126.7513003
+            },
+            "address": "제주 제주시 구좌읍 김녕로1길 75-1 1층 넘은봄",
+            "description": "아름다운 바다 뷰와 맛있는 메뉴의 조화",
+            "urls": {
+                "naver": "https://naver.me/xhzCYYcB"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-709b580feb31",
+            "title": "소소밀",
+            "location": {
+                "lat": 33.4636143,
+                "lng": 126.5309419
+            },
+            "address": "제주 제주시 한북로 139 1층",
+            "description": "신선한 재료로 만든 맛있는 샐러드와 파스타",
+            "urls": {
+                "naver": "https://naver.me/5ZJxEa1N"
+            },
+            "labels": [
+                "양식"
+            ]
+        },
+        {
+            "id": "place-3d2eff1508f9",
+            "title": "잇마이피자 시청점",
+            "location": {
+                "lat": 33.4974643,
+                "lng": 126.5316979
+            },
+            "address": "제주 제주시 중앙로 253 2층",
+            "description": "맛있는 사이드와 피자로 행복한 식사",
+            "urls": {
+                "naver": "https://naver.me/5UEcNTq5"
+            },
+            "labels": [
+                "피자"
+            ]
+        },
+        {
+            "id": "place-0bc2a227869d",
+            "title": "알콜달콜",
+            "location": {
+                "lat": 33.4866804,
+                "lng": 126.4848215
+            },
+            "address": "제주 제주시 원노형로 22 1층 알콜달콜",
+            "description": "풍성한 양과 맛있는 음식의 조화",
+            "urls": {
+                "naver": "https://naver.me/5HkadiKq"
+            },
+            "labels": [
+                "맥주,호프"
+            ]
+        },
+        {
+            "id": "place-ce33baaa28b4",
+            "title": "코모도",
+            "location": {
+                "lat": 33.4920258,
+                "lng": 126.4795533
+            },
+            "address": "제주 제주시 남녕로 54 상가 1층",
+            "description": "따뜻한 분위기에서 즐기는 맛있는 음식",
+            "urls": {
+                "naver": "https://naver.me/IMyGAy2b"
+            },
+            "labels": [
+                "요리주점"
+            ]
+        },
+        {
+            "id": "place-c4bd13d7ef60",
+            "title": "천하제일 오라방",
+            "location": {
+                "lat": 33.5058482,
+                "lng": 126.528243
+            },
+            "address": "제주 제주시 오현길 2 1층",
+            "description": "맛있는 음식과 진한 육수의 조화",
+            "urls": {
+                "naver": "https://naver.me/x8tpr4Xc"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-a04027ad933c",
+            "title": "삼미횟집 제주공항점",
+            "location": {
+                "lat": 33.5046202,
+                "lng": 126.4637024
+            },
+            "address": "제주 제주시 도두항서5길 1",
+            "description": "맛있는 코스 요리와 아름다운 바다 전망",
+            "urls": {
+                "naver": "https://naver.me/GpCzUQs0"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-a4d82c393533",
+            "title": "정수용식당",
+            "location": {
+                "lat": 33.5154626,
+                "lng": 126.5277807
+            },
+            "address": "제주 제주시 서부두남길 16-2 1층",
+            "description": "품질 좋은 고기와 다양한 맛있는 메뉴",
+            "urls": {
+                "naver": "https://naver.me/FFGL0XoS"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-693baf8ce6a3",
+            "title": "제주할망밥상 표선점",
+            "location": {
+                "lat": 33.3203441,
+                "lng": 126.8292487
+            },
+            "address": "제주 서귀포시 표선면 표선동서로 177-1",
+            "description": "맛있는 반찬과 생선의 향연",
+            "urls": {
+                "naver": "https://naver.me/xiqumLA1"
+            },
+            "labels": [
+                "생선구이"
+            ]
+        },
+        {
+            "id": "place-c3c391afe58e",
+            "title": "나목도식당",
+            "location": {
+                "lat": 33.3535892,
+                "lng": 126.7717789
+            },
+            "address": "제주 서귀포시 표선면 가시로613번길 60 나목도식당",
+            "description": "신선한 고기와 맛있는 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/G65JQdXw"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-1f3ee89e7872",
+            "title": "가스름식당",
+            "location": {
+                "lat": 33.3531151,
+                "lng": 126.7719384
+            },
+            "address": "제주 서귀포시 표선면 가시로565번길 19 가스름식당",
+            "description": "맛있는 고기와 구수한 순대국의 조화",
+            "urls": {
+                "naver": "https://naver.me/GI3Yqnvg"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-9d9f7eaaa1ab",
+            "title": "당케올레국수",
+            "location": {
+                "lat": 33.3252702,
+                "lng": 126.8433224
+            },
+            "address": "제주 서귀포시 표선면 민속해안로 584",
+            "description": "맛있는 보말칼국수와 푸짐한 반찬",
+            "urls": {
+                "naver": "https://naver.me/xwmqUHQ0"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-348dc7c1064d",
+            "title": "옥돔식당",
+            "location": {
+                "lat": 33.2199734,
+                "lng": 126.2489597
+            },
+            "address": "제주 서귀포시 대정읍 신영로36번길 62",
+            "description": "맛있는 보말칼국수와 일품 국물의 만남",
+            "urls": {
+                "naver": "https://naver.me/GMmgEth8"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-2d91afa6fd16",
+            "title": "상원가든",
+            "location": {
+                "lat": 33.2217209,
+                "lng": 126.2652571
+            },
+            "address": "제주 서귀포시 대정읍 송악관광로 132 상원가든",
+            "description": "맛있는 생갈비와 풍성한 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/I55TUI0I"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-44021d67e11d",
+            "title": "제주선채향",
+            "location": {
+                "lat": 33.2263383,
+                "lng": 126.2990878
+            },
+            "address": "제주 서귀포시 안덕면 사계남로84번길 6",
+            "description": "맛있는 전복죽과 풍성한 양의 맛",
+            "urls": {
+                "naver": "https://naver.me/F6lTBARq"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-e71e097e23ca",
+            "title": "수눌음",
+            "location": {
+                "lat": 33.2182121,
+                "lng": 126.2500884
+            },
+            "address": "제주 서귀포시 대정읍 하모항구로 50 수눌음",
+            "description": "다양한 맛있는 음식과 푸짐한 양의 만남",
+            "urls": {
+                "naver": "https://naver.me/G9r5APjP"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-15b786b01f35",
+            "title": "돈어길 제주신화월드본점",
+            "location": {
+                "lat": 33.2807928,
+                "lng": 126.2853708
+            },
+            "address": "제주 서귀포시 대정읍 중산간서로 2274 C동 1층",
+            "description": "맛있는 반찬과 품질 좋은 고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/xcnaFOis"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-b3956416dd56",
+            "title": "파도소리해녀촌",
+            "location": {
+                "lat": 33.5197737,
+                "lng": 126.9488784
+            },
+            "address": "제주 제주시 우도면 우도해안길 510",
+            "description": "칼칼한 보말칼국수와 신선한 해산물의 만남",
+            "urls": {
+                "naver": "https://naver.me/G7V4Guvh"
+            },
+            "labels": [
+                "해물,생선요리"
+            ]
+        },
+        {
+            "id": "place-2b5b165641bc",
+            "title": "섬소나이 우도본점",
+            "location": {
+                "lat": 33.513337,
+                "lng": 126.9575652
+            },
+            "address": "제주 제주시 우도면 우도해안길 814",
+            "description": "맛있는 음식과 풍부한 해산물의 조화",
+            "urls": {
+                "naver": "https://naver.me/x9BN61gn"
+            },
+            "labels": [
+                "중식당"
+            ]
+        },
+        {
+            "id": "place-c1155593e567",
+            "title": "함덕닭해장국",
+            "location": {
+                "lat": 33.529668,
+                "lng": 126.6634979
+            },
+            "address": "제주 제주시 조천읍 조천우회로 508",
+            "description": "담백한 육수와 맛있는 닭육계장의 조화",
+            "urls": {
+                "naver": "https://naver.me/GPdosVrn"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-e04648294b47",
+            "title": "함덕골목 본점",
+            "location": {
+                "lat": 33.5393555,
+                "lng": 126.6411637
+            },
+            "address": "제주 제주시 조천읍 조천북6길 62",
+            "description": "푸짐한 양의 맛있는 국물",
+            "urls": {
+                "naver": "https://naver.me/xTT6DxUf"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-31e4cb2db538",
+            "title": "소금바치 순이네",
+            "location": {
+                "lat": 33.5036573,
+                "lng": 126.912638
+            },
+            "address": "제주 제주시 구좌읍 해맞이해안로 2196",
+            "description": "부드럽고 맛있는 문어 볶음과 예쁜 바다 경치",
+            "urls": {
+                "naver": "https://naver.me/F2Zux7nq"
+            },
+            "labels": [
+                "해물,생선요리"
+            ]
+        },
+        {
+            "id": "place-0474c607853b",
+            "title": "남양수산",
+            "location": {
+                "lat": 33.4501517,
+                "lng": 126.9141728
+            },
+            "address": "제주 서귀포시 성산읍 고성동서로56번길 11",
+            "description": "신선한 참돔회와 풍부한 쌈채소의 만남",
+            "urls": {
+                "naver": "https://naver.me/GWe2abxZ"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-d15d85957ed2",
+            "title": "단백",
+            "location": {
+                "lat": 33.4499644,
+                "lng": 126.9145773
+            },
+            "address": "제주 서귀포시 성산읍 고성동서로56번길 15 2층 단백",
+            "description": "정성스러운 감자 샐러드와 맛있는 음식",
+            "urls": {
+                "naver": "https://naver.me/5PVaJFRA"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-36cc97f0b230",
+            "title": "성산 타쿠마스시",
+            "location": {
+                "lat": 33.4390437,
+                "lng": 126.9184922
+            },
+            "address": "제주 서귀포시 성산읍 섭지코지로 15",
+            "description": "신선한 재료로 만든 맛있는 회덮밥",
+            "urls": {
+                "naver": "https://naver.me/Fk73Tp6R"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-b23eac06e046",
+            "title": "서귀피안 베이커리",
+            "location": {
+                "lat": 33.4352519,
+                "lng": 126.9219377
+            },
+            "address": "제주 서귀포시 성산읍 신양로122번길 17 2F",
+            "description": "넓은 공간에서 즐기는 맛있는 베이커리와 빵",
+            "urls": {
+                "naver": "https://naver.me/G7V4dL7G"
+            },
+            "labels": [
+                "베이커리"
+            ]
+        },
+        {
+            "id": "place-47ee78ef5b32",
+            "title": "WORLD CLASS FISH&CHIPS",
+            "location": {
+                "lat": 33.4628927,
+                "lng": 126.9329109
+            },
+            "address": "제주 서귀포시 성산읍 성산중앙로 33 윌라라",
+            "description": "바삭한 튀김과 맛있는 음식의 조화",
+            "urls": {
+                "naver": "https://naver.me/xQe2olFC"
+            },
+            "labels": [
+                "브런치"
+            ]
+        },
+        {
+            "id": "place-7529e9636427",
+            "title": "닻",
+            "location": {
+                "lat": 33.486079,
+                "lng": 126.3920068
+            },
+            "address": "제주 제주시 애월읍 가문동길 41-2 2층",
+            "description": "새우튀김의 바삭한 식감",
+            "urls": {
+                "naver": "https://naver.me/GOPeYx9x"
+            },
+            "labels": [
+                "술집"
+            ]
+        },
+        {
+            "id": "place-17481bfcf4c7",
+            "title": "안녕협재씨 제주협재점",
+            "location": {
+                "lat": 33.38657,
+                "lng": 126.2249803
+            },
+            "address": "제주 제주시 한림읍 금능길 12 1층",
+            "description": "맛있는 음식과 예쁜 세팅의 조화",
+            "urls": {
+                "naver": "https://naver.me/56R6KYYw"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-8e4f12e66ffa",
+            "title": "채훈이네 해장국 제주협재점",
+            "location": {
+                "lat": 33.4054082,
+                "lng": 126.2586498
+            },
+            "address": "제주 제주시 한림읍 한림상로 29 채훈이네해장국",
+            "description": "다양한 맛있는 메뉴와 깔끔한 시원한 해장국",
+            "urls": {
+                "naver": "https://naver.me/FW6hJ5Uv"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-46362afab774",
+            "title": "제주스시호타루",
+            "location": {
+                "lat": 33.4633507,
+                "lng": 126.3100422
+            },
+            "address": "제주 제주시 애월읍 애월로1길 24-11 3층",
+            "description": "신선한 초밥과 다양한 메뉴의 향연",
+            "urls": {
+                "naver": "https://naver.me/5N15pN5g"
+            },
+            "labels": [
+                "초밥,롤"
+            ]
+        },
+        {
+            "id": "place-d849a1ccd74b",
+            "title": "협재칼국수",
+            "location": {
+                "lat": 33.3968231,
+                "lng": 126.2444864
+            },
+            "address": "제주 제주시 한림읍 협재로 3",
+            "description": "칼칼한 칼국수와 풍성한 해산물의 만남",
+            "urls": {
+                "naver": "https://naver.me/Fw7iH7R2"
+            },
+            "labels": [
+                "칼국수,만두"
+            ]
+        },
+        {
+            "id": "place-c8819c120d67",
+            "title": "제주명가두루치기 서귀포올레시장점",
+            "location": {
+                "lat": 33.2495697,
+                "lng": 126.5709958
+            },
+            "address": "제주 서귀포시 태평로 495 명가두루치기",
+            "description": "싱싱한 해산물로 만든 맛있는 음식",
+            "urls": {
+                "naver": "https://naver.me/5N15HjXc"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-5e674a69211f",
+            "title": "어진이네 횟집",
+            "location": {
+                "lat": 33.2410077,
+                "lng": 126.6109142
+            },
+            "address": "제주 서귀포시 보목포로 93",
+            "description": "싱싱한 해산물과 깔끔한 양념 맛의 조화",
+            "urls": {
+                "naver": "https://naver.me/xUw1zCFT"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-b77ce66c5bee",
+            "title": "칼초네화덕피자",
+            "location": {
+                "lat": 33.2521106,
+                "lng": 126.3956753
+            },
+            "address": "제주 서귀포시 예래로 115",
+            "description": "맛있는 수제 피자와 풍성한 치즈의 조화",
+            "urls": {
+                "naver": "https://naver.me/GZZBVbyY"
+            },
+            "labels": [
+                "피자"
+            ]
+        },
+        {
+            "id": "place-309a44ef5e70",
+            "title": "오는정김밥",
+            "location": {
+                "lat": 33.2496637,
+                "lng": 126.5675976
+            },
+            "address": "제주 서귀포시 동문동로 2 1층 오는정김밥",
+            "description": "맛있는 김밥과 바삭한 유부의 조화",
+            "urls": {
+                "naver": "https://naver.me/xKERgJP4"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-e72123d5b89a",
+            "title": "돈블랙 서귀포본점",
+            "location": {
+                "lat": 33.2487281,
+                "lng": 126.5149834
+            },
+            "address": "제주 서귀포시 서호남로32번길 24 1층 돈블랙",
+            "description": "싱싱한 쌈 재료와 다양한 메뉴의 향연",
+            "urls": {
+                "naver": "https://naver.me/IgJGXW02"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-05c5daba8aec",
+            "title": "중문수두리보말칼국수",
+            "location": {
+                "lat": 33.2515785,
+                "lng": 126.4249998
+            },
+            "address": "제주 서귀포시 천제연로 192 1층",
+            "description": "감칠맛 보말죽과 맛있는 음식의 만남",
+            "urls": {
+                "naver": "https://naver.me/FJbWAWQm"
+            },
+            "labels": [
+                "칼국수,만두"
+            ]
+        },
+        {
+            "id": "place-0343f2fbff96",
+            "title": "미친부엌 제주본점",
+            "location": {
+                "lat": 33.5169994,
+                "lng": 126.5231556
+            },
+            "address": "제주 제주시 탑동로 15 1, 2층",
+            "description": "맛있는 음식과 좋은 분위기의 조화",
+            "urls": {
+                "naver": "https://naver.me/xOxH6gTQ"
+            },
+            "labels": [
+                "이자카야"
+            ]
+        },
+        {
+            "id": "place-8dd96acb9ce7",
+            "title": "돈사돈 본점",
+            "location": {
+                "lat": 33.4788636,
+                "lng": 126.4639591
+            },
+            "address": "제주 제주시 우평로 19",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/GoD7LW5G"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-37fef3e180f4",
+            "title": "은희네해장국",
+            "location": {
+                "lat": 33.5085514,
+                "lng": 126.5407278
+            },
+            "address": "제주 제주시 고마로13길 8",
+            "description": "맛있는 음식과 푸짐한 양의 만남",
+            "urls": {
+                "naver": "https://naver.me/5eUcAg8e"
+            },
+            "labels": [
+                "해장국"
+            ]
+        },
+        {
+            "id": "place-a5f8c255e938",
+            "title": "넉둥베기고사리육개장",
+            "location": {
+                "lat": 33.5097844,
+                "lng": 126.5126046
+            },
+            "address": "제주 제주시 서문로 9-1 1층",
+            "description": "맛있는 국물과 풍성한 반찬의 토속음식",
+            "urls": {
+                "naver": "https://naver.me/5BcjWy8u"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-844eac136b76",
+            "title": "제주순메밀막국수",
+            "location": {
+                "lat": 33.2912545,
+                "lng": 126.3019503
+            },
+            "address": "제주 서귀포시 안덕면 녹차분재로 60",
+            "description": "맛있는 들기름 막국수와 다양한 메뉴의 향연",
+            "urls": {
+                "naver": "https://naver.me/GpCTDUu3"
+            },
+            "labels": [
+                "막국수"
+            ]
+        },
+        {
+            "id": "place-74bf45c4f005",
+            "title": "모들한상",
+            "location": {
+                "lat": 33.4553478,
+                "lng": 126.346979
+            },
+            "address": "제주 제주시 애월읍 하가로 180",
+            "description": "맛있는 음식과 고사리파스타의 만남",
+            "urls": {
+                "naver": "https://naver.me/F1rxjDJP"
+            },
+            "labels": [
+                "양식"
+            ]
+        },
+        {
+            "id": "place-9ed31fef6d8e",
+            "title": "돝밭 애월흑돼지",
+            "location": {
+                "lat": 33.4673605,
+                "lng": 126.3384952
+            },
+            "address": "제주 제주시 애월읍 애월해안로 249 1F 돝밭",
+            "description": "맛있는 고기와 청결한 매장에서의 즐거움",
+            "urls": {
+                "naver": "https://naver.me/FSw73K9o"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-b58a40789814",
+            "title": "금돈가 제주 애월해안도로 본점",
+            "location": {
+                "lat": 33.4843155,
+                "lng": 126.391182
+            },
+            "address": "제주 제주시 애월읍 가문동남길 63 1층",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/5oE5ltw9"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-313e55d1bd86",
+            "title": "오랑우탄면사무소",
+            "location": {
+                "lat": 33.2312461,
+                "lng": 126.2975502
+            },
+            "address": "제주 서귀포시 안덕면 산방로 367-1 1층",
+            "description": "다양한 맛과 탄탄면의 완벽한 조화",
+            "urls": {
+                "naver": "https://naver.me/FcmARJYn"
+            },
+            "labels": [
+                "아시아음식"
+            ]
+        },
+        {
+            "id": "place-685d53f42b61",
+            "title": "평담옥",
+            "location": {
+                "lat": 33.4828024,
+                "lng": 126.4845185
+            },
+            "address": "제주 제주시 원노형로 66 2층",
+            "description": "맛있는 음식과 우수한 가성비의 만남",
+            "urls": {
+                "naver": "https://naver.me/xxYNHZLk"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-d5ed249af84d",
+            "title": "국진장",
+            "location": {
+                "lat": 33.504308,
+                "lng": 126.519175
+            },
+            "address": "제주 제주시 전농로 56-1",
+            "description": "맛있는 음식과 풍성한 메뉴의 조화",
+            "urls": {
+                "naver": "https://naver.me/5ss7WVnu"
+            },
+            "labels": [
+                "중식당"
+            ]
+        },
+        {
+            "id": "place-88b99ef21e1f",
+            "title": "통일가든",
+            "location": {
+                "lat": 33.5342049,
+                "lng": 126.6355206
+            },
+            "address": "제주 제주시 조천읍 조와로 14",
+            "description": "쫄깃한 면이 맛있는 고소한 콩국수",
+            "urls": {
+                "naver": "https://naver.me/xcnkeqI2"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-488ce284af02",
+            "title": "엉덩물",
+            "location": {
+                "lat": 33.4909262,
+                "lng": 126.4949
+            },
+            "address": "제주 제주시 성두길 7-7",
+            "description": "맛있는 갈치국과 옥돔국의 향연",
+            "urls": {
+                "naver": "https://naver.me/FN7UOsDg"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-2afefe933474",
+            "title": "불특정식당",
+            "location": {
+                "lat": 33.4856536,
+                "lng": 126.4826865
+            },
+            "address": "제주 제주시 원노형6길 2 1층 불특정식당",
+            "description": "맛있는 음식과 좋은 분위기의 만남",
+            "urls": {
+                "naver": "https://naver.me/FbOnj5Me"
+            },
+            "labels": [
+                "와인"
+            ]
+        },
+        {
+            "id": "place-a5b6f54ddd67",
+            "title": "봉순이네흑돼지 제주신화월드본점",
+            "location": {
+                "lat": 33.2777809,
+                "lng": 126.2795534
+            },
+            "address": "제주 서귀포시 대정읍 영어도시로 64 1층",
+            "description": "맛있는 고기와 풍성한 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/Ghbu87L2"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-58668b874d3c",
+            "title": "맥파이 브루어리",
+            "location": {
+                "lat": 33.5032061,
+                "lng": 126.6171776
+            },
+            "address": "제주 제주시 동회천1길 23",
+            "description": "맛있는 샘플 맥주와 친절한 서비스의 조화",
+            "urls": {
+                "naver": "https://naver.me/xgNSYMea"
+            },
+            "labels": [
+                "맥주,호프"
+            ]
+        },
+        {
+            "id": "place-8e953f6baff3",
+            "title": "크라운돼지 제주점",
+            "location": {
+                "lat": 33.3933495,
+                "lng": 126.3827881
+            },
+            "address": "제주 제주시 애월읍 상가목장길 84",
+            "description": "맛있는 반찬과 품질 좋은 고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/Grmaw6AR"
+            },
+            "labels": [
+                "돼지고기구이"
+            ]
+        },
+        {
+            "id": "place-d3b399891a40",
+            "title": "선흘곶",
+            "location": {
+                "lat": 33.5108619,
+                "lng": 126.6901372
+            },
+            "address": "제주 제주시 조천읍 선흘서2길 22 1층",
+            "description": "맛있는 반찬과 고등어의 향연",
+            "urls": {
+                "naver": "https://naver.me/Fmf6Ykfs"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-15c26ef22d8d",
+            "title": "신해바라기",
+            "location": {
+                "lat": 33.514203,
+                "lng": 126.525944
+            },
+            "address": "제주 제주시 관덕로13길 13",
+            "description": "맛있는 반찬과 자극적인 맛의 하모니",
+            "urls": {
+                "naver": "https://naver.me/xKERg5Ny"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-89dbc4148f01",
+            "title": "피자굽는돌하르방",
+            "location": {
+                "lat": 33.304782,
+                "lng": 126.2559915
+            },
+            "address": "제주 제주시 한경면 청수로 218",
+            "description": "다양한 맛 메뉴와 맛있는 피자",
+            "urls": {
+                "naver": "https://naver.me/GfCkjgem"
+            },
+            "labels": [
+                "피자"
+            ]
+        },
+        {
+            "id": "place-f541e5a15e9d",
+            "title": "모살물 본점",
+            "location": {
+                "lat": 33.4905522,
+                "lng": 126.4945277
+            },
+            "address": "제주 제주시 삼무로3길 14",
+            "description": "맛있는 회와 다양한 음식의 향연",
+            "urls": {
+                "naver": "https://naver.me/Gsj2inco"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-638f96412b2f",
+            "title": "2010제주상춘재",
+            "location": {
+                "lat": 33.4699691,
+                "lng": 126.5459291
+            },
+            "address": "제주 제주시 중앙로 598 1층",
+            "description": "맛있는 반찬과 성게비빔밥의 향연",
+            "urls": {
+                "naver": "https://naver.me/57VZv1ju"
+            },
+            "labels": [
+                "해물,생선요리"
+            ]
+        },
+        {
+            "id": "place-af41cf975f41",
+            "title": "진진국수전문점",
+            "location": {
+                "lat": 33.4878605,
+                "lng": 126.4999289
+            },
+            "address": "제주 제주시 선덕로5길 19",
+            "description": "맛있는 국수와 돔베고기의 환상적 조화",
+            "urls": {
+                "naver": "https://naver.me/IgJGdSvz"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-8b1b3152ca27",
+            "title": "더애월 본점",
+            "location": {
+                "lat": 33.4561337,
+                "lng": 126.3486521
+            },
+            "address": "제주 제주시 애월읍 하가로 159 1층",
+            "description": "알찬 메뉴와 맛있는 솥밥의 조화",
+            "urls": {
+                "naver": "https://naver.me/FlZnN2xa"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-afce585cfbf8",
+            "title": "슌식당",
+            "location": {
+                "lat": 33.4764668,
+                "lng": 126.896258
+            },
+            "address": "제주 서귀포시 성산읍 시흥상동로 87 시흥리 버스정류장 바로 뒷집",
+            "description": "맛있는 우동 요리와 다양한 메뉴의 향연",
+            "urls": {
+                "naver": "https://naver.me/502M63vS"
+            },
+            "labels": [
+                "일식당"
+            ]
+        },
+        {
+            "id": "place-f8825084229b",
+            "title": "사우스포레스트",
+            "location": {
+                "lat": 33.2983679,
+                "lng": 126.6006938
+            },
+            "address": "제주 서귀포시 516로 574-23",
+            "description": "다양한 메뉴와 맛있는 파스타의 조화",
+            "urls": {
+                "naver": "https://naver.me/GCvqV8Wc"
+            },
+            "labels": [
+                "양식"
+            ]
+        },
+        {
+            "id": "place-055ca04a1c48",
+            "title": "똣똣라면 본점",
+            "location": {
+                "lat": 33.3586514,
+                "lng": 126.2966352
+            },
+            "address": "제주 제주시 한림읍 금악로 18",
+            "description": "풍부한 재료로 만든 맛있는 라면",
+            "urls": {
+                "naver": "https://naver.me/GYC9cEkD"
+            },
+            "labels": [
+                "라면"
+            ]
+        },
+        {
+            "id": "place-d19978a6c886",
+            "title": "제주에가면",
+            "location": {
+                "lat": 33.5147355,
+                "lng": 126.5179954
+            },
+            "address": "제주 제주시 탑동로 119 제주에가면",
+            "description": "쫄깃하고 진한 보말칼국수의 매력",
+            "urls": {
+                "naver": "https://naver.me/FV7YOOvi"
+            },
+            "labels": [
+                "한식"
+            ]
+        },
+        {
+            "id": "place-6a4b532df5d2",
+            "title": "삼대국수회관 본점",
+            "location": {
+                "lat": 33.5068841,
+                "lng": 126.530101
+            },
+            "address": "제주 제주시 삼성로 41 1층",
+            "description": "맛있는 비빔고기국수와 부드러운 고기의 조화",
+            "urls": {
+                "naver": "https://naver.me/Gn0yuakK"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-502719606e87",
+            "title": "골막식당",
+            "location": {
+                "lat": 33.5024666,
+                "lng": 126.5383749
+            },
+            "address": "제주 제주시 천수로 12",
+            "description": "두툼한 국물과 맛있는 비빔국수의 조화",
+            "urls": {
+                "naver": "https://naver.me/GkR3zwpz"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-6ba025518202",
+            "title": "성산봄죽칼국수 신산리 본점",
+            "location": {
+                "lat": 33.3766421,
+                "lng": 126.8768542
+            },
+            "address": "제주 서귀포시 성산읍 환해장성로 33 1층 2호",
+            "description": "맛있는 음식과 친절한 서비스의 만남",
+            "urls": {
+                "naver": "https://naver.me/FBe2QJvG"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-c0ba11ba77be",
+            "title": "온오프",
+            "location": {
+                "lat": 33.5129891,
+                "lng": 126.9614267
+            },
+            "address": "제주 제주시 우도면 우도해안길 876 온오프",
+            "description": "맛있는 바질치즈 돈까스와 다양한 음식의 향연",
+            "urls": {
+                "naver": "https://naver.me/xGIPsHMf"
+            },
+            "labels": [
+                "돈가스"
+            ]
+        },
+        {
+            "id": "place-c30989cab5e2",
+            "title": "달마갈비",
+            "location": {
+                "lat": 33.5148839,
+                "lng": 126.5273959
+            },
+            "address": "제주 제주시 중앙로7길 25",
+            "description": "맛있는 고기와 정갈한 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/FFGMgtMn"
+            },
+            "labels": [
+                "육류,고기요리"
+            ]
+        },
+        {
+            "id": "place-d21a7e5451a7",
+            "title": "도두항식당",
+            "location": {
+                "lat": 33.505508,
+                "lng": 126.4660826
+            },
+            "address": "제주 제주시 도두항서길 11-2",
+            "description": "맛있는 반찬과 뜨끈한 국물의 조화",
+            "urls": {
+                "naver": "https://naver.me/xmxe8Fw5"
+            },
+            "labels": [
+                "향토음식"
+            ]
+        },
+        {
+            "id": "place-d895fc85da9e",
+            "title": "제주약수터",
+            "location": {
+                "lat": 33.2477327,
+                "lng": 126.5616683
+            },
+            "address": "제주 서귀포시 중앙로 35 1층",
+            "description": "좋은 분위기와 다양한 맥주로 즐기는 시간",
+            "urls": {
+                "naver": "https://naver.me/xSFaL93m"
+            },
+            "labels": [
+                "맥주,호프"
+            ]
+        },
+        {
+            "id": "place-1f1e92f5a7c0",
+            "title": "미영이네",
+            "location": {
+                "lat": 33.217709,
+                "lng": 126.2497839
+            },
+            "address": "제주 서귀포시 대정읍 하모항구로 42",
+            "description": "맛있는 고등어회와 풍성한 반찬의 조화",
+            "urls": {
+                "naver": "https://naver.me/xprAMDP8"
+            },
+            "labels": [
+                "생선회"
+            ]
+        },
+        {
+            "id": "place-0076bb08ea4e",
+            "title": "국수바다 서귀포본점",
+            "location": {
+                "lat": 33.2529794,
+                "lng": 126.4472165
+            },
+            "address": "제주 서귀포시 일주서로 580 1층",
+            "description": "맛있는 국수와 깔끔한 국물의 만남",
+            "urls": {
+                "naver": "https://naver.me/IDFUgaSy"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-5cbe0da69781",
+            "title": "도토리키친 본점",
+            "location": {
+                "lat": 33.5153809,
+                "lng": 126.5185915
+            },
+            "address": "제주 제주시 북성로 59 1층",
+            "description": "상큼한 청귤 소바와 다양한 메뉴의 향연",
+            "urls": {
+                "naver": "https://naver.me/GgWkousC"
+            },
+            "labels": [
+                "국수"
+            ]
+        },
+        {
+            "id": "place-f8a8a76ea8fb",
+            "title": "모닥식탁",
+            "location": {
+                "lat": 33.5309576,
+                "lng": 126.8173387
+            },
+            "address": "제주 제주시 구좌읍 한동로 136",
+            "description": "맛있는 메뉴와 아름다운 인테리어의 조화",
+            "urls": {
+                "naver": "https://naver.me/5bVYAK3s"
+            },
+            "labels": [
+                "카레"
+            ]
+        },
+        {
+            "id": "place-d7f583b692fe",
+            "title": "봉자네상점",
+            "location": {
+                "lat": 33.5533626,
+                "lng": 126.7976402
+            },
+            "address": "제주 제주시 구좌읍 월정7길 26 1동",
+            "description": "풍부한 육즙의 등심으로 더욱 맛있는 우동",
+            "urls": {
+                "naver": "https://naver.me/x0UEfkso"
+            },
+            "labels": [
+                "돈가스"
+            ]
+        },
+        {
+            "id": "place-c3fe949a90db",
+            "title": "한림칼국수",
+            "location": {
+                "lat": 33.41556,
+                "lng": 126.2615145
+            },
+            "address": "제주 제주시 한림읍 한림해안로 141",
+            "description": "맛있는 보말죽과 매력적인 음식의 향연",
+            "urls": {
+                "naver": "https://naver.me/xWTnmG9p"
+            },
+            "labels": [
+                "칼국수,만두"
+            ]
+        },
+        {
+            "id": "place-89471d96125c",
+            "title": "하도핑크",
+            "location": {
+                "lat": 33.5223862,
+                "lng": 126.8834129
+            },
+            "address": "제주 제주시 구좌읍 문주란로1길 43 하도핑크",
+            "description": "맛있는 음식과 아름다운 공간의 조화",
+            "urls": {
+                "naver": "https://naver.me/xJiBJkYT"
+            },
+            "labels": [
+                "스파게티,파스타전문"
+            ]
+        },
+        {
+            "id": "place-538d223babf1",
+            "title": "그림상회",
+            "location": {
+                "lat": 33.3261705,
+                "lng": 126.7649479
+            },
+            "address": "제주 서귀포시 표선면 중산간동로5570번길 9",
+            "description": "",
+            "urls": {
+                "naver": "https://naver.me/5oE4OgtM"
+            },
+            "labels": [
+                "카페,디저트"
+            ]
+        }
+    ]
+}
