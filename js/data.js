@@ -143,9 +143,24 @@ async function loadMapFiles() {
         const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
         console.log('현재 베이스 URL:', baseUrl);
         
-        // data/maps 디렉토리의 콘텐츠 요청 시도
+        // 알려진 맵 파일 목록 (GitHub Pages와 같은 환경에서 우선 사용)
+        const knownMapFiles = [
+            'jeju_food.json',
+            'jeju_trip_202506.json'
+        ];
+        
+        // 1. 먼저 알려진 맵 파일들을 직접 로드 시도
         try {
-            // 기존 로직을 유지하되, 베이스 URL을 사용하도록 수정
+            console.log('알려진 맵 파일들을 로드합니다:', knownMapFiles);
+            await loadMapFilesFromList(knownMapFiles, baseUrl);
+            console.log('알려진 맵 파일 로드 성공');
+            return;
+        } catch (knownFilesError) {
+            console.log('알려진 맵 파일 로드 실패, 디렉토리 스캔 시도:', knownFilesError.message);
+        }
+        
+        // 2. 알려진 파일 로드 실패 시, 디렉토리 목록 스캔 시도
+        try {
             const response = await fetch(`${baseUrl}/data/maps/`);
             
             if (response.ok) {
@@ -165,17 +180,16 @@ async function loadMapFiles() {
                     return;
                 } else {
                     console.log('디렉토리에서 JSON 파일을 찾을 수 없습니다.');
+                    throw new Error('디렉토리에서 JSON 파일을 찾을 수 없습니다.');
                 }
             } else {
                 console.log('디렉토리 목록을 가져올 수 없습니다:', response.status);
+                throw new Error(`디렉토리 목록을 가져올 수 없습니다: ${response.status}`);
             }
         } catch (dirError) {
             console.log('디렉토리 스캔 오류:', dirError.message);
+            throw dirError; // 재시도 로직으로 전달
         }
-        
-        // 서버가 디렉토리 목록을 제공하지 않는 경우
-        console.error('맵 데이터를 로드할 수 없습니다.');
-        throw new Error('맵 데이터를 로드할 수 없습니다. GitHub Pages에서는 디렉토리 목록을 제공하지 않습니다. 로컬 웹 서버에서 테스트하거나, 인덱스 파일을 사용하세요.');
         
     } catch (error) {
         console.error('맵 데이터 로드 오류:', error);
@@ -206,7 +220,24 @@ async function loadMapFilesFromList(mapFiles, baseUrl) {
             const fileResponse = await fetch(filePath);
             if (!fileResponse.ok) {
                 console.error(`${fileName} 로드 실패: ${fileResponse.status} ${fileResponse.statusText}`);
-                return null;
+                
+                // 원격 로드 실패 시 로컬 maps 디렉토리에서 시도
+                try {
+                    console.log(`로컬 경로 시도: /maps/${fileName}`);
+                    const localResponse = await fetch(`/maps/${fileName}`);
+                    
+                    if (!localResponse.ok) {
+                        console.error(`로컬 경로 로드 실패: ${localResponse.status} ${localResponse.statusText}`);
+                        return null;
+                    }
+                    
+                    const localData = await localResponse.json();
+                    console.log(`로컬 경로에서 ${fileName} 로드 성공`);
+                    return localData;
+                } catch (localError) {
+                    console.error(`로컬 경로 로드 오류 (${fileName}):`, localError);
+                    return null;
+                }
             }
             
             const data = await fileResponse.json();
