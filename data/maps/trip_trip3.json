@@ -1,0 +1,980 @@
+{
+  "id": "trip3",
+  "title": "제주도 서부-남부-동부 4일 여행",
+  "description": "제주도를 서부에서 시작해 서남부, 남동부, 동부를 거쳐 일주하는 4일간의 여행 코스입니다.",
+  "created": "2024-05-15",
+  "modified": "2024-05-15",
+  "color": "#FF9800",
+  "startDate": "2024-06-20",
+  "endDate": "2024-06-23",
+  "transportation": "렌터카",
+  "totalBudget": 1200000,
+  "labels": [
+    {
+      "name": "가족",
+      "description": "가족 여행객에게 적합한 장소",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "공항",
+      "description": "공항 시설",
+      "color": "#2196F3"
+    },
+    {
+      "name": "렌터카",
+      "description": "렌터카 관련 시설",
+      "color": "#607D8B"
+    },
+    {
+      "name": "특산품",
+      "description": "제주도의 특산품을 구매할 수 있는 장소",
+      "color": "#FF9800"
+    },
+    {
+      "name": "국립공원",
+      "description": "국립공원으로 지정된 장소",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "계곡",
+      "description": "계곡이 있는 장소",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "카약",
+      "description": "카약 체험이 가능한 장소",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "호텔",
+      "description": "호텔 숙박 시설",
+      "color": "#3F51B5"
+    },
+    {
+      "name": "리조트",
+      "description": "리조트 시설",
+      "color": "#673AB7"
+    },
+    {
+      "name": "고급",
+      "description": "고급 시설 및 서비스",
+      "color": "#E91E63"
+    },
+    {
+      "name": "흑돼지",
+      "description": "제주도 특산품인 흑돼지 요리를 제공하는 장소",
+      "color": "#795548"
+    },
+    {
+      "name": "음식",
+      "description": "다양한 음식을 제공하는 장소",
+      "color": "#F44336"
+    },
+    {
+      "name": "저녁",
+      "description": "저녁 식사로 적합한 장소",
+      "color": "#673AB7"
+    },
+    {
+      "name": "관광지",
+      "description": "일반적인 관광 명소",
+      "icon": "mdi:map-marker",
+      "color": "#FF5722"
+    },
+    {
+      "name": "자연",
+      "description": "자연 경관 및 자연 환경과 관련된 장소",
+      "icon": "mdi:nature",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "유네스코",
+      "description": "유네스코 세계유산으로 등재된 장소",
+      "icon": "mdi:earth",
+      "color": "#2196F3"
+    },
+    {
+      "name": "일출",
+      "description": "일출 감상 명소",
+      "icon": "mdi:weather-sunset-up",
+      "color": "#FF9800"
+    },
+    {
+      "name": "일몰",
+      "description": "일몰 감상 명소",
+      "icon": "mdi:weather-sunset-down",
+      "color": "#FFA726"
+    },
+    {
+      "name": "전망",
+      "description": "경치를 감상할 수 있는 전망 포인트",
+      "icon": "mdi:eye",
+      "color": "#9C27B0"
+    },
+    {
+      "name": "섬",
+      "description": "제주도 주변의 작은 섬",
+      "icon": "mdi:island",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "해변",
+      "description": "해변 및 바다와 관련된 장소",
+      "icon": "mdi:beach",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "산책",
+      "description": "산책하기 좋은 장소",
+      "icon": "mdi:walk",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "수영",
+      "description": "수영이 가능한 장소",
+      "icon": "mdi:swim",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "산",
+      "description": "산과 관련된 장소",
+      "icon": "mdi:mountain",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "등산",
+      "description": "등산 활동이 가능한 장소",
+      "icon": "mdi:hiking",
+      "color": "#795548"
+    },
+    {
+      "name": "동굴",
+      "description": "동굴이나 용암 동굴",
+      "icon": "mdi:tunnel",
+      "color": "#607D8B"
+    },
+    {
+      "name": "시장",
+      "description": "전통 시장 및 시장 형태의 상권",
+      "icon": "mdi:store",
+      "color": "#FF9800"
+    },
+    {
+      "name": "맛집",
+      "description": "맛있는 음식을 제공하는 음식점",
+      "icon": "mdi:food",
+      "color": "#F44336"
+    },
+    {
+      "name": "쇼핑",
+      "description": "쇼핑이 가능한 장소",
+      "icon": "mdi:shopping",
+      "color": "#9E9E9E"
+    },
+    {
+      "name": "해산물",
+      "description": "해산물 요리를 제공하는 음식점",
+      "icon": "mdi:fish",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "고기",
+      "description": "고기 요리를 제공하는 음식점",
+      "icon": "mdi:food-steak",
+      "color": "#795548"
+    },
+    {
+      "name": "교통",
+      "description": "교통 관련 시설",
+      "icon": "mdi:bus",
+      "color": "#2196F3"
+    },
+    {
+      "name": "오름",
+      "description": "제주도의 오름",
+      "icon": "mdi:mountain",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "카페",
+      "description": "카페 및 음료 제공 장소",
+      "icon": "mdi:coffee",
+      "color": "#795548"
+    },
+    {
+      "name": "도넛",
+      "description": "도넛 전문점",
+      "icon": "mdi:food-croissant",
+      "color": "#E91E63"
+    },
+    {
+      "name": "베이커리",
+      "description": "빵집 및 베이커리",
+      "icon": "mdi:bread-slice",
+      "color": "#FF9800"
+    },
+    {
+      "name": "해안도로",
+      "description": "해안을 따라 이어진 도로",
+      "icon": "mdi:road-variant",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "산방산",
+      "description": "산방산 관련 장소",
+      "icon": "mdi:mountain",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "마라도",
+      "description": "마라도 관련 장소",
+      "icon": "mdi:island",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "사찰",
+      "description": "사찰 및 종교 시설",
+      "icon": "mdi:buddhism",
+      "color": "#673AB7"
+    },
+    {
+      "name": "폭포",
+      "description": "폭포가 있는 장소",
+      "icon": "mdi:waterfall",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "숙소",
+      "description": "숙박 시설",
+      "icon": "mdi:bed",
+      "color": "#3F51B5"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "date": "2024-06-20",
+      "places": [
+        {
+          "placeId": "place4",
+          "order": 1,
+          "memo": "제주공항 도착, 렌터카 픽업",
+          "timeEstimate": "09:00",
+          "transportation": "airplane"
+        },
+        {
+          "placeId": "place11",
+          "order": 2,
+          "memo": "애월 해안도로에 위치한 오션뷰 카페",
+          "timeEstimate": "09:30",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place12",
+          "order": 3,
+          "memo": "애월에서 유명한 수제 도넛 맛집",
+          "timeEstimate": "11:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place3",
+          "order": 4,
+          "memo": "에메랄드빛 바다와 하얀 모래사장이 아름다운 해변",
+          "timeEstimate": "12:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place13",
+          "order": 5,
+          "memo": "점심: 담백한 해장국",
+          "timeEstimate": "13:00",
+          "transportation": "walking"
+        },
+        {
+          "placeId": "place14",
+          "order": 6,
+          "memo": "완만한 경사로 쉽게 오를 수 있는 오름",
+          "timeEstimate": "14:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place15",
+          "order": 7,
+          "memo": "숙소 체크인 및 휴식",
+          "timeEstimate": "17:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place16",
+          "order": 8,
+          "memo": "저녁: 모슬포 고등어회 맛집",
+          "timeEstimate": "19:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place17",
+          "order": 9,
+          "memo": "바다 전망이 아름다운 베이커리 카페",
+          "timeEstimate": "21:00",
+          "transportation": "walking"
+        }
+      ],
+      "memo": "제주공항 → 서부 → 서남부 (모슬포/사계 숙소)"
+    },
+    {
+      "day": 2,
+      "date": "2024-06-21",
+      "places": [
+        {
+          "placeId": "place15",
+          "order": 1,
+          "memo": "출발",
+          "timeEstimate": "09:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place18",
+          "order": 2,
+          "memo": "제주 서남부 해안과 산방산을 조망할 수 있는 오름",
+          "timeEstimate": "09:30",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place19",
+          "order": 3,
+          "memo": "마라도 배 탑승",
+          "timeEstimate": "11:30",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place20",
+          "order": 4,
+          "memo": "대한민국 최남단 섬",
+          "timeEstimate": "12:00",
+          "transportation": "ship"
+        },
+        {
+          "placeId": "place20",
+          "order": 5,
+          "memo": "점심: 마라도 짜장면",
+          "timeEstimate": "13:00",
+          "transportation": "walking"
+        },
+        {
+          "placeId": "place21",
+          "order": 6,
+          "memo": "청보리 군락지로 유명한 작은 섬",
+          "timeEstimate": "14:30",
+          "transportation": "ship"
+        },
+        {
+          "placeId": "place22",
+          "order": 7,
+          "memo": "산방산을 배경으로 한 아름다운 해변, 일몰 명소",
+          "timeEstimate": "17:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place23",
+          "order": 8,
+          "memo": "저녁: 갈치조림과 우럭조림으로 유명한 현지인 맛집",
+          "timeEstimate": "18:30",
+          "transportation": "car"
+        }
+      ],
+      "memo": "서남부 지역 관광 (모슬포/사계 숙소)"
+    },
+    {
+      "day": 3,
+      "date": "2024-06-22",
+      "places": [
+        {
+          "placeId": "place15",
+          "order": 1,
+          "memo": "출발",
+          "timeEstimate": "09:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place24",
+          "order": 2,
+          "memo": "거대한 종 모양의 화산암체",
+          "timeEstimate": "09:30",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place25",
+          "order": 3,
+          "memo": "파도에 의해 침식된 독특한 지형의 해안가",
+          "timeEstimate": "10:40",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place26",
+          "order": 4,
+          "memo": "아름다운 풍경을 감상할 수 있는 오름",
+          "timeEstimate": "11:45",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place27",
+          "order": 5,
+          "memo": "바다 전망이 아름다운 레스토랑",
+          "timeEstimate": "13:10",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place28",
+          "order": 6,
+          "memo": "아름다운 사찰로 평화로운 분위기의 명소",
+          "timeEstimate": "14:55",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place29",
+          "order": 7,
+          "memo": "서귀포 새섬으로 연결되는 아름다운 다리",
+          "timeEstimate": "16:10",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place30",
+          "order": 8,
+          "memo": "바다로 직접 떨어지는 해안 폭포",
+          "timeEstimate": "17:05",
+          "transportation": "walking"
+        },
+        {
+          "placeId": "place31",
+          "order": 9,
+          "memo": "아기자기한 카페",
+          "timeEstimate": "17:45",
+          "transportation": "walking"
+        },
+        {
+          "placeId": "place32",
+          "order": 10,
+          "memo": "숙소 체크인",
+          "timeEstimate": "19:15",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place33",
+          "order": 11,
+          "memo": "저녁: 중문에 위치한 전복요리 전문점",
+          "timeEstimate": "20:00",
+          "transportation": "walking"
+        }
+      ],
+      "memo": "서남부 → 남동부 (중문 숙소)"
+    },
+    {
+      "day": 4,
+      "date": "2024-06-23",
+      "places": [
+        {
+          "placeId": "place32",
+          "order": 1,
+          "memo": "출발",
+          "timeEstimate": "09:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place34",
+          "order": 2,
+          "memo": "성산일출봉을 배경으로 한 아름다운 해안가",
+          "timeEstimate": "09:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place35",
+          "order": 3,
+          "memo": "성산일출봉이 보이는 아름다운 해변",
+          "timeEstimate": "10:50",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place36",
+          "order": 4,
+          "memo": "점심: 고등어쌈밥",
+          "timeEstimate": "12:00",
+          "transportation": "walking"
+        },
+        {
+          "placeId": "place1",
+          "order": 5,
+          "memo": "유네스코 세계자연유산",
+          "timeEstimate": "13:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place37",
+          "order": 6,
+          "memo": "성산일출봉과 우도를 조망할 수 있는 오션뷰 카페",
+          "timeEstimate": "14:40",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place4",
+          "order": 7,
+          "memo": "렌터카 반납",
+          "timeEstimate": "17:15",
+          "transportation": "car"
+        }
+      ],
+      "memo": "중문 → 성산 → 공항"
+    }
+  ],
+  "places": [
+    {
+      "id": "place1",
+      "title": "성산일출봉",
+      "location": {
+        "lat": 33.458031,
+        "lng": 126.942520
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 일출로 284-12",
+      "description": "제주도의 대표적인 관광지로, 유네스코 세계자연유산으로 등재되었습니다. 일출 명소로 유명하며, 정상에 오르면 제주의 아름다운 해안선을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491961",
+        "kakao": "https://place.map.kakao.com/8413089"
+      },
+      "labels": ["관광지", "자연", "유네스코", "일출", "전망"]
+    },
+    {
+      "id": "place3",
+      "title": "협재해수욕장",
+      "location": {
+        "lat": 33.3941,
+        "lng": 126.2392
+      },
+      "address": "제주특별자치도 제주시 한림읍 협재리 2497-1",
+      "description": "제주 서쪽에 위치한 아름다운 해변으로, 에메랄드빛 바다와 백사장이 인상적입니다. 비양도를 바라볼 수 있어 경치가 좋으며, 수심이 얕아 가족 여행객에게 인기가 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491975",
+        "kakao": "https://place.map.kakao.com/8413343"
+      },
+      "labels": ["해변", "수영", "자연", "관광지", "가족"]
+    },
+    {
+      "id": "place4",
+      "title": "제주 국제공항",
+      "location": {
+        "lat": 33.5067,
+        "lng": 126.4930
+      },
+      "address": "제주특별자치도 제주시 공항로 2",
+      "description": "제주도의 관문인 국제공항으로, 국내에서 가장 붐비는 항공 노선인 서울-제주 노선이 운영되고 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11590565",
+        "kakao": "https://place.map.kakao.com/8504330"
+      },
+      "labels": ["교통", "공항", "렌터카"]
+    },
+    {
+      "id": "place11",
+      "title": "애월 해안도로 카페",
+      "location": {
+        "lat": 33.4617,
+        "lng": 126.3099
+      },
+      "address": "제주특별자치도 제주시 애월읍 애월해안로 516",
+      "description": "애월 해안도로에 위치한 카페로, 탁 트인 바다 전망이 일품입니다. 제주의 아름다운 해안선과 석양을 감상하기에 최적의 장소입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/애월%20해안도로%20카페",
+        "kakao": "https://place.map.kakao.com/search/애월%20해안도로%20카페"
+      },
+      "labels": ["카페", "해안도로", "전망", "일몰"]
+    },
+    {
+      "id": "place12",
+      "title": "애월 수제 도넛",
+      "location": {
+        "lat": 33.4635,
+        "lng": 126.3125
+      },
+      "address": "제주특별자치도 제주시 애월읍 애월리 2540",
+      "description": "애월읍에 위치한 인기 도넛 맛집으로, 다양한 종류의 수제 도넛을 제공합니다. 특히 제주 감귤을 활용한 시그니처 도넛이 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/애월%20도넛",
+        "kakao": "https://place.map.kakao.com/search/애월%20도넛"
+      },
+      "labels": ["카페", "도넛", "베이커리", "맛집"]
+    },
+    {
+      "id": "place13",
+      "title": "한림 해장국",
+      "location": {
+        "lat": 33.4126,
+        "lng": 126.2685
+      },
+      "address": "제주특별자치도 제주시 한림읍 한림로 123",
+      "description": "제주 현지인들이 자주 찾는 해장국 전문점으로, 담백하고 깊은 맛의 해장국을 맛볼 수 있습니다. 신선한 제주산 식재료로 만든 반찬도 일품입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/한림%20해장국",
+        "kakao": "https://place.map.kakao.com/search/한림%20해장국"
+      },
+      "labels": ["맛집", "음식", "해산물"]
+    },
+    {
+      "id": "place14",
+      "title": "금오름",
+      "location": {
+        "lat": 33.3516,
+        "lng": 126.3059
+      },
+      "address": "제주특별자치도 제주시 한경면 금등리 산1-1",
+      "description": "제주의 서부 지역에 위치한 오름으로, 완만한 경사로 쉽게 오를 수 있어 가족 여행객에게 인기가 있습니다. 정상에서 바라보는 서쪽 해안선의 전망이 아름답습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13148280",
+        "kakao": "https://place.map.kakao.com/8122075"
+      },
+      "labels": ["오름", "자연", "산책", "전망"]
+    },
+    {
+      "id": "place15",
+      "title": "모슬포 게스트하우스",
+      "location": {
+        "lat": 33.2184,
+        "lng": 126.2513
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 모슬포항3길 14",
+      "description": "모슬포 항구 근처에 위치한 아늑한 게스트하우스로, 산방산과 바다가 내려다보이는 전망이 좋습니다. 현지 관광 정보를 친절하게 안내해 주는 것으로 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/모슬포%20게스트하우스",
+        "kakao": "https://place.map.kakao.com/search/모슬포%20게스트하우스"
+      },
+      "labels": ["숙소", "바다", "산방산"]
+    },
+    {
+      "id": "place16",
+      "title": "모슬포 고등어회 맛집",
+      "location": {
+        "lat": 33.2171,
+        "lng": 126.2507
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 모슬포항로 121",
+      "description": "모슬포 항구 바로 앞에 위치한 고등어회 전문점으로, 매일 아침 들어오는 신선한 고등어로 회를 떠 제공합니다. 제철 해산물 요리도 함께 즐길 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/모슬포%20고등어회",
+        "kakao": "https://place.map.kakao.com/search/모슬포%20고등어회"
+      },
+      "labels": ["맛집", "해산물", "음식", "저녁"]
+    },
+    {
+      "id": "place17",
+      "title": "사계 베이커리 카페",
+      "location": {
+        "lat": 33.2293,
+        "lng": 126.2943
+      },
+      "address": "제주특별자치도 서귀포시 안덕면 사계리 2475",
+      "description": "산방산과 바다가 한눈에 보이는 전망 좋은 베이커리 카페입니다. 제주 특산물을 활용한 다양한 빵과 디저트를 맛볼 수 있으며, 석양이 아름다운 장소로 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/사계%20베이커리",
+        "kakao": "https://place.map.kakao.com/search/사계%20베이커리"
+      },
+      "labels": ["카페", "베이커리", "전망", "일몰", "산방산"]
+    },
+    {
+      "id": "place18",
+      "title": "송악산",
+      "location": {
+        "lat": 33.1999,
+        "lng": 126.2910
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 상모리 산1-1",
+      "description": "제주 서남부에 위치한 아름다운 오름으로, 99개의 작은 봉우리가 있다고 하여 송악산이라 불립니다. 정상에서 마라도와 가파도, 산방산을 한눈에 볼 수 있는 절경을 자랑합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13490781",
+        "kakao": "https://place.map.kakao.com/8088825"
+      },
+      "labels": ["오름", "자연", "전망", "산방산"]
+    },
+    {
+      "id": "place19",
+      "title": "마라도 선착장",
+      "location": {
+        "lat": 33.1927,
+        "lng": 126.2880
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 하모리 670-8",
+      "description": "대한민국 최남단 섬인 마라도로 가는 배가 출발하는 선착장입니다. 여객선은 날씨에 따라 운항 여부가 결정되며, 소요 시간은 약 30분입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/18615219",
+        "kakao": "https://place.map.kakao.com/26748493"
+      },
+      "labels": ["교통", "섬", "마라도"]
+    },
+    {
+      "id": "place20",
+      "title": "마라도",
+      "location": {
+        "lat": 33.1166,
+        "lng": 126.2666
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 마라리",
+      "description": "대한민국 최남단에 위치한 작은 섬으로, 한 바퀴 도는 데 약 1시간 정도 소요됩니다. 유명한 마라도 등대, 천연 기념물인 담팔수 군락지, 그리고 특산물인 톳 요리와 짜장면이 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13493309",
+        "kakao": "https://place.map.kakao.com/25344217"
+      },
+      "labels": ["섬", "자연", "마라도", "관광지"]
+    },
+    {
+      "id": "place21",
+      "title": "가파도",
+      "location": {
+        "lat": 33.1702,
+        "lng": 126.2695
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 가파리",
+      "description": "모슬포 근처에 위치한 작은 섬으로, 봄에는 청보리 군락지로 유명합니다. 섬 전체가 평평해 자전거로 한 바퀴 돌기 좋은 곳입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13493308",
+        "kakao": "https://place.map.kakao.com/25344212"
+      },
+      "labels": ["섬", "자연", "산책"]
+    },
+    {
+      "id": "place22",
+      "title": "사계해변",
+      "location": {
+        "lat": 33.2316,
+        "lng": 126.3034
+      },
+      "address": "제주특별자치도 서귀포시 안덕면 사계리 산 8-1",
+      "description": "산방산을 배경으로 한 아름다운 해변으로, 검은 모래사장과 현무암 지형이 특징입니다. 특히 일몰 시간에 방문하면 아름다운 석양과 함께 산방산의 실루엣을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/37858035",
+        "kakao": "https://place.map.kakao.com/25344098"
+      },
+      "labels": ["해변", "산방산", "일몰", "자연"]
+    },
+    {
+      "id": "place23",
+      "title": "중문 생선요리 맛집",
+      "location": {
+        "lat": 33.2450,
+        "lng": 126.3698
+      },
+      "address": "제주특별자치도 서귀포시 안덕면 중문관광로 333",
+      "description": "중문 해안가에 위치한 생선요리 전문점으로, 갈치조림과 우럭조림이 대표 메뉴입니다. 제주 현지인들도 즐겨 찾는 맛집으로 신선한 해산물로 요리한 음식을 맛볼 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/중문%20생선요리",
+        "kakao": "https://place.map.kakao.com/search/중문%20생선요리"
+      },
+      "labels": ["맛집", "해산물", "음식", "저녁"]
+    },
+    {
+      "id": "place24",
+      "title": "산방산",
+      "location": {
+        "lat": 33.2368,
+        "lng": 126.3131
+      },
+      "address": "제주특별자치도 서귀포시 안덕면 사계리 산 16",
+      "description": "서귀포시 안덕면에 위치한 종 모양의 거대한 화산암체로, 높이는 약 395m입니다. 산방굴사라는 유명한 사찰이 있으며, 주변 경관이 아름다워 많은 관광객이 찾는 명소입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491718",
+        "kakao": "https://place.map.kakao.com/8413732"
+      },
+      "labels": ["산", "자연", "산방산", "관광지"]
+    },
+    {
+      "id": "place25",
+      "title": "형제섬 해안도로",
+      "location": {
+        "lat": 33.2297,
+        "lng": 126.3428
+      },
+      "address": "제주특별자치도 서귀포시 안덕면 대평리",
+      "description": "산방산과 형제섬을 지나는 해안도로로, 바다와 주변 경관이 아름다워 드라이브 코스로 인기가 있습니다. 파도에 의해 침식된 독특한 지형의 해안가를 볼 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/형제섬%20해안도로",
+        "kakao": "https://place.map.kakao.com/search/형제섬%20해안도로"
+      },
+      "labels": ["해안도로", "자연", "전망"]
+    },
+    {
+      "id": "place26",
+      "title": "논오름",
+      "location": {
+        "lat": 33.2561,
+        "lng": 126.4122
+      },
+      "address": "제주특별자치도 서귀포시 대정읍 상모리 산 50",
+      "description": "중문 근처에 위치한 작은 오름으로, 비교적 쉽게 오를 수 있어 가족 산책 코스로 인기가 있습니다. 정상에서는 주변 해안과 마을 전경을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/논오름",
+        "kakao": "https://place.map.kakao.com/search/논오름"
+      },
+      "labels": ["오름", "자연", "산책", "전망"]
+    },
+    {
+      "id": "place27",
+      "title": "서귀포 바다뷰 레스토랑",
+      "location": {
+        "lat": 33.2438,
+        "lng": 126.4550
+      },
+      "address": "제주특별자치도 서귀포시 중문관광로 123",
+      "description": "서귀포 중문단지에 위치한 레스토랑으로, 제주 바다를 바라보며 식사를 즐길 수 있습니다. 제주산 식재료를 활용한 다양한 요리와 함께 아름다운 전망을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/서귀포%20바다뷰%20레스토랑",
+        "kakao": "https://place.map.kakao.com/search/서귀포%20바다뷰%20레스토랑"
+      },
+      "labels": ["맛집", "음식", "전망"]
+    },
+    {
+      "id": "place28",
+      "title": "약천사",
+      "location": {
+        "lat": 33.2816,
+        "lng": 126.5214
+      },
+      "address": "제주특별자치도 서귀포시 중산간동로 8500",
+      "description": "서귀포시 중산간에 위치한 아름다운 사찰로, 약천사 대웅보전은 제주도 유형문화재로 지정되어 있습니다. 울창한 숲속에 자리 잡고 있어 평화롭고 고즈넉한 분위기를 느낄 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11846444",
+        "kakao": "https://place.map.kakao.com/8099464"
+      },
+      "labels": ["사찰", "자연", "산책"]
+    },
+    {
+      "id": "place29",
+      "title": "서귀포 새연교",
+      "location": {
+        "lat": 33.2404,
+        "lng": 126.5642
+      },
+      "address": "제주특별자치도 서귀포시 서홍동 621-15",
+      "description": "서귀포 새섬으로 연결되는 아름다운 보행자 전용 다리로, 밤에는 다양한 색상의 조명으로 아름답게 빛납니다. 다리에서 바라보는 서귀포 바다와 도심 풍경이 인상적입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/1992621508",
+        "kakao": "https://place.map.kakao.com/25344071"
+      },
+      "labels": ["관광지", "전망", "산책"]
+    },
+    {
+      "id": "place30",
+      "title": "정방폭포",
+      "location": {
+        "lat": 33.2444,
+        "lng": 126.5717
+      },
+      "address": "제주특별자치도 서귀포시 동홍동 299-3",
+      "description": "바다로 직접 떨어지는 국내 유일의 해안 폭포로, 높이는 약 23m입니다. 폭포수가 바다와 만나는 장면이 장관이며, 주변 산책로에서 다양한 각도에서 폭포를 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491982",
+        "kakao": "https://place.map.kakao.com/8413091"
+      },
+      "labels": ["폭포", "자연", "관광지"]
+    },
+    {
+      "id": "place31",
+      "title": "서귀포 올레시장 카페",
+      "location": {
+        "lat": 33.2459,
+        "lng": 126.5667
+      },
+      "address": "제주특별자치도 서귀포시 중정로 76",
+      "description": "서귀포 올레시장 인근에 위치한 아기자기한 카페로, 제주 특산물을 활용한 다양한 음료와 디저트를 맛볼 수 있습니다. 현지인들에게도 인기있는 휴식 공간입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/서귀포%20올레시장%20카페",
+        "kakao": "https://place.map.kakao.com/search/서귀포%20올레시장%20카페"
+      },
+      "labels": ["카페", "시장", "맛집"]
+    },
+    {
+      "id": "place32",
+      "title": "중문 숙소",
+      "location": {
+        "lat": 33.2490,
+        "lng": 126.4109
+      },
+      "address": "제주특별자치도 서귀포시 중문관광로 332",
+      "description": "중문관광단지에 위치한 편안한 숙소로, 아름다운 중문해변과 가까워 접근성이 좋습니다. 다양한 부대시설과 깔끔한 객실을 제공합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/중문%20숙소",
+        "kakao": "https://place.map.kakao.com/search/중문%20숙소"
+      },
+      "labels": ["숙소", "중문관광단지"]
+    },
+    {
+      "id": "place33",
+      "title": "중문 전복요리 전문점",
+      "location": {
+        "lat": 33.2482,
+        "lng": 126.4120
+      },
+      "address": "제주특별자치도 서귀포시 중문관광로 310",
+      "description": "중문관광단지 내에 위치한 전복요리 전문점으로, 신선한 제주산 전복으로 만든 다양한 요리를 맛볼 수 있습니다. 전복죽, 전복구이, 전복회 등 다양한 전복 요리가 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/중문%20전복요리",
+        "kakao": "https://place.map.kakao.com/search/중문%20전복요리"
+      },
+      "labels": ["맛집", "해산물", "음식", "중문관광단지"]
+    },
+    {
+      "id": "place34",
+      "title": "성산 해안도로",
+      "location": {
+        "lat": 33.4598,
+        "lng": 126.9242
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 일출로",
+      "description": "성산일출봉 주변을 따라 이어지는 해안도로로, 아름다운 제주 동부 해안의 경관을 감상할 수 있습니다. 성산일출봉과 우도를 배경으로 드라이브하기 좋은 코스입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/성산%20해안도로",
+        "kakao": "https://place.map.kakao.com/search/성산%20해안도로"
+      },
+      "labels": ["해안도로", "전망", "일출"]
+    },
+    {
+      "id": "place35",
+      "title": "광치기 해변",
+      "location": {
+        "lat": 33.4501,
+        "lng": 126.9272
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 고성리 224-33",
+      "description": "성산일출봉 바로 아래에 위치한 아름다운 해변으로, 성산일출봉을 배경으로 한 풍경이 장관입니다. 특히 일출 시간에 방문하면 더욱 아름다운 경관을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/1035632413",
+        "kakao": "https://place.map.kakao.com/25902949"
+      },
+      "labels": ["해변", "자연", "일출", "전망"]
+    },
+    {
+      "id": "place36",
+      "title": "성산 고등어쌈밥 맛집",
+      "location": {
+        "lat": 33.4604,
+        "lng": 126.9319
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 성산중앙로 64",
+      "description": "성산일출봉 근처에 위치한 고등어쌈밥 전문점으로, 신선한 제주산 고등어를 쌈과 함께 즐길 수 있는 건강한 한 끼를 제공합니다. 제주도의 특색 있는 향토 음식을 맛볼 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/성산%20고등어쌈밥",
+        "kakao": "https://place.map.kakao.com/search/성산%20고등어쌈밥"
+      },
+      "labels": ["맛집", "해산물", "음식"]
+    },
+    {
+      "id": "place37",
+      "title": "성산 카페",
+      "location": {
+        "lat": 33.4589,
+        "lng": 126.9349
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 일출로 284-20",
+      "description": "성산일출봉과 우도를 한눈에 조망할 수 있는 오션뷰 카페로, 통유리창을 통해 제주의 아름다운 바다를 감상하며 커피와 디저트를 즐길 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/search/성산%20카페",
+        "kakao": "https://place.map.kakao.com/search/성산%20카페"
+      },
+      "labels": ["카페", "전망", "일출"]
+    }
+  ]
+} 

@@ -1,0 +1,184 @@
+{
+  "labels": [
+    {
+      "name": "관광지",
+      "description": "일반적인 관광 명소",
+      "icon": "mdi:palm-tree",
+      "color": "#4285F4"
+    },
+    {
+      "name": "유네스코",
+      "description": "유네스코 세계유산으로 등재된 장소",
+      "icon": "mdi:shield-star",
+      "color": "#673AB7"
+    },
+    {
+      "name": "자연",
+      "description": "자연 경관 및 자연 환경과 관련된 장소",
+      "icon": "mdi:nature",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "산",
+      "description": "산과 관련된 장소",
+      "icon": "mdi:terrain",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "오름",
+      "description": "제주도의 작은 화산체인 오름",
+      "icon": "mdi:terrain",
+      "color": "#5B7065"
+    },
+    {
+      "name": "동굴",
+      "description": "동굴이나 용암 동굴",
+      "icon": "mdi:tunnel-outline",
+      "color": "#607D8B"
+    },
+    {
+      "name": "해변",
+      "description": "해변 및 바다와 관련된 장소",
+      "icon": "mdi:beach",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "섬",
+      "description": "제주도 주변의 작은 섬",
+      "icon": "mdi:island",
+      "color": "#89ABE3"
+    },
+    {
+      "name": "전망",
+      "description": "경치를 감상할 수 있는 전망 포인트",
+      "icon": "mdi:panorama",
+      "color": "#3F51B5"
+    },
+    {
+      "name": "오션뷰",
+      "description": "바다가 보이는 전망을 가진 장소",
+      "icon": "mdi:beach",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "일출",
+      "description": "일출 감상 명소",
+      "icon": "mdi:weather-sunset-up",
+      "color": "#FBBC05"
+    },
+    {
+      "name": "일몰",
+      "description": "일몰 감상 명소",
+      "icon": "mdi:weather-sunset",
+      "color": "#FF9800"
+    },
+    {
+      "name": "등산",
+      "description": "등산 활동이 가능한 장소",
+      "icon": "mdi:hiking",
+      "color": "#5B7065"
+    },
+    {
+      "name": "산책",
+      "description": "산책하기 좋은 장소",
+      "icon": "mdi:walk",
+      "color": "#A7BEAE"
+    },
+    {
+      "name": "수영",
+      "description": "수영이 가능한 장소",
+      "icon": "mdi:swim",
+      "color": "#89ABE3"
+    },
+    {
+      "name": "휴식",
+      "description": "휴식을 취하기 좋은 장소",
+      "icon": "mdi:sofa",
+      "color": "#B8D8D8"
+    },
+    {
+      "name": "식당",
+      "description": "음식점 및 레스토랑",
+      "icon": "mdi:silverware-fork-knife",
+      "color": "#FF5722"
+    },
+    {
+      "name": "맛집",
+      "description": "맛있는 음식을 제공하는 음식점",
+      "icon": "mdi:food",
+      "color": "#FF5722"
+    },
+    {
+      "name": "해산물",
+      "description": "해산물 요리를 제공하는 음식점",
+      "icon": "mdi:fish",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "고기",
+      "description": "고기 요리를 제공하는 음식점",
+      "icon": "mdi:food-steak",
+      "color": "#EA4335"
+    },
+    {
+      "name": "카페",
+      "description": "카페 및 음료점",
+      "icon": "mdi:coffee",
+      "color": "#795548"
+    },
+    {
+      "name": "숙소",
+      "description": "숙박시설",
+      "icon": "mdi:bed",
+      "color": "#C4DFDF"
+    },
+    {
+      "name": "교통",
+      "description": "교통 관련 시설",
+      "icon": "mdi:bus",
+      "color": "#607D8B"
+    },
+    {
+      "name": "택시",
+      "description": "택시 탑승 가능한 장소",
+      "icon": "mdi:taxi",
+      "color": "#FFEB3B"
+    },
+    {
+      "name": "버스",
+      "description": "버스 탑승 가능한 장소",
+      "icon": "mdi:bus",
+      "color": "#607D8B"
+    },
+    {
+      "name": "지하철",
+      "description": "지하철 탑승 가능한 장소",
+      "icon": "mdi:subway",
+      "color": "#9E9E9E"
+    },
+    {
+      "name": "렌트카",
+      "description": "렌트카 대여 가능한 장소",
+      "icon": "mdi:car",
+      "color": "#9E9E9E"
+    },
+    {
+      "name": "공항",
+      "description": "공항",
+      "icon": "mdi:airport",
+      "color": "#2196F3"
+    },
+    {
+      "name": "쇼핑",
+      "description": "쇼핑이 가능한 장소",
+      "icon": "mdi:shopping",
+      "color": "#E5D1FA"
+    },
+    {
+      "name": "시장",
+      "description": "전통 시장 및 시장 형태의 상권",
+      "icon": "mdi:store",
+      "color": "#D09683"
+    }
+  ]
+} 

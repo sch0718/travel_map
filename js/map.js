@@ -135,14 +135,48 @@ function setMapEventListeners() {
     // 지도 드래그 종료 이벤트
     kakao.maps.event.addListener(map, 'dragend', function() {
         console.log('지도 이동 완료');
-        // 필요한 경우 추가 동작 구현
+        // 선택된 마커가 있고 정보 패널이 표시 중이면 위치 업데이트
+        updateInfoPanelPosition();
     });
     
     // 지도 줌 변경 이벤트
     kakao.maps.event.addListener(map, 'zoom_changed', function() {
         console.log('지도 줌 레벨 변경:', map.getLevel());
-        // 필요한 경우 추가 동작 구현
+        // 선택된 마커가 있고 정보 패널이 표시 중이면 위치 업데이트
+        updateInfoPanelPosition();
     });
+}
+
+/**
+ * 정보 패널 위치 업데이트 함수
+ * 지도 이동이나 줌 레벨 변경 시 선택된 마커의 정보 패널 위치를 업데이트
+ */
+function updateInfoPanelPosition() {
+    // 선택된 마커가 있고 해당 장소 정보 패널이 표시 중인지 확인
+    if (selectedMarker && document.getElementById('place-info-panel').style.display === 'block') {
+        // 선택된 마커의 장소 정보 가져오기
+        const place = selectedMarker.place;
+        if (!place) return;
+        
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        let markerPosition;
+        
+        // 마커 타입에 따라 위치 계산 방법 다르게 적용
+        if (selectedMarker instanceof kakao.maps.Marker) {
+            // 일반 마커인 경우
+            markerPosition = projection.containerPointFromCoords(selectedMarker.getPosition());
+        } else if (selectedMarker instanceof kakao.maps.CustomOverlay) {
+            // 커스텀 오버레이인 경우
+            const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+            markerPosition = projection.containerPointFromCoords(position);
+        } else {
+            return; // 알 수 없는 마커 타입
+        }
+        
+        // 마커 위치에 맞게 패널 위치 업데이트
+        showPlaceInfoPanel(place, markerPosition);
+    }
 }
 
 /**
@@ -218,6 +252,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    
+    // 지도 이동 및 줌 변경 이벤트에 대한 팝업 위치 업데이트 리스너 추가
+    if (map) {
+        kakao.maps.event.addListener(map, 'idle', function() {
+            // 지도 이동이나 줌 변경 후 유휴 상태가 되면 위치 업데이트
+            updateInfoPanelPosition();
+        });
+    }
 });
 
 /**
@@ -337,24 +379,8 @@ function createMarkerImage(place, trip = null, order = null) {
     }
     
     // 테마 기반 마커 생성 (커스텀 오버레이로 구현)
-    // 장소 유형에 따라 아이콘 결정
-    let icon = '📍'; // 기본 아이콘
-    
-    if (place.labels.includes('숙소')) {
-        icon = '🏨';
-    } else if (place.labels.includes('맛집') || place.labels.includes('음식')) {
-        icon = '🍽️';
-    } else if (place.labels.includes('관광지')) {
-        icon = '🏞️';
-    } else if (place.labels.includes('카페')) {
-        icon = '☕';
-    } else if (place.labels.includes('해변') || place.labels.includes('바다')) {
-        icon = '🏖️';
-    } else if (place.labels.includes('산')) {
-        icon = '⛰️';
-    } else if (place.labels.includes('공항') || place.labels.includes('교통')) {
-        icon = '🚗';
-    }
+    // 장소 유형에 따라 아이콘 결정 - getPlaceIcon 함수 사용
+    let icon = window.getPlaceIcon ? getPlaceIcon(place) : '📍';
     
     // 마커를 HTML로 생성 - 버튼 요소로 만들어 클릭 이벤트 처리 쉽게
     const content = `<button class="custom-marker" data-place-id="${place.id}" style="
@@ -511,9 +537,13 @@ function showTripPath(trip, dayIndex) {
         return;
     }
     
+    // 방문 순서대로 정렬
+    const sortedPlaces = [...dayPlaces].sort((a, b) => a.order - b.order);
+    
     // 장소 순서대로 좌표 추가 및 마커 생성
-    dayPlaces.forEach(dayPlace => {
-        const place = getPlaceById(dayPlace.placeId);
+    sortedPlaces.forEach(dayPlace => {
+        // trip.places 배열에서 직접 장소 정보 가져오기
+        const place = trip.places.find(p => p.id === dayPlace.placeId);
         if (place) {
             // 경로에 좌표 추가
             linePath.push(new kakao.maps.LatLng(place.location.lat, place.location.lng));
@@ -546,7 +576,9 @@ function showTripPath(trip, dayIndex) {
     window.currentPolyline = polyline;
     
     // 모든 장소가 보이도록 지도 범위 조정
-    const places = dayPlaces.map(dayPlace => getPlaceById(dayPlace.placeId)).filter(Boolean);
+    const places = sortedPlaces
+        .map(dayPlace => trip.places.find(p => p.id === dayPlace.placeId))
+        .filter(Boolean);
     setMapBounds(places);
 }
 

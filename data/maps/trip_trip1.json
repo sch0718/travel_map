@@ -1,0 +1,470 @@
+{
+  "id": "trip1",
+  "title": "2023년 제주도 여행",
+  "description": "가족과 함께하는 4박 5일 제주도 여행 일정입니다.",
+  "created": "2023-11-15",
+  "modified": "2023-12-05",
+  "color": "#2196F3",
+  "startDate": "2023-12-20",
+  "endDate": "2023-12-24",
+  "transportation": "렌터카",
+  "totalBudget": 1500000,
+  "labels": [
+    {
+      "name": "가족",
+      "description": "가족 여행객에게 적합한 장소",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "공항",
+      "description": "공항 시설",
+      "color": "#2196F3"
+    },
+    {
+      "name": "렌터카",
+      "description": "렌터카 관련 시설",
+      "color": "#607D8B"
+    },
+    {
+      "name": "특산품",
+      "description": "제주도의 특산품을 구매할 수 있는 장소",
+      "color": "#FF9800"
+    },
+    {
+      "name": "국립공원",
+      "description": "국립공원으로 지정된 장소",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "백록담",
+      "description": "한라산 정상에 위치한 화산 분화구",
+      "color": "#9C27B0"
+    },
+    {
+      "name": "계곡",
+      "description": "계곡이 있는 장소",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "카약",
+      "description": "카약 체험이 가능한 장소",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "호텔",
+      "description": "호텔 숙박 시설",
+      "color": "#3F51B5"
+    },
+    {
+      "name": "리조트",
+      "description": "리조트 시설",
+      "color": "#673AB7"
+    },
+    {
+      "name": "고급",
+      "description": "고급 시설 및 서비스",
+      "color": "#E91E63"
+    },
+    {
+      "name": "중문관광단지",
+      "description": "중문관광단지 내 위치한 장소",
+      "color": "#795548"
+    },
+    {
+      "name": "흑돼지",
+      "description": "제주도 특산품인 흑돼지 요리를 제공하는 장소",
+      "color": "#795548"
+    },
+    {
+      "name": "음식",
+      "description": "다양한 음식을 제공하는 장소",
+      "color": "#F44336"
+    },
+    {
+      "name": "저녁",
+      "description": "저녁 식사로 적합한 장소",
+      "color": "#673AB7"
+    },
+    {
+      "name": "관광지",
+      "description": "일반적인 관광 명소",
+      "icon": "mdi:map-marker",
+      "color": "#FF5722"
+    },
+    {
+      "name": "자연",
+      "description": "자연 경관 및 자연 환경과 관련된 장소",
+      "icon": "mdi:nature",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "유네스코",
+      "description": "유네스코 세계유산으로 등재된 장소",
+      "icon": "mdi:earth",
+      "color": "#2196F3"
+    },
+    {
+      "name": "일출",
+      "description": "일출 감상 명소",
+      "icon": "mdi:weather-sunset-up",
+      "color": "#FF9800"
+    },
+    {
+      "name": "전망",
+      "description": "경치를 감상할 수 있는 전망 포인트",
+      "icon": "mdi:eye",
+      "color": "#9C27B0"
+    },
+    {
+      "name": "섬",
+      "description": "제주도 주변의 작은 섬",
+      "icon": "mdi:island",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "해변",
+      "description": "해변 및 바다와 관련된 장소",
+      "icon": "mdi:beach",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "산책",
+      "description": "산책하기 좋은 장소",
+      "icon": "mdi:walk",
+      "color": "#4CAF50"
+    },
+    {
+      "name": "수영",
+      "description": "수영이 가능한 장소",
+      "icon": "mdi:swim",
+      "color": "#00BCD4"
+    },
+    {
+      "name": "산",
+      "description": "산과 관련된 장소",
+      "icon": "mdi:mountain",
+      "color": "#8BC34A"
+    },
+    {
+      "name": "등산",
+      "description": "등산 활동이 가능한 장소",
+      "icon": "mdi:hiking",
+      "color": "#795548"
+    },
+    {
+      "name": "동굴",
+      "description": "동굴이나 용암 동굴",
+      "icon": "mdi:tunnel",
+      "color": "#607D8B"
+    },
+    {
+      "name": "시장",
+      "description": "전통 시장 및 시장 형태의 상권",
+      "icon": "mdi:store",
+      "color": "#FF9800"
+    },
+    {
+      "name": "맛집",
+      "description": "맛있는 음식을 제공하는 음식점",
+      "icon": "mdi:food",
+      "color": "#F44336"
+    },
+    {
+      "name": "쇼핑",
+      "description": "쇼핑이 가능한 장소",
+      "icon": "mdi:shopping",
+      "color": "#9E9E9E"
+    },
+    {
+      "name": "해산물",
+      "description": "해산물 요리를 제공하는 음식점",
+      "icon": "mdi:fish",
+      "color": "#03A9F4"
+    },
+    {
+      "name": "고기",
+      "description": "고기 요리를 제공하는 음식점",
+      "icon": "mdi:food-steak",
+      "color": "#795548"
+    },
+    {
+      "name": "숙소",
+      "description": "숙박시설",
+      "icon": "mdi:bed",
+      "color": "#3F51B5"
+    }
+  ],
+  "days": [
+    {
+      "day": 1,
+      "date": "2023-12-20",
+      "places": [
+        {
+          "placeId": "place4",
+          "order": 1,
+          "memo": "제주공항 도착, 렌터카 수령",
+          "timeEstimate": "12:00",
+          "transportation": "airplane"
+        },
+        {
+          "placeId": "place5",
+          "order": 2,
+          "memo": "올레시장에서 점심식사 및 특산품 구경",
+          "timeEstimate": "13:30",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place9",
+          "order": 3,
+          "memo": "호텔 체크인 및 휴식",
+          "timeEstimate": "16:00",
+          "transportation": "car"
+        }
+      ],
+      "memo": "첫날은 이동 및 휴식 위주로 일정을 가볍게 구성"
+    },
+    {
+      "day": 2,
+      "date": "2023-12-21",
+      "places": [
+        {
+          "placeId": "place1",
+          "order": 1,
+          "memo": "일출봉 등반",
+          "timeEstimate": "08:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place2",
+          "order": 2,
+          "memo": "우도 관광 (배타고 이동)",
+          "timeEstimate": "11:00",
+          "transportation": "ship"
+        },
+        {
+          "placeId": "place7",
+          "order": 3,
+          "memo": "만장굴 탐험",
+          "timeEstimate": "16:00",
+          "transportation": "car"
+        }
+      ],
+      "memo": "제주도 동부 지역 관광"
+    },
+    {
+      "day": 3,
+      "date": "2023-12-22",
+      "places": [
+        {
+          "placeId": "place6",
+          "order": 1,
+          "memo": "한라산 등반 (어리목 코스)",
+          "timeEstimate": "07:00",
+          "transportation": "car"
+        }
+      ],
+      "memo": "한라산 등반에 하루 전체를 할애"
+    },
+    {
+      "day": 4,
+      "date": "2023-12-23",
+      "places": [
+        {
+          "placeId": "place3",
+          "order": 1,
+          "memo": "협재해수욕장 산책",
+          "timeEstimate": "10:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place8",
+          "order": 2,
+          "memo": "쇠소깍에서 카약 체험",
+          "timeEstimate": "14:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place10",
+          "order": 3,
+          "memo": "흑돼지 거리에서 저녁 식사",
+          "timeEstimate": "18:00",
+          "transportation": "car"
+        }
+      ],
+      "memo": "제주도 서부 및 남부 지역 관광"
+    },
+    {
+      "day": 5,
+      "date": "2023-12-24",
+      "places": [
+        {
+          "placeId": "place5",
+          "order": 1,
+          "memo": "올레시장에서 기념품 쇼핑",
+          "timeEstimate": "10:00",
+          "transportation": "car"
+        },
+        {
+          "placeId": "place4",
+          "order": 2,
+          "memo": "공항 도착 및 렌터카 반납",
+          "timeEstimate": "14:00",
+          "transportation": "car"
+        }
+      ],
+      "memo": "마지막 날은 여유롭게 쇼핑 후 귀가 준비"
+    }
+  ],
+  "places": [
+    {
+      "id": "place1",
+      "title": "성산일출봉",
+      "location": {
+        "lat": 33.458031,
+        "lng": 126.942520
+      },
+      "address": "제주특별자치도 서귀포시 성산읍 일출로 284-12",
+      "description": "제주도의 대표적인 관광지로, 유네스코 세계자연유산으로 등재되었습니다. 일출 명소로 유명하며, 정상에 오르면 제주의 아름다운 해안선을 감상할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491961",
+        "kakao": "https://place.map.kakao.com/8413089"
+      },
+      "labels": ["관광지", "자연", "유네스코", "일출", "전망"]
+    },
+    {
+      "id": "place2",
+      "title": "우도",
+      "location": {
+        "lat": 33.5031,
+        "lng": 126.9511
+      },
+      "address": "제주특별자치도 제주시 우도면",
+      "description": "제주도 동쪽에 위치한 작은 섬으로, 성산일출봉에서 배를 타고 약 15분 거리에 있습니다. 아름다운 해변과 소가 누워있는 형상을 닮았다고 하여 우도(牛島)라 불립니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13491613",
+        "kakao": "https://place.map.kakao.com/8413461"
+      },
+      "labels": ["관광지", "자연", "섬", "해변", "산책"]
+    },
+    {
+      "id": "place3",
+      "title": "협재해수욕장",
+      "location": {
+        "lat": 33.3941,
+        "lng": 126.2392
+      },
+      "address": "제주특별자치도 제주시 한림읍 협재리 2497-1",
+      "description": "제주 서쪽에 위치한 아름다운 해변으로, 에메랄드빛 바다와 백사장이 인상적입니다. 비양도를 바라볼 수 있어 경치가 좋으며, 수심이 얕아 가족 여행객에게 인기가 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491975",
+        "kakao": "https://place.map.kakao.com/8413343"
+      },
+      "labels": ["해변", "수영", "자연", "관광지", "가족"]
+    },
+    {
+      "id": "place4",
+      "title": "제주 국제공항",
+      "location": {
+        "lat": 33.5067,
+        "lng": 126.4930
+      },
+      "address": "제주특별자치도 제주시 공항로 2",
+      "description": "제주도의 관문인 국제공항으로, 국내에서 가장 붐비는 항공 노선인 서울-제주 노선이 운영되고 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11590565",
+        "kakao": "https://place.map.kakao.com/8504330"
+      },
+      "labels": ["교통", "공항", "렌터카"]
+    },
+    {
+      "id": "place5",
+      "title": "제주 올레시장",
+      "location": {
+        "lat": 33.4996,
+        "lng": 126.5312
+      },
+      "address": "제주특별자치도 제주시 노형동 920-12",
+      "description": "제주 시내에 위치한 전통시장으로, 제주도의 신선한 해산물과 특산품을 구매할 수 있습니다. 다양한 먹거리와 볼거리가 있어 관광객들에게 인기가 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/18042948",
+        "kakao": "https://place.map.kakao.com/8042123"
+      },
+      "labels": ["시장", "맛집", "쇼핑", "해산물", "특산품"]
+    },
+    {
+      "id": "place6",
+      "title": "한라산",
+      "location": {
+        "lat": 33.3617,
+        "lng": 126.5292
+      },
+      "address": "제주특별자치도 제주시 오등동 산 182-1",
+      "description": "제주도의 중앙에 위치한 대한민국에서 가장 높은 산(1,947m)으로, 다양한 등산로가 있어 많은 등산객이 찾습니다. 정상에는 백록담이라는 화산 분화구가 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491637",
+        "kakao": "https://place.map.kakao.com/8413721"
+      },
+      "labels": ["산", "등산", "자연", "국립공원", "백록담"]
+    },
+    {
+      "id": "place7",
+      "title": "만장굴",
+      "location": {
+        "lat": 33.5287,
+        "lng": 126.7708
+      },
+      "address": "제주특별자치도 제주시 구좌읍 만장굴길 182",
+      "description": "세계에서 가장 긴 용암동굴 중 하나로, 총 길이가 약 13.4km입니다. 유네스코 세계자연유산으로 등재되었으며, 동굴 내부의 다양한 용암 구조물을 관찰할 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11491952",
+        "kakao": "https://place.map.kakao.com/8413090"
+      },
+      "labels": ["동굴", "유네스코", "자연", "관광지"]
+    },
+    {
+      "id": "place8",
+      "title": "쇠소깍",
+      "location": {
+        "lat": 33.2539,
+        "lng": 126.6222
+      },
+      "address": "제주특별자치도 서귀포시 하효동 1565",
+      "description": "서귀포시에 위치한 아름다운 계곡으로, 담수와 해수가 만나는 독특한 지형을 갖고 있습니다. 투명 카약을 타고 주변 경관을 즐길 수 있어 인기 있는 관광지입니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/13493225",
+        "kakao": "https://place.map.kakao.com/11074562"
+      },
+      "labels": ["계곡", "카약", "자연", "관광지"]
+    },
+    {
+      "id": "place9",
+      "title": "제주신라호텔",
+      "location": {
+        "lat": 33.2478,
+        "lng": 126.4096
+      },
+      "address": "제주특별자치도 서귀포시 색달동 3039-3",
+      "description": "서귀포시 중문관광단지에 위치한 5성급 리조트 호텔로, 아름다운 해변과 정원을 갖추고 있습니다. 다양한 부대시설과 고급스러운 서비스로 유명합니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/11871233",
+        "kakao": "https://place.map.kakao.com/8095225"
+      },
+      "labels": ["숙소", "호텔", "리조트", "고급", "중문관광단지"]
+    },
+    {
+      "id": "place10",
+      "title": "제주도 흑돼지 거리",
+      "location": {
+        "lat": 33.4992,
+        "lng": 126.5291
+      },
+      "address": "제주특별자치도 제주시 일도1동 1100",
+      "description": "제주시 중심가에 위치한 흑돼지 전문점들이 모여있는 거리로, 제주도의 대표적인 먹거리인 흑돼지 고기를 맛볼 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/18596886",
+        "kakao": "https://place.map.kakao.com/26785963"
+      },
+      "labels": ["맛집", "흑돼지", "고기", "음식", "저녁"]
+    }
+  ]
+} 

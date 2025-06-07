@@ -1,0 +1,62 @@
+{
+  "id": "theme2",
+  "title": "제주도 맛집 탐방",
+  "description": "제주도의 맛있는 음식을 즐길 수 있는 맛집들을 소개합니다.",
+  "created": "2023-06-10",
+  "modified": "2023-09-05",
+  "color": "#EA4335",
+  "labels": [
+    {
+      "name": "특산품",
+      "description": "제주도의 특산품을 구매할 수 있는 장소",
+      "color": "#FF9800"
+    },
+    {
+      "name": "흑돼지",
+      "description": "제주도 특산품인 흑돼지 요리를 제공하는 장소",
+      "color": "#795548"
+    },
+    {
+      "name": "음식",
+      "description": "다양한 음식을 제공하는 장소",
+      "color": "#F44336"
+    },
+    {
+      "name": "저녁",
+      "description": "저녁 식사로 적합한 장소",
+      "color": "#673AB7"
+    }
+  ],
+  "places": [
+    {
+      "id": "place5",
+      "title": "제주 올레시장",
+      "location": {
+        "lat": 33.4996,
+        "lng": 126.5312
+      },
+      "address": "제주특별자치도 제주시 노형동 920-12",
+      "description": "제주 시내에 위치한 전통시장으로, 제주도의 신선한 해산물과 특산품을 구매할 수 있습니다. 다양한 먹거리와 볼거리가 있어 관광객들에게 인기가 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/18042948",
+        "kakao": "https://place.map.kakao.com/8042123"
+      },
+      "labels": ["시장", "음식", "쇼핑", "해산물", "특산품"]
+    },
+    {
+      "id": "place10",
+      "title": "제주도 흑돼지 거리",
+      "location": {
+        "lat": 33.4992,
+        "lng": 126.5291
+      },
+      "address": "제주특별자치도 제주시 일도1동 1100",
+      "description": "제주시 중심가에 위치한 흑돼지 전문점들이 모여있는 거리로, 제주도의 대표적인 먹거리인 흑돼지 고기를 맛볼 수 있습니다.",
+      "urls": {
+        "naver": "https://map.naver.com/p/entry/place/18596886",
+        "kakao": "https://place.map.kakao.com/26785963"
+      },
+      "labels": ["음식", "흑돼지", "고기", "요리", "저녁"]
+    }
+  ]
+} 

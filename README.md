@@ -27,10 +27,14 @@
      ```
 
 3. **웹 서버 실행**
-   - 간단한 로컬 HTTP 서버를 사용하여 앱을 실행할 수 있습니다:
+   - 제공된 스크립트를 사용하여 간단히 로컬 서버를 실행할 수 있습니다:
+     ```
+     sh start_server.sh
+     ```
+   - 또는 다음 방법 중 하나를 선택할 수 있습니다:
      ```
      # Python 3를 사용하는 경우
-     python -m http.server 3000
+     python3 -m http.server 3000
      
      # Node.js를 사용하는 경우
      npx http-server -p 3000
@@ -41,18 +45,48 @@
 
 ```
 travel_map/
-├── index.html           # 메인 HTML 파일
-├── css/                 # CSS 스타일시트
-│   ├── style.css        # 기본 스타일
-│   └── responsive.css   # 반응형 스타일
-├── js/                  # JavaScript 파일
-│   ├── data.js          # 데이터 관리 모듈
-│   ├── map.js           # 지도 관리 모듈
-│   └── ui.js            # UI 관리 모듈
-└── data/                # 데이터 파일
-    ├── places.json      # 장소 데이터
-    ├── themes.json      # 테마 데이터
-    └── trips.json       # 여행 일정 데이터
+├── index.html            # 메인 HTML 파일
+├── css/                  # CSS 스타일시트
+│   ├── style.css         # 기본 스타일
+│   └── responsive.css    # 반응형 스타일
+├── js/                   # JavaScript 파일
+│   ├── data.js           # 데이터 관리 모듈
+│   ├── map.js            # 지도 관리 모듈
+│   └── ui.js             # UI 관리 모듈
+├── data/                 # 데이터 파일
+│   ├── maps/             # 지도 데이터 파일
+│   │   ├── theme_*.json  # 테마 지도 데이터
+│   │   └── trip_*.json   # 여행 일정 데이터
+│   ├── schemas/          # JSON 스키마 정의
+│   │   ├── labels.schema.json       # 라벨 데이터 스키마
+│   │   ├── map-common.schema.json   # 공통 지도 스키마
+│   │   ├── theme-map.schema.json    # 테마 지도 스키마
+│   │   └── trip-map.schema.json     # 여행 일정 스키마
+│   └── system/           # 시스템 데이터
+│       ├── labels.json             # 라벨 정의
+│       └── transportations.json    # 이동 수단 정의
+└── docs/                 # 문서 파일
+    ├── 작업_계획서.md     # 작업 계획 문서
+    ├── 화면설계서.md      # UI/UX 화면 설계 문서
+    └── 요구사항 정의서.md  # 요구사항 정의 문서
+```
+
+## 데이터 구조 및 유효성 검사
+
+이 프로젝트는 JSON Schema를 사용하여 데이터 구조의 유효성을 검사합니다. 다음 명령으로 데이터 파일의 유효성을 검사할 수 있습니다:
+
+```
+# 테마 지도 데이터 검증
+npm run validate:theme
+
+# 여행 지도 데이터 검증
+npm run validate:trip
+
+# 라벨 데이터 검증
+npm run validate:labels
+
+# 모든 데이터 검증
+npm run validate:all
 ```
 
 ## 기술 스택
@@ -61,6 +95,8 @@ travel_map/
 - CSS3 (반응형 디자인)
 - JavaScript (ES6+)
 - 카카오맵 API
+- AJV (JSON Schema 검증)
+- Iconify (아이콘 라이브러리)
 
 ## 향후 개발 계획
 

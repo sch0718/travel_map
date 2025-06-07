@@ -16,7 +16,8 @@
     
     /* 태블릿에서 라벨 스타일 조정 */
     .place-labels {
-        max-height: 2.8rem;
+        max-width: 100%;
+        padding-right: 5px;
     }
 }
 
@@ -79,10 +80,16 @@
     
     /* 모바일에서 라벨 스타일 조정 */
     .place-labels {
-        max-height: 2.3rem;
+        max-width: 100%;
+        padding-right: 5px;
     }
     
-    .place-label-small {
+    .place-label {
+        font-size: 0.75rem;
+        padding: 2px 6px;
+    }
+    
+    .place-label.small {
         font-size: 0.7rem;
         padding: 1px 4px;
     }

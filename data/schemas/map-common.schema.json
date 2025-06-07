@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "지도 데이터 공통 정의",
+  "description": "테마 지도와 여행 지도에서 공통으로 사용하는 데이터 정의",
+  "definitions": {
+    "label": {
+      "type": "object",
+      "required": ["name", "description", "color"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "라벨의 표시 이름"
+        },
+        "description": {
+          "type": "string",
+          "description": "라벨에 대한 설명"
+        },
+        "color": {
+          "type": "string",
+          "description": "라벨의 색상 (HEX 코드)",
+          "pattern": "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$"
+        },
+        "icon": {
+          "type": "string",
+          "description": "라벨에 사용될 아이콘 식별자 (선택적)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "category": {
+      "type": "object",
+      "required": ["name", "values"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "카테고리의 이름"
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "카테고리에 속한 값들의 목록"
+        }
+      },
+      "additionalProperties": false
+    },
+    "location": {
+      "type": "object",
+      "required": ["lat", "lng"],
+      "properties": {
+        "lat": {
+          "type": "number",
+          "description": "위도"
+        },
+        "lng": {
+          "type": "number",
+          "description": "경도"
+        }
+      },
+      "additionalProperties": false
+    },
+    "urls": {
+      "type": "object",
+      "properties": {
+        "naver": {
+          "type": "string",
+          "format": "uri",
+          "description": "네이버 지도 URL"
+        },
+        "kakao": {
+          "type": "string",
+          "format": "uri",
+          "description": "카카오 지도 URL"
+        }
+      },
+      "additionalProperties": false
+    },
+    "place": {
+      "type": "object",
+      "required": ["id", "title", "location", "address", "description", "labels"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "장소의 고유 식별자"
+        },
+        "title": {
+          "type": "string",
+          "description": "장소 이름"
+        },
+        "location": {
+          "$ref": "#/definitions/location"
+        },
+        "address": {
+          "type": "string",
+          "description": "장소의 주소"
+        },
+        "description": {
+          "type": "string",
+          "description": "장소에 대한 설명"
+        },
+        "urls": {
+          "$ref": "#/definitions/urls"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "장소에 적용된 라벨 이름 목록"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+} 
