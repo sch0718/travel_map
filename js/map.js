@@ -13,40 +13,44 @@ var selectedMarker = null; // 현재 선택된 마커
  * 카카오 맵을 생성하고 기본 설정을 적용합니다.
  */
 function initMap() {
-    // 지도를 표시할 div 요소 가져오기
-    const container = document.getElementById('map');
-    
-    // 지도 컨테이너가 보이는 상태인지 확인
-    if (container) {
-        // 지도 생성 전 컨테이너 크기 확인 및 처리
-        ensureContainerSize(container);
+    try {
+        // 지도를 표시할 div 요소 가져오기
+        const container = document.getElementById('map');
         
-        // 지도의 초기 옵션 설정
-        const options = {
-            center: new kakao.maps.LatLng(33.3617, 126.5292), // 한라산 중심
-            level: 9 // 확대 레벨 (1~14, 숫자가 클수록 축소)
-        };
-        
-        // 지도 생성
-        map = new kakao.maps.Map(container, options);
-        
-        // 지도 컨트롤 추가
-        addMapControls();
-        
-        // 지도 이벤트 리스너 설정
-        setMapEventListeners();
-        
-        // 지도 생성 후 약간의 지연을 두고 relayout 호출하여 초기 렌더링 보장
-        setTimeout(() => {
-            if (map) {
-                console.log('초기 지도 리레이아웃 실행');
-                forceMapRelayout();
-            }
-        }, 100);
-        
-        console.log('지도 초기화 완료');
-    } else {
-        console.error('지도 컨테이너 요소를 찾을 수 없습니다.');
+        // 지도 컨테이너가 보이는 상태인지 확인
+        if (container) {
+            // 지도 생성 전 컨테이너 크기 확인 및 처리
+            ensureContainerSize(container);
+            
+            // 지도의 초기 옵션 설정
+            const options = {
+                center: new kakao.maps.LatLng(33.3617, 126.5292), // 한라산 중심
+                level: 9 // 확대 레벨 (1~14, 숫자가 클수록 축소)
+            };
+            
+            // 지도 생성
+            map = new kakao.maps.Map(container, options);
+            
+            // 지도 컨트롤 추가
+            addMapControls();
+            
+            // 지도 이벤트 리스너 설정
+            setMapEventListeners();
+            
+            // 지도 생성 후 약간의 지연을 두고 relayout 호출하여 초기 렌더링 보장
+            setTimeout(() => {
+                if (map) {
+                    console.log('초기 지도 리레이아웃 실행');
+                    forceMapRelayout();
+                }
+            }, 100);
+            
+            console.log('지도 초기화 완료');
+        } else {
+            console.error('지도 컨테이너 요소를 찾을 수 없습니다.');
+        }
+    } catch (error) {
+        console.error('지도 초기화 중 오류 발생:', error);
     }
 }
 

@@ -9,8 +9,53 @@
     <link rel="stylesheet" href="css/responsive.css?v=1.0.1">
     <!-- Iconify 라이브러리 추가 -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <!-- 카카오 맵 API -->
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
+    <!-- 카카오 맵 API - 비동기 로드 방식으로 변경 -->
+    <script>
+        // 앱 초기화 함수 - 순차적 실행 보장
+        async function initApplication() {
+            try {
+                console.log('앱 초기화 시작');
+                
+                // 1. 카카오맵 API 로드
+                await loadKakaoMapsAPI();
+                
+                // 2. 지도 초기화
+                initMap();
+                
+                // 3. UI 초기화
+                initUI();
+                
+                // 4. 데이터 초기화
+                await initData();
+                
+                console.log('앱 초기화 완료');
+            } catch (error) {
+                console.error('앱 초기화 실패:', error);
+            }
+        }
+        
+        // 카카오맵 API 비동기 로드 함수
+        function loadKakaoMapsAPI() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4&autoload=false';
+                script.onload = function() {
+                    kakao.maps.load(function() {
+                        console.log('카카오맵 API 로드 완료');
+                        resolve();
+                    });
+                };
+                script.onerror = function() {
+                    console.error('카카오맵 API 로드 실패');
+                    reject(new Error('카카오맵 API 로드 실패'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        // 페이지 로드 시 앱 초기화 실행
+        document.addEventListener('DOMContentLoaded', initApplication);
+    </script>
 </head>
 <body>
     <!-- 헤더 영역 -->
