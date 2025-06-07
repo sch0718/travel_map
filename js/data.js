@@ -544,6 +544,8 @@ function collectActiveFilters() {
 /**
  * 장소 검색
  * @param {string} query - 검색어
+ * @description 장소의 제목(title)과 주소(address)만 검색 대상으로 합니다.
+ * 여행 모드에서 검색 시 자동으로 테마 모드로 전환됩니다.
  */
 function searchPlaces(query) {
     if (!query || query.trim() === '') {
@@ -556,70 +558,61 @@ function searchPlaces(query) {
         return;
     }
     
+    // 여행 모드일 경우 테마 모드로 전환
+    if (dataStore.currentTrip && dataStore.viewMode === 'trip') {
+        console.log('검색을 위해 테마 모드로 전환합니다.');
+        
+        // UI 변경 (UI 모듈 함수 호출)
+        setViewModeUI('theme');
+        
+        // 테마 모드로 변경 (이미 setViewModeUI에서 호출하므로 중복 호출 제거)
+        // setViewMode('theme');
+        
+        // 사용자에게 알림 (이미 setViewModeUI에서 토스트 메시지로 표시하므로 제거)
+        // alert('검색을 위해 테마 모드로 전환합니다.');
+    }
+    
     // 검색어 정규화
     const normalizedQuery = query.trim().toLowerCase();
     
-    // 모든 장소 수집 (테마와 여행 데이터에서)
-    let allPlaces = [];
+    // 현재 선택된 테마/여행의 장소만 검색
+    let placesToSearch = [];
     
-    // 테마에서 장소 수집
-    dataStore.themes.forEach(theme => {
-        if (theme.places && Array.isArray(theme.places)) {
-            allPlaces = allPlaces.concat(theme.places);
-        }
-    });
+    if (dataStore.currentTheme) {
+        // 현재 테마의 장소만 사용
+        placesToSearch = dataStore.currentTheme.places || [];
+    } else if (dataStore.currentTrip) {
+        // 여행의 모든 장소 사용 (이제 테마 모드로 전환되었으므로)
+        placesToSearch = dataStore.currentTrip.places || [];
+    } else {
+        // 선택된 테마/여행이 없으면 검색 결과 없음
+        showError("검색하려면 먼저 테마나 여행을 선택해주세요.");
+        return;
+    }
     
-    // 여행에서 장소 수집
-    dataStore.trips.forEach(trip => {
-        if (trip.places && Array.isArray(trip.places)) {
-            allPlaces = allPlaces.concat(trip.places);
-        }
-    });
-    
-    // 중복 제거 (같은 ID의 장소가 여러 테마/여행에 있을 수 있음)
-    const uniquePlaces = [];
-    const placeIds = new Set();
-    
-    allPlaces.forEach(place => {
-        if (!placeIds.has(place.id)) {
-            placeIds.add(place.id);
-            uniquePlaces.push(place);
-        }
-    });
-    
-    // 장소 검색 (제목, 설명, 주소, 라벨에서 검색)
-    const searchResults = uniquePlaces.filter(place => {
+    // 장소 검색 (제목과 주소만 검색 대상으로 함)
+    const searchResults = placesToSearch.filter(place => {
         return (
             place.title.toLowerCase().includes(normalizedQuery) ||
-            place.description.toLowerCase().includes(normalizedQuery) ||
-            place.address.toLowerCase().includes(normalizedQuery) ||
-            place.labels.some(label => label.toLowerCase().includes(normalizedQuery))
+            place.address.toLowerCase().includes(normalizedQuery)
         );
     });
     
-    // 결과를 현재 테마/여행의 장소로 제한 (선택적)
-    let filteredResults = searchResults;
-    if (dataStore.currentTheme) {
-        const themePlaceIds = new Set(dataStore.currentTheme.places.map(p => p.id));
-        filteredResults = searchResults.filter(place => themePlaceIds.has(place.id));
-    } else if (dataStore.currentTrip) {
-        const tripPlaceIds = new Set();
-        dataStore.currentTrip.days.forEach(day => {
-            day.places.forEach(place => {
-                tripPlaceIds.add(place.placeId);
-            });
-        });
-        filteredResults = searchResults.filter(place => tripPlaceIds.has(place.id));
-    }
-    
     // 검색 결과 업데이트
-    dataStore.filteredPlaces = filteredResults;
+    dataStore.filteredPlaces = searchResults;
     
     // 장소 목록 업데이트
-    updatePlacesList(filteredResults);
+    updatePlacesList(searchResults);
     
     // 지도 마커 업데이트
-    updateMapMarkers(filteredResults);
+    updateMapMarkers(searchResults);
+    
+    // 검색 결과 알림
+    if (searchResults.length === 0) {
+        alert(`"${query}" 검색 결과가 없습니다.`);
+    } else {
+        console.log(`검색 결과: ${searchResults.length}개의 장소를 찾았습니다.`);
+    }
 }
 
 /**
