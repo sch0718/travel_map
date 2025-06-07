@@ -265,12 +265,12 @@ async function loadLabels() {
         const data = await response.json();
         
         // 라벨 데이터를 labelInfo에 설정
-        if (data.system_labels && Array.isArray(data.system_labels)) {
+        if (data.labels && Array.isArray(data.labels)) {
             // 기존 labelInfo 초기화
             dataStore.labelInfo = {};
             
             // labels.json의 모든 라벨 정보 추가
-            data.system_labels.forEach(label => {
+            data.labels.forEach(label => {
                 dataStore.labelInfo[label.name] = {
                     icon: label.icon,
                     description: label.description,
@@ -279,7 +279,7 @@ async function loadLabels() {
             });
         }
         
-        console.log('시스템 라벨 데이터 로드 완료:', Object.keys(dataStore.labelInfo).length);
+        console.log('라벨 데이터 로드 완료:', Object.keys(dataStore.labelInfo).length);
     } catch (error) {
         console.error('라벨 데이터 로드 오류:', error);
         // 라벨 로드 실패 시 기본 라벨 정보 설정
@@ -370,14 +370,14 @@ function setCurrentTheme(themeId) {
     // 이제 places 배열이 테마 자체에 포함되어 있음
     dataStore.filteredPlaces = theme.places || [];
     
-    // 테마에 정의된 라벨 정보가 있다면 시스템 라벨 정보와 병합
+    // 테마에 정의된 라벨 정보가 있다면 기본 라벨 정보와 병합
     if (theme.labelInfo && typeof theme.labelInfo === 'object') {
         console.log('테마에 정의된 라벨 정보 발견:', Object.keys(theme.labelInfo).length);
         
-        // 테마의 라벨 정보로 오버라이드 (기존 시스템 라벨은 유지하면서)
+        // 테마의 라벨 정보로 오버라이드 (기존 라벨은 유지하면서)
         Object.keys(theme.labelInfo).forEach(labelName => {
             dataStore.labelInfo[labelName] = {
-                ...dataStore.labelInfo[labelName], // 기존 시스템 라벨 정보 (있을 경우)
+                ...dataStore.labelInfo[labelName], // 기존 라벨 정보 (있을 경우)
                 ...theme.labelInfo[labelName]      // 테마에 정의된 라벨 정보 (오버라이드)
             };
         });
@@ -417,58 +417,74 @@ function setCurrentTrip(tripId) {
     // 이제 places 배열이 여행 일정 자체에 포함되어 있음
     dataStore.filteredPlaces = trip.places || [];
     
-    // 여행에 정의된 라벨 정보가 있다면 시스템 라벨 정보와 병합
+    // 여행에 정의된 라벨 정보가 있다면 기본 라벨 정보와 병합
     if (trip.labelInfo && typeof trip.labelInfo === 'object') {
         console.log('여행에 정의된 라벨 정보 발견:', Object.keys(trip.labelInfo).length);
         
-        // 여행의 라벨 정보로 오버라이드 (기존 시스템 라벨은 유지하면서)
+        // 여행의 라벨 정보로 오버라이드 (기존 라벨은 유지하면서)
         Object.keys(trip.labelInfo).forEach(labelName => {
             dataStore.labelInfo[labelName] = {
-                ...dataStore.labelInfo[labelName], // 기존 시스템 라벨 정보 (있을 경우)
+                ...dataStore.labelInfo[labelName], // 기존 라벨 정보 (있을 경우)
                 ...trip.labelInfo[labelName]       // 여행에 정의된 라벨 정보 (오버라이드)
             };
         });
     }
     
-    // 여행 일정 정보 업데이트
-    updateTripInfo(trip);
-    
-    // 첫번째 일차의 경로 표시 - 기본값
-    if (trip.days.length > 0) {
-        showTripDay(trip, 0);
+    // 현재 뷰 모드에 따라 다르게 표시
+    if (dataStore.viewMode === 'theme') {
+        // 테마 모드로 표시 (라벨 기반 카테고리로)
+        displayThemeView();
+    } else {
+        // 여행 모드로 표시 (일정별로)
+        updateTripInfo(trip);
+        
+        // 첫번째 일차의 경로 표시 - 기본값
+        if (trip.days.length > 0) {
+            showTripDay(trip, 0);
+        }
     }
 }
 
 /**
- * 카테고리로 장소 필터링
+ * 카테고리별 장소 필터링
  * @param {string} category - 카테고리 이름
  * @param {string} value - 카테고리 값
  * @param {boolean} isChecked - 체크 여부
  */
 function filterPlacesByCategory(category, value, isChecked) {
-    if (!dataStore.currentTheme) return;
+    // 현재 표시 중인 데이터 소스 (테마 또는 여행)
+    const currentData = dataStore.currentTheme || dataStore.currentTrip;
+    if (!currentData) return;
     
-    // 현재 테마에 속한 모든 장소 (places가 이미 장소 객체 배열임)
-    const themePlaces = dataStore.currentTheme.places || [];
+    console.log('필터링 시작:', category, value, isChecked, '현재 데이터:', currentData.title);
     
     // 활성화된 필터 수집
     const activeFilters = collectActiveFilters();
+    console.log('활성화된 필터:', activeFilters);
     
     // 필터가 없으면 모든 장소 표시
     if (Object.keys(activeFilters).length === 0) {
-        dataStore.filteredPlaces = themePlaces;
+        // 현재 데이터에 속한 모든 장소 표시
+        dataStore.filteredPlaces = currentData.places || [];
     } else {
         // 필터 적용
-        dataStore.filteredPlaces = themePlaces.filter(place => {
+        dataStore.filteredPlaces = currentData.places.filter(place => {
             // 모든 활성화된 카테고리에 대해 검사
             for (const [category, values] of Object.entries(activeFilters)) {
+                if (values.length === 0) continue; // 값이 없으면 스킵
+                
+                // 장소에 라벨이 없는 경우 제외
+                if (!place.labels || !Array.isArray(place.labels)) {
+                    return false;
+                }
+                
                 // 해당 카테고리의 값이 하나라도 일치하는지 확인
                 const hasMatch = values.some(value => 
                     place.labels.includes(value)
                 );
                 
                 // 일치하는 값이 없으면 필터링에서 제외
-                if (values.length > 0 && !hasMatch) {
+                if (!hasMatch) {
                     return false;
                 }
             }
@@ -483,6 +499,9 @@ function filterPlacesByCategory(category, value, isChecked) {
     
     // 지도 마커 업데이트
     updateMapMarkers(dataStore.filteredPlaces);
+    
+    // 로그 출력
+    console.log(`필터링 결과: ${dataStore.filteredPlaces.length}개 장소 표시`);
 }
 
 /**
@@ -491,17 +510,32 @@ function filterPlacesByCategory(category, value, isChecked) {
  */
 function collectActiveFilters() {
     const activeFilters = {};
-    const checkboxes = document.querySelectorAll('#category-list input[type="checkbox"]:checked');
     
-    checkboxes.forEach(checkbox => {
-        const category = checkbox.dataset.category;
-        const value = checkbox.value;
+    // 다양한 선택자를 사용하여 모든 체크된 카테고리 체크박스 찾기
+    const selectors = [
+        '.categories-scroll-container input[type="checkbox"]:checked',
+        '#category-list input[type="checkbox"]:checked'
+    ];
+    
+    // 모든 선택자를 순회하며 체크된 체크박스 수집
+    selectors.forEach(selector => {
+        const checkboxes = document.querySelectorAll(selector);
         
-        if (!activeFilters[category]) {
-            activeFilters[category] = [];
-        }
-        
-        activeFilters[category].push(value);
+        checkboxes.forEach(checkbox => {
+            const category = checkbox.dataset.category;
+            const value = checkbox.value;
+            
+            if (!category || !value) return; // 유효하지 않은 데이터 건너뛰기
+            
+            if (!activeFilters[category]) {
+                activeFilters[category] = [];
+            }
+            
+            // 중복 방지
+            if (!activeFilters[category].includes(value)) {
+                activeFilters[category].push(value);
+            }
+        });
     });
     
     return activeFilters;
@@ -705,8 +739,24 @@ function displayThemeView() {
     
     // 여행의 모든 장소를 테마처럼 표시
     const allPlaces = dataStore.currentTrip.places || [];
+    dataStore.filteredPlaces = allPlaces; // 필터링된 장소 목록 초기화
+    
+    // 지도와 장소 목록 업데이트
     updateMapMarkers(allPlaces);
     updatePlacesList(allPlaces);
+    
+    // 장소 목록 제목을 '장소'로 설정 (일정 대신)
+    document.getElementById('places-list-title').textContent = '장소';
+    
+    // 카테고리 필터 생성 (여행 데이터를 테마처럼 취급)
+    const categoryList = document.getElementById('category-list');
+    categoryList.innerHTML = '';
+    
+    // UI 모듈의 updateCategoryFilters 함수 호출
+    // 이 함수는 카테고리 스크롤 컨테이너와 필터 체크박스를 생성함
+    updateCategoryFilters(dataStore.currentTrip);
+    
+    console.log('테마 보기 모드 적용 완료');
 }
 
 /**

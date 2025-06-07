@@ -225,48 +225,157 @@ function updateCategoryFilters(theme) {
     categoryList.innerHTML = '';
     
     // 테마가 없으면 종료
-    if (!theme || !theme.categories) {
+    if (!theme || !theme.places || theme.places.length === 0) {
         return;
     }
     
-    // 각 카테고리 그룹에 대해 필터 생성
-    theme.categories.forEach(category => {
-        // 카테고리 그룹 제목
-        const categoryTitle = document.createElement('h4');
-        categoryTitle.textContent = category.name;
-        categoryList.appendChild(categoryTitle);
-        
-        // 카테고리 값 목록
-        const valuesList = document.createElement('div');
-        valuesList.className = 'category-values';
-        
-        // 각 카테고리 값에 대한 체크박스 생성
-        category.values.forEach(value => {
-            const categoryItem = document.createElement('div');
-            categoryItem.className = 'category-item';
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `category-${value.replace(/\s+/g, '-')}`;
-            checkbox.value = value;
-            checkbox.dataset.category = category.name;
-            
-            // 체크박스 변경 이벤트 리스너
-            checkbox.addEventListener('change', function() {
-                filterPlacesByCategory(category.name, value, this.checked);
+    // 라벨 정보 수집 및 카테고리화
+    const uniqueLabels = new Set();
+    
+    // 모든 장소의 라벨 수집
+    theme.places.forEach(place => {
+        if (place.labels && Array.isArray(place.labels)) {
+            place.labels.forEach(label => {
+                uniqueLabels.add(label);
             });
-            
-            const label = document.createElement('label');
-            label.htmlFor = checkbox.id;
-            label.textContent = value;
-            
-            categoryItem.appendChild(checkbox);
-            categoryItem.appendChild(label);
-            valuesList.appendChild(categoryItem);
+        }
+    });
+    
+    // 라벨이 없으면 종료
+    if (uniqueLabels.size === 0) {
+        return;
+    }
+    
+    // 카테고리 스크롤 컨테이너 생성 (클래스명 변경)
+    const categoriesContainer = document.createElement('div');
+    categoriesContainer.className = 'categories-scroll-container';
+    
+    // 왼쪽 스크롤 버튼 추가
+    const leftScrollBtn = document.createElement('div');
+    leftScrollBtn.className = 'category-scroll-btn left';
+    leftScrollBtn.innerHTML = '&lt;';
+    leftScrollBtn.addEventListener('click', () => scrollCategoryList('left'));
+    categoriesContainer.appendChild(leftScrollBtn);
+    
+    // 오른쪽 스크롤 버튼 추가
+    const rightScrollBtn = document.createElement('div');
+    rightScrollBtn.className = 'category-scroll-btn right';
+    rightScrollBtn.innerHTML = '&gt;';
+    rightScrollBtn.addEventListener('click', () => scrollCategoryList('right'));
+    categoriesContainer.appendChild(rightScrollBtn);
+    
+    // 카테고리 값 목록 (가로 스크롤 컨테이너)
+    const valuesList = document.createElement('div');
+    valuesList.className = 'category-values';
+    
+    // 정렬된 라벨 목록 생성
+    const sortedLabels = Array.from(uniqueLabels).sort();
+    
+    // 각 라벨에 대한 체크박스 생성
+    sortedLabels.forEach(value => {
+        const categoryItem = document.createElement('div');
+        categoryItem.className = 'category-item';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `category-${value.replace(/\s+/g, '-')}`;
+        checkbox.value = value;
+        checkbox.dataset.category = '장소 유형';
+        
+        // 체크박스 변경 이벤트 리스너
+        checkbox.addEventListener('change', function() {
+            filterPlacesByCategory('장소 유형', value, this.checked);
         });
         
-        categoryList.appendChild(valuesList);
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = value;
+        
+        categoryItem.appendChild(checkbox);
+        categoryItem.appendChild(label);
+        valuesList.appendChild(categoryItem);
     });
+    
+    // 스크롤 이벤트 리스너 추가
+    valuesList.addEventListener('scroll', () => {
+        updateScrollButtonsVisibility(valuesList, leftScrollBtn, rightScrollBtn);
+    });
+    
+    categoriesContainer.appendChild(valuesList);
+    categoryList.appendChild(categoriesContainer);
+    
+    // 초기 스크롤 버튼 상태 업데이트
+    updateScrollButtonsVisibility(valuesList, leftScrollBtn, rightScrollBtn);
+    
+    // 리사이즈 이벤트에서 스크롤 버튼 상태 업데이트
+    window.addEventListener('resize', () => {
+        updateScrollButtonsVisibility(valuesList, leftScrollBtn, rightScrollBtn);
+    });
+}
+
+/**
+ * 카테고리 목록 스크롤 함수
+ * @param {string} direction - 스크롤 방향 ('left' 또는 'right')
+ */
+function scrollCategoryList(direction) {
+    const valuesContainer = document.querySelector('.category-values');
+    if (!valuesContainer) return;
+    
+    const scrollAmount = 150; // 스크롤 양 (픽셀)
+    
+    if (direction === 'left') {
+        valuesContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+        valuesContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+    
+    // 스크롤 후 버튼 상태 업데이트
+    setTimeout(() => {
+        const leftBtn = document.querySelector('.category-scroll-btn.left');
+        const rightBtn = document.querySelector('.category-scroll-btn.right');
+        if (leftBtn && rightBtn) {
+            updateScrollButtonsVisibility(valuesContainer, leftBtn, rightBtn);
+        }
+    }, 300);
+}
+
+/**
+ * 스크롤 버튼 가시성 업데이트 함수
+ * @param {HTMLElement} container - 스크롤 컨테이너
+ * @param {HTMLElement} leftBtn - 왼쪽 스크롤 버튼
+ * @param {HTMLElement} rightBtn - 오른쪽 스크롤 버튼
+ */
+function updateScrollButtonsVisibility(container, leftBtn, rightBtn) {
+    if (!container || !leftBtn || !rightBtn) return;
+    
+    // 모든 항목이 표시될 경우 두 버튼 모두 숨김
+    if (container.scrollWidth <= container.clientWidth) {
+        leftBtn.style.display = 'none';
+        rightBtn.style.display = 'none';
+        return;
+    } else {
+        leftBtn.style.display = 'flex';
+        rightBtn.style.display = 'flex';
+    }
+    
+    // 왼쪽 버튼 상태 업데이트
+    if (container.scrollLeft <= 5) { // 약간의 여유 허용
+        leftBtn.style.opacity = '0';
+        leftBtn.style.pointerEvents = 'none';
+    } else {
+        leftBtn.style.opacity = '0.8';
+        leftBtn.style.pointerEvents = 'auto';
+    }
+    
+    // 오른쪽 버튼 상태 업데이트
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    if (container.scrollLeft >= maxScrollLeft - 5) { // 약간의 여유 허용
+        rightBtn.style.opacity = '0';
+        rightBtn.style.pointerEvents = 'none';
+    } else {
+        rightBtn.style.opacity = '0.8';
+        rightBtn.style.pointerEvents = 'auto';
+    }
 }
 
 /**
@@ -289,6 +398,9 @@ function updateThemeInfo(theme) {
     
     // 장소 목록 제목을 '장소'로 설정
     document.getElementById('places-list-title').textContent = '장소';
+    
+    // 장소의 라벨을 기반으로 카테고리 필터 생성
+    updateCategoryFilters(theme);
 }
 
 /**

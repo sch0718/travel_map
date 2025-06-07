@@ -5,16 +5,6 @@
   "created": "2024-05-15",
   "modified": "2024-05-15",
   "color": "#FF9800",
-  "categories": [
-    {
-      "name": "여행 테마",
-      "values": ["자연탐방", "해변", "맛집"]
-    },
-    {
-      "name": "활동",
-      "values": ["트레킹", "섬 관광", "일몰감상"]
-    }
-  ],
   "startDate": "2024-06-20",
   "endDate": "2024-06-23",
   "transportation": "렌터카",

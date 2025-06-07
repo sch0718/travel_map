@@ -266,19 +266,126 @@ h1, h2, h3 {
 
 /* 카테고리 필터 */
 .category-filter {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
     border-bottom: 1px solid var(--border-color);
+}
+
+.category-filter h4 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 600;
+    padding-left: 0.5rem;
+    position: relative;
+}
+
+.category-filter h4::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 70%;
+    background-color: var(--primary-color);
+    border-radius: 1px;
+}
+
+/* 카테고리 스크롤 컨테이너 */
+.categories-scroll-container {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.category-values {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 0.8rem 1.8rem; /* 상단 패딩 증가 */
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    position: relative;
+    align-items: center; /* 항목들을 세로 중앙 정렬 */
+}
+
+.category-values::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
 }
 
 .category-item {
     display: flex;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+    background-color: var(--light-background);
+    padding: 0.5rem 0.8rem; /* 패딩 약간 증가 */
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    height: 32px; /* 높이 명시적 지정 */
+}
+
+.category-item:hover {
+    background-color: var(--primary-color)15;
 }
 
 .category-item input[type="checkbox"] {
     margin-right: 0.5rem;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
+.category-item label {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.category-item input[type="checkbox"]:checked + label {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* 카테고리 스크롤 버튼 */
+.category-scroll-btn {
+    position: absolute;
+    top: 50%; /* 타이틀 제거로 인한 위치 조정 */
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    font-size: 1rem;
+    opacity: 0.8;
+    transition: all 0.2s ease;
+}
+
+.category-scroll-btn:hover {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.2);
+}
+
+.category-scroll-btn.left {
+    left: 3px;
+}
+
+.category-scroll-btn.right {
+    right: 3px;
 }
 
 /* 장소 목록 */
