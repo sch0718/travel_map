@@ -25,6 +25,12 @@
       "color": "#4CAF50"
     },
     {
+      "name": "제주도",
+      "description": "제주도에 위치한 장소",
+      "icon": "mdi:island",
+      "color": "#4CAF50"
+    },
+    {
       "name": "오름",
       "description": "제주도의 작은 화산체인 오름",
       "icon": "mdi:terrain",
@@ -109,6 +115,30 @@
       "color": "#FF5722"
     },
     {
+      "name": "한식",
+      "description": "한식 전문점",
+      "icon": "mdi:food",
+      "color": "#FF5722"
+    },
+    {
+      "name": "중식",
+      "description": "중식 전문점",
+      "icon": "mdi:food",
+      "color": "#FF5722"
+    },
+    {
+      "name": "양식",
+      "description": "양식 전문점",
+      "icon": "mdi:food",
+      "color": "#FF5722"
+    },
+    {
+      "name": "일식",
+      "description": "일식 전문점",
+      "icon": "mdi:food",
+      "color": "#FF5722"
+    },
+    {
       "name": "해산물",
       "description": "해산물 요리를 제공하는 음식점",
       "icon": "mdi:fish",
@@ -121,10 +151,28 @@
       "color": "#EA4335"
     },
     {
+      "name": "국수",
+      "description": "국수 요리를 제공하는 음식점",
+      "icon": "mdi:noodles",
+      "color": "#FF5722"
+    },
+    {
+      "name": "라면",
+      "description": "라면 요리를 제공하는 음식점",
+      "icon": "mdi:noodles",
+      "color": "#FF5722"
+    },
+    {
       "name": "카페",
       "description": "카페 및 음료점",
       "icon": "mdi:coffee",
       "color": "#795548"
+    },
+    {
+      "name": "베이커리",
+      "description": "베이커리 및 빵",
+      "icon": "mdi:bread-slice",
+      "color": "#FFC107"
     },
     {
       "name": "숙소",
