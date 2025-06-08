@@ -7,6 +7,8 @@
 var map; // 카카오 맵 객체
 var markers = []; // 지도에 표시된 마커 배열
 var selectedMarker = null; // 현재 선택된 마커
+var markerClusterer = null; // 마커 클러스터러 객체
+var markerImageCache = {}; // 마커 이미지 캐시
 
 /**
  * 지도 초기화 함수
@@ -36,6 +38,12 @@ function initMap() {
             
             // 지도 이벤트 리스너 설정
             setMapEventListeners();
+            
+            // 마커 클러스터러 초기화
+            initMarkerClusterer();
+            
+            // 마커 이미지 프리로드
+            preloadMarkerImages();
             
             // 지도 생성 후 약간의 지연을 두고 relayout 호출하여 초기 렌더링 보장
             setTimeout(() => {
@@ -184,8 +192,108 @@ function updateInfoPanelPosition() {
 }
 
 /**
- * 마커 업데이트 함수
+ * 마커 클러스터러 초기화 함수
+ * 많은 수의 마커를 효율적으로 표시하기 위해 클러스터링을 설정합니다.
+ */
+function initMarkerClusterer() {
+    try {
+        // MarkerClusterer 라이브러리가 로드되었는지 확인
+        if (!kakao.maps.MarkerClusterer) {
+            console.warn('MarkerClusterer 라이브러리가 로드되지 않았습니다.');
+            return;
+        }
+        
+        markerClusterer = new kakao.maps.MarkerClusterer({
+            map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+            averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+            minLevel: 6, // 클러스터 할 최소 지도 레벨
+            calculator: [10, 30, 50], // 클러스터의 크기 구분 값(10개 미만, 10~30개, 30~50개, 50개 이상)
+            styles: [
+                { // ~10개 까지
+                    width: '36px', height: '36px',
+                    background: 'rgba(66, 133, 244, 0.8)',
+                    borderRadius: '18px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    lineHeight: '36px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
+                },
+                { // ~30개 까지
+                    width: '48px', height: '48px',
+                    background: 'rgba(52, 168, 83, 0.8)',
+                    borderRadius: '24px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    lineHeight: '48px',
+                    fontSize: '16px',
+                    fontWeight: 'bold'
+                },
+                { // ~50개 까지
+                    width: '60px', height: '60px',
+                    background: 'rgba(251, 188, 5, 0.8)',
+                    borderRadius: '30px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    lineHeight: '60px',
+                    fontSize: '18px',
+                    fontWeight: 'bold'
+                },
+                { // 50개 이상
+                    width: '72px', height: '72px',
+                    background: 'rgba(234, 67, 53, 0.8)',
+                    borderRadius: '36px',
+                    color: '#fff',
+                    textAlign: 'center',
+                    lineHeight: '72px',
+                    fontSize: '20px',
+                    fontWeight: 'bold'
+                }
+            ]
+        });
+        
+        console.log('마커 클러스터러 초기화 완료');
+    } catch (error) {
+        console.error('마커 클러스터러 초기화 오류:', error);
+    }
+}
+
+/**
+ * 마커 이미지 프리로딩 함수
+ * 자주 사용되는 마커 이미지를 미리 로드하여 렌더링 성능을 개선합니다.
+ */
+function preloadMarkerImages() {
+    try {
+        // 기본 마커 색상 프리로드
+        const baseColors = ['red', 'blue', 'green', 'purple', 'yellow', 'orange'];
+        
+        baseColors.forEach(color => {
+            const img = new Image();
+            img.src = `images/markers/${color}.png`;
+            markerImageCache[color] = img;
+        });
+        
+        // 라벨 기반 아이콘 프리로드
+        if (dataStore.labelInfo) {
+            Object.values(dataStore.labelInfo).forEach(label => {
+                if (label.icon) {
+                    const img = new Image();
+                    img.src = `images/icons/${label.icon}.png`;
+                    markerImageCache[`icon_${label.icon}`] = img;
+                }
+            });
+        }
+        
+        console.log('마커 이미지 프리로딩 완료');
+    } catch (error) {
+        console.error('마커 이미지 프리로딩 오류:', error);
+    }
+}
+
+/**
+ * 마커 업데이트 함수 (최적화 버전)
  * 주어진 장소 데이터를 기반으로 지도에 마커를 표시합니다.
+ * 클러스터링을 적용하여 많은 수의 마커도 효율적으로 처리합니다.
  * @param {Array} places - 장소 데이터 배열
  * @param {Object} trip - 여행 일정 객체 (선택적)
  */
@@ -199,15 +307,78 @@ function updateMapMarkers(places, trip = null) {
         return;
     }
     
-    // 마커 생성 및 표시
-    places.forEach(place => {
-        addMarker(place, trip);
+    // 클러스터러가 없으면 초기화
+    if (!markerClusterer) {
+        initMarkerClusterer();
+    }
+    
+    // 마커 배열 준비
+    const newMarkers = [];
+    const maxInitialMarkers = 100; // 초기에 표시할 최대 마커 수
+    const initialMarkers = places.slice(0, maxInitialMarkers);
+    
+    console.log(`초기 마커 생성 (${initialMarkers.length}/${places.length})`);
+    
+    // 우선 초기 마커만 생성
+    initialMarkers.forEach(place => {
+        const marker = addMarker(place, trip);
+        if (marker) newMarkers.push(marker);
     });
+    
+    // 나머지 마커는 비동기적으로 생성
+    if (places.length > maxInitialMarkers) {
+        console.log(`남은 마커 (${places.length - maxInitialMarkers}개) 비동기 생성`);
+        
+        setTimeout(() => {
+            const remainingMarkers = places.slice(maxInitialMarkers);
+            const remainingBatchSize = 50; // 한 번에 처리할 마커 수
+            
+            // 배치 처리 함수
+            function processBatch(startIdx) {
+                const endIdx = Math.min(startIdx + remainingBatchSize, remainingMarkers.length);
+                const currentBatch = remainingMarkers.slice(startIdx, endIdx);
+                
+                // 현재 배치의 마커 생성
+                const batchMarkers = currentBatch.map(place => addMarker(place, trip)).filter(Boolean);
+                newMarkers.push(...batchMarkers);
+                
+                // 마커 클러스터러에 새 마커 추가
+                if (markerClusterer && batchMarkers.length > 0) {
+                    const kakaoMarkers = batchMarkers.filter(m => m instanceof kakao.maps.Marker);
+                    if (kakaoMarkers.length > 0) {
+                        markerClusterer.addMarkers(kakaoMarkers);
+                    }
+                }
+                
+                // 아직 처리할 마커가 남아있으면 다음 배치 처리 예약
+                if (endIdx < remainingMarkers.length) {
+                    setTimeout(() => processBatch(endIdx), 10);
+                } else {
+                    console.log('모든 마커 생성 완료');
+                }
+            }
+            
+            // 첫 번째 배치 시작
+            processBatch(0);
+        }, 100);
+    }
+    
+    // 마커 클러스터러에 초기 마커 추가
+    if (markerClusterer) {
+        // 클러스터러 초기화
+        markerClusterer.clear();
+        
+        // 일반 마커만 클러스터러에 추가 (커스텀 오버레이는 제외)
+        const kakaoMarkers = newMarkers.filter(m => m instanceof kakao.maps.Marker);
+        if (kakaoMarkers.length > 0) {
+            markerClusterer.addMarkers(kakaoMarkers);
+        }
+    }
     
     // 모든 마커가 보이도록 지도 범위 조정
     setMapBounds(places);
     
-    console.log('마커 업데이트 완료:', places.length);
+    console.log('마커 업데이트 초기화 완료:', initialMarkers.length);
 }
 
 /**

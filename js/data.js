@@ -15,6 +15,12 @@ const dataStore = {
     viewMode: 'trip', // 기본 보기 모드: 'theme' 또는 'trip'
     // 라벨 정보 (아이콘, 설명 등) - labels.json에서 로드됨
     labelInfo: {},
+    // 테마 및 여행 메타데이터 인덱스
+    themeIndex: [],
+    tripIndex: [],
+    // 현재 로드된 테마/여행 ID 추적
+    loadedThemes: new Set(),
+    loadedTrips: new Set(),
     // 기본 테마 색상 팔레트 - 눈에 편하고 예쁘며 널리 사용되는 20가지 색상
     themeColors: [
         // 블루계열
@@ -61,9 +67,160 @@ const dataStore = {
     ]
 };
 
+// 맵 메타데이터 캐시
+const mapMetaCache = {
+    fileMap: {}  // 파일명과 ID 매핑 객체
+};
+
+// 데이터 캐시 관리
+const dataCache = {
+    // 최대 캐시 크기 (동시에 메모리에 유지할 테마/여행 수)
+    maxCacheSize: 5,
+    
+    // 캐시 적용
+    cacheTheme(themeId, themeData) {
+        if (dataStore.loadedThemes.size >= this.maxCacheSize) {
+            this.evictLeastRecentTheme();
+        }
+        dataStore.loadedThemes.add(themeId);
+        return themeData;
+    },
+    
+    // 가장 오래된 테마 제거
+    evictLeastRecentTheme() {
+        if (dataStore.loadedThemes.size === 0) return;
+        
+        // LRU 정책: 가장 오래 사용되지 않은 테마 제거
+        const oldestThemeId = Array.from(dataStore.loadedThemes)[0];
+        dataStore.loadedThemes.delete(oldestThemeId);
+        
+        // 테마 데이터에서 해당 테마만 제거 (연결된 장소는 유지)
+        if (dataStore.themes) {
+            dataStore.themes = dataStore.themes.filter(t => t.id !== oldestThemeId);
+        }
+        
+        console.log(`캐시에서 테마 제거됨: ${oldestThemeId}`);
+    },
+    
+    // 여행 캐시 관리
+    cacheTrip(tripId, tripData) {
+        if (dataStore.loadedTrips.size >= this.maxCacheSize) {
+            this.evictLeastRecentTrip();
+        }
+        dataStore.loadedTrips.add(tripId);
+        return tripData;
+    },
+    
+    // 가장 오래된 여행 제거
+    evictLeastRecentTrip() {
+        if (dataStore.loadedTrips.size === 0) return;
+        
+        const oldestTripId = Array.from(dataStore.loadedTrips)[0];
+        dataStore.loadedTrips.delete(oldestTripId);
+        
+        if (dataStore.trips) {
+            dataStore.trips = dataStore.trips.filter(t => t.id !== oldestTripId);
+        }
+        
+        console.log(`캐시에서 여행 제거됨: ${oldestTripId}`);
+    },
+    
+    // 캐시 히트 여부 확인
+    isThemeCached(themeId) {
+        return dataStore.loadedThemes.has(themeId);
+    },
+    
+    isTripCached(tripId) {
+        return dataStore.loadedTrips.has(tripId);
+    }
+};
+
+// Web Worker 관리
+let dataWorker = null;
+
+/**
+ * Web Worker 초기화 함수
+ * 데이터 처리를 별도 스레드로 분리하여 UI 응답성을 향상시킵니다.
+ */
+function initDataWorker() {
+    // Web Worker 지원 확인
+    if (window.Worker) {
+        try {
+            dataWorker = new Worker('js/dataWorker.js');
+            
+            // 메시지 핸들러 설정
+            dataWorker.onmessage = function(e) {
+                const { type, data, error } = e.data;
+                
+                switch (type) {
+                    case 'filterComplete':
+                        // 필터링 결과 처리
+                        handleFilterResults(data);
+                        break;
+                    case 'searchComplete':
+                        // 검색 결과 처리
+                        handleSearchResults(data);
+                        break;
+                    case 'error':
+                        console.error('Web Worker 오류:', error);
+                        showError('데이터 처리 중 오류가 발생했습니다.', error);
+                        break;
+                }
+            };
+            
+            console.log('Data Worker 초기화 완료');
+            return true;
+        } catch (error) {
+            console.error('Web Worker 초기화 실패:', error);
+            return false;
+        }
+    } else {
+        console.warn('Web Worker가 지원되지 않습니다. 대체 구현 사용');
+        return false;
+    }
+}
+
+/**
+ * 필터 결과 처리 함수
+ * Worker로부터 받은 필터링 결과를 처리합니다.
+ * @param {Array} filteredPlaces - 필터링된 장소 배열
+ */
+function handleFilterResults(filteredPlaces) {
+    // 로딩 표시 해제
+    showLoading(false);
+    
+    // 필터링된 장소 저장
+    dataStore.filteredPlaces = filteredPlaces;
+    
+    // 지도와 목록 업데이트
+    updateMapMarkers(filteredPlaces, isCurrentTrip() ? dataStore.currentTrip : null);
+    updatePlacesList(filteredPlaces, isCurrentTrip() ? dataStore.currentTrip : null);
+    
+    console.log(`필터링 완료: ${filteredPlaces.length}개 장소`);
+}
+
+/**
+ * 검색 결과 처리 함수
+ * Worker로부터 받은 검색 결과를 처리합니다.
+ * @param {Array} searchResults - 검색된 장소 배열
+ */
+function handleSearchResults(searchResults) {
+    // 로딩 표시 해제
+    showLoading(false);
+    
+    // 검색 결과 저장
+    dataStore.filteredPlaces = searchResults;
+    
+    // 지도와 목록 업데이트
+    updateMapMarkers(searchResults, isCurrentTrip() ? dataStore.currentTrip : null);
+    updatePlacesList(searchResults, isCurrentTrip() ? dataStore.currentTrip : null);
+    
+    console.log(`검색 완료: ${searchResults.length}개 장소 발견`);
+}
+
 /**
  * 데이터 초기화 함수
- * 모든 필요한 데이터를 로드하고 초기 설정을 수행합니다.
+ * 필수 메타데이터를 로드하고 초기 설정을 수행합니다.
  */
 async function initData() {
     try {
@@ -72,13 +229,16 @@ async function initData() {
         
         console.log('데이터 로드 시작');
         
-        // 각 데이터 로드 함수를 개별적으로 실행하고 오류 처리
+        // Web Worker 초기화
+        initDataWorker();
+        
+        // 필수 메타데이터만 먼저 로드
         try {
-            await loadMapFiles();
-            console.log('맵 데이터 로드 성공');
-        } catch (mapError) {
-            console.error('맵 데이터 로드 실패:', mapError);
-            showError('맵 데이터를 불러오는 중 오류가 발생했습니다.', mapError);
+            await loadLabels();
+            console.log('라벨 데이터 로드 성공');
+        } catch (labelError) {
+            console.error('라벨 데이터 로드 실패:', labelError);
+            showError('라벨 데이터를 불러오는 중 오류가 발생했습니다.', labelError);
         }
         
         try {
@@ -90,25 +250,26 @@ async function initData() {
         }
         
         try {
-            await loadLabels();
-            console.log('라벨 데이터 로드 성공');
-        } catch (labelError) {
-            console.error('라벨 데이터 로드 실패:', labelError);
-            showError('라벨 데이터를 불러오는 중 오류가 발생했습니다.', labelError);
+            // 맵 파일 목록만 스캔하여 메타데이터 구성 (실제 콘텐츠는 로드하지 않음)
+            await scanMapFiles();
+            console.log('맵 메타데이터 스캔 성공');
+        } catch (mapError) {
+            console.error('맵 메타데이터 스캔 실패:', mapError);
+            showError('맵 메타데이터를 불러오는 중 오류가 발생했습니다.', mapError);
         }
         
-        console.log('데이터 로드 완료:', {
-            themes: dataStore.themes?.length || 0,
-            trips: dataStore.trips?.length || 0,
+        console.log('초기 데이터 로드 완료:', {
+            themeIndex: dataStore.themeIndex?.length || 0,
+            tripIndex: dataStore.tripIndex?.length || 0,
             transportations: dataStore.transportations?.length || 0
         });
         
         // 데이터가 하나도 로드되지 않았으면 오류 표시
         if (
-            (!dataStore.themes || dataStore.themes.length === 0) &&
-            (!dataStore.trips || dataStore.trips.length === 0)
+            (!dataStore.themeIndex || dataStore.themeIndex.length === 0) &&
+            (!dataStore.tripIndex || dataStore.tripIndex.length === 0)
         ) {
-            showError('테마 또는 여행 데이터를 로드하지 못했습니다. 페이지를 새로고침하거나 관리자에게 문의하세요.');
+            showError('테마 또는 여행 메타데이터를 로드하지 못했습니다. 페이지를 새로고침하거나 관리자에게 문의하세요.');
             return;
         }
         
@@ -116,11 +277,13 @@ async function initData() {
         initThemeSelector();
         
         // 기본 테마 설정 (첫 번째 테마)
-        if (dataStore.themes && dataStore.themes.length > 0) {
-            setCurrentTheme(dataStore.themes[0].id);
-        } else if (dataStore.trips && dataStore.trips.length > 0) {
+        if (dataStore.themeIndex && dataStore.themeIndex.length > 0) {
+            await loadThemeData(dataStore.themeIndex[0].id);
+            setCurrentTheme(dataStore.themeIndex[0].id);
+        } else if (dataStore.tripIndex && dataStore.tripIndex.length > 0) {
             // 테마가 없으면 첫 번째 여행으로 초기화
-            setCurrentTrip(dataStore.trips[0].id);
+            await loadTripData(dataStore.tripIndex[0].id);
+            setCurrentTrip(dataStore.tripIndex[0].id);
         }
         
         // 로딩 상태 해제
@@ -128,7 +291,257 @@ async function initData() {
     } catch (error) {
         console.error('데이터 초기화 오류:', error);
         showError('데이터를 불러오는 중 오류가 발생했습니다.', error);
+        showLoading(false);
     }
+}
+
+/**
+ * 맵 파일 스캔 및 메타데이터 구성
+ * 실제 장소 데이터는 로드하지 않고 파일 정보와 기본 메타데이터만 캐싱
+ */
+async function scanMapFiles() {
+    try {
+        // 베이스 URL 동적 결정 (GitHub Pages와 로컬 환경 모두 지원)
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        console.log('현재 베이스 URL:', baseUrl);
+        console.log('맵 파일 스캔 시작');
+        
+        // 파일 목록 가져오기 (서버에서 디렉토리 목록 제공하는 경우)
+        let mapFiles = [];
+        try {
+            const response = await fetch(`${baseUrl}/data/maps/`);
+            if (response.ok) {
+                const html = await response.text();
+                const fileRegex = /href="([^"]+\.json)"/g;
+                let match;
+                
+                while ((match = fileRegex.exec(html)) !== null) {
+                    mapFiles.push(match[1]);
+                }
+                
+                if (mapFiles.length === 0) {
+                    console.log('디렉토리에서 JSON 파일을 찾을 수 없습니다.');
+                    // 백업 파일 목록 사용 (선택적)
+                    mapFiles = getBackupFileList();
+                }
+            } else {
+                console.log('디렉토리 목록을 가져올 수 없습니다:', response.status);
+                throw new Error('맵 파일 목록을 가져올 수 없습니다.');
+            }
+        } catch (dirError) {
+            console.log('디렉토리 스캔 오류:', dirError.message);
+            throw dirError;
+        }
+        
+        // 파일 메타데이터 병렬 로드 (헤더만 요청하거나 작은 샘플만 요청)
+        const metaPromises = mapFiles.map(async (fileName) => {
+            try {
+                // 헤더만 요청하여 파일 크기 확인 (선택적)
+                // 또는 Range 헤더로 파일 시작 부분만 요청하여 메타데이터 추출
+                const response = await fetch(`${baseUrl}/data/maps/${fileName}`, {
+                    method: 'GET',
+                    headers: {
+                        'Range': 'bytes=0-1024'  // 첫 1KB만 요청 (메타데이터 포함 예상)
+                    }
+                });
+                
+                if (!response.ok) return null;
+                
+                // 파일 시작 부분에서 메타데이터 추출
+                const metaChunk = await response.json();
+                
+                // 최소한의 필요 정보만 추출
+                const metaData = {
+                    id: metaChunk.id,
+                    title: metaChunk.title,
+                    description: metaChunk.description || '',
+                    type: metaChunk.days ? 'trip' : 'theme',
+                    fileName: fileName,
+                    // 장소 데이터는 로드하지 않음
+                    placesCount: metaChunk.places ? metaChunk.places.length : 0
+                };
+                
+                // 파일명과 ID 매핑 저장
+                mapMetaCache.fileMap[metaChunk.id] = fileName;
+                
+                return metaData;
+            } catch (fileError) {
+                console.warn(`파일 메타데이터 로드 실패: ${fileName}`, fileError);
+                return null;
+            }
+        });
+        
+        // 모든 메타데이터 로드 완료 대기
+        const metaResults = await Promise.allSettled(metaPromises);
+        
+        // 성공적으로 로드된 메타데이터만 필터링
+        const validMeta = metaResults
+            .filter(result => result.status === 'fulfilled' && result.value)
+            .map(result => result.value);
+        
+        // 테마와 여행으로 분류
+        dataStore.themeIndex = validMeta.filter(meta => meta.type === 'theme');
+        dataStore.tripIndex = validMeta.filter(meta => meta.type === 'trip');
+        
+        console.log('맵 메타데이터 로드 완료:', {
+            themes: dataStore.themeIndex.length,
+            trips: dataStore.tripIndex.length,
+            total: validMeta.length
+        });
+        
+        return {
+            themes: dataStore.themeIndex,
+            trips: dataStore.tripIndex
+        };
+    } catch (error) {
+        console.error('맵 메타데이터 스캔 오류:', error);
+        throw error;
+    }
+}
+
+/**
+ * 백업 파일 목록 반환 (선택적)
+ * 서버가 디렉토리 목록을 제공하지 않을 경우 대체 방법
+ */
+function getBackupFileList() {
+    // 미리 알고 있는 파일 목록이나 명명 규칙 기반 추측
+    console.log('백업 파일 목록 사용');
+    
+    // 예: 미리 알려진 파일 목록
+    return [
+        'theme_1.json', 
+        'theme_2.json', 
+        'trip_1.json',
+        'trip_2.json'
+    ];
+}
+
+/**
+ * 테마 데이터 로드 함수
+ * @param {string} themeId - 로드할 테마 ID
+ * @returns {Object} - 로드된 테마 데이터
+ */
+async function loadThemeData(themeId) {
+    // 이미 캐시에 있는지 확인
+    if (dataCache.isThemeCached(themeId)) {
+        console.log(`테마 데이터 이미 로드됨: ${themeId}`);
+        return getThemeById(themeId);
+    }
+    
+    try {
+        showLoading(true);
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        
+        // mapMetaCache에서 파일명 찾기
+        const fileName = mapMetaCache.fileMap[themeId] || `theme_${themeId}.json`;
+        
+        const response = await fetch(`${baseUrl}/data/maps/${fileName}`);
+        
+        if (!response.ok) throw new Error(`테마 데이터를 로드할 수 없습니다: ${themeId}`);
+        
+        const themeData = await response.json();
+        
+        // 테마 데이터 처리 및 저장
+        if (!dataStore.themes) dataStore.themes = [];
+        if (!dataStore.places) dataStore.places = [];
+        
+        // 중복 방지를 위해 기존 테마 제거
+        dataStore.themes = dataStore.themes.filter(t => t.id !== themeId);
+        
+        // 새 테마 추가
+        dataStore.themes.push(themeData);
+        
+        // 테마에 포함된 장소 데이터 처리
+        processPlaces(themeData.places || []);
+        
+        // 캐시에 테마 추가
+        dataCache.cacheTheme(themeId, themeData);
+        
+        console.log(`테마 데이터 로드 완료: ${themeId}`);
+        showLoading(false);
+        return themeData;
+    } catch (error) {
+        console.error(`테마 데이터 로드 오류: ${themeId}`, error);
+        showError(`테마 데이터를 불러오는 중 오류가 발생했습니다: ${themeId}`, error);
+        showLoading(false);
+        throw error;
+    }
+}
+
+/**
+ * 여행 데이터 로드 함수
+ * @param {string} tripId - 로드할 여행 ID
+ * @returns {Object} - 로드된 여행 데이터
+ */
+async function loadTripData(tripId) {
+    // 이미 캐시에 있는지 확인
+    if (dataCache.isTripCached(tripId)) {
+        console.log(`여행 데이터 이미 로드됨: ${tripId}`);
+        return getTripById(tripId);
+    }
+    
+    try {
+        showLoading(true);
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        
+        // mapMetaCache에서 파일명 찾기
+        const fileName = mapMetaCache.fileMap[tripId] || `trip_${tripId}.json`;
+        
+        const response = await fetch(`${baseUrl}/data/maps/${fileName}`);
+        
+        if (!response.ok) throw new Error(`여행 데이터를 로드할 수 없습니다: ${tripId}`);
+        
+        const tripData = await response.json();
+        
+        // 여행 데이터 처리 및 저장
+        if (!dataStore.trips) dataStore.trips = [];
+        if (!dataStore.places) dataStore.places = [];
+        
+        // 중복 방지를 위해 기존 여행 제거
+        dataStore.trips = dataStore.trips.filter(t => t.id !== tripId);
+        
+        // 새 여행 추가
+        dataStore.trips.push(tripData);
+        
+        // 여행에 포함된 장소 데이터 처리
+        processPlaces(tripData.places || []);
+        
+        // 캐시에 여행 추가
+        dataCache.cacheTrip(tripId, tripData);
+        
+        console.log(`여행 데이터 로드 완료: ${tripId}`);
+        showLoading(false);
+        return tripData;
+    } catch (error) {
+        console.error(`여행 데이터 로드 오류: ${tripId}`, error);
+        showError(`여행 데이터를 불러오는 중 오류가 발생했습니다: ${tripId}`, error);
+        showLoading(false);
+        throw error;
+    }
+}
+
+/**
+ * 장소 데이터 처리 함수
+ * 중복 없이 장소 데이터를 dataStore.places에 추가
+ * @param {Array} places - 장소 데이터 배열
+ */
+function processPlaces(places) {
+    if (!places || !Array.isArray(places)) return;
+    
+    places.forEach(place => {
+        // 이미 존재하는 장소인지 확인
+        const existingIndex = dataStore.places.findIndex(p => p.id === place.id);
+        
+        if (existingIndex >= 0) {
+            // 존재하는 장소는 업데이트
+            dataStore.places[existingIndex] = {...dataStore.places[existingIndex], ...place};
+        } else {
+            // 새 장소는 추가
+            dataStore.places.push(place);
+        }
+    });
+    
+    console.log(`장소 데이터 처리 완료: ${places.length}개 처리됨, 총 ${dataStore.places.length}개 장소`);
 }
 
 /**

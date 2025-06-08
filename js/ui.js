@@ -60,30 +60,36 @@ function initThemeSelector() {
     // 모든 옵션 및 옵션그룹 제거 후 기본 옵션 추가
     themeSelect.innerHTML = '<option value="">테마/여행 선택</option>';
     
-    // 테마 옵션 추가 (days 필드가 없는 맵은 테마)
-    if (dataStore.themes && dataStore.themes.length > 0) {
+    // 테마 옵션 추가 (메타데이터 인덱스 기반)
+    if (dataStore.themeIndex && dataStore.themeIndex.length > 0) {
         const themesOptgroup = document.createElement('optgroup');
         themesOptgroup.label = '테마';
         
-        dataStore.themes.forEach(theme => {
+        dataStore.themeIndex.forEach(theme => {
             const option = document.createElement('option');
             option.value = `${theme.id}`;
             option.textContent = theme.title;
+            if (theme.placesCount > 0) {
+                option.textContent += ` (${theme.placesCount}개 장소)`;
+            }
             themesOptgroup.appendChild(option);
         });
         
         themeSelect.appendChild(themesOptgroup);
     }
     
-    // 여행 일정 옵션 추가 (days 필드가 있는 맵은 여행)
-    if (dataStore.trips && dataStore.trips.length > 0) {
+    // 여행 일정 옵션 추가 (메타데이터 인덱스 기반)
+    if (dataStore.tripIndex && dataStore.tripIndex.length > 0) {
         const tripsOptgroup = document.createElement('optgroup');
         tripsOptgroup.label = '여행 일정';
         
-        dataStore.trips.forEach(trip => {
+        dataStore.tripIndex.forEach(trip => {
             const option = document.createElement('option');
             option.value = `${trip.id}`;
             option.textContent = trip.title;
+            if (trip.placesCount > 0) {
+                option.textContent += ` (${trip.placesCount}개 장소)`;
+            }
             tripsOptgroup.appendChild(option);
         });
         
@@ -168,7 +174,7 @@ function setupTouchEvents() {
 /**
  * 테마/여행 변경 처리 함수
  */
-function handleThemeChange() {
+async function handleThemeChange() {
     const selectedValue = themeSelect.value;
     
     // 선택된 값이 없으면 종료
@@ -185,21 +191,52 @@ function handleThemeChange() {
     // 장소 정보 패널 닫기
     hidePlaceInfoPanel();
     
-    // 선택된 ID로 테마와 여행 객체 찾기
-    const selectedTheme = getThemeById(selectedValue);
-    const selectedTrip = getTripById(selectedValue);
+    // 로딩 표시
+    showLoading(true);
     
-    // days 필드 존재 여부로 테마/여행 구분
-    if (selectedTrip && selectedTrip.days) {
-        setCurrentTrip(selectedValue);
-        // 여행인 경우 보기 모드 선택기 표시
-        viewModeSelector.style.display = 'flex';
-        // 기본적으로 여행 모드 선택
-        setViewModeUI('trip');
-    } else if (selectedTheme) {
-        setCurrentTheme(selectedValue);
-        // 테마인 경우 보기 모드 선택기 숨김
-        viewModeSelector.style.display = 'none';
+    try {
+        // 메타데이터에서 타입 확인
+        const isTrip = dataStore.tripIndex.some(t => t.id === selectedValue);
+        const isTheme = dataStore.themeIndex.some(t => t.id === selectedValue);
+        
+        if (isTrip) {
+            // 여행 데이터 로드 (아직 로드되지 않은 경우)
+            if (!dataCache.isTripCached(selectedValue)) {
+                await loadTripData(selectedValue);
+            }
+            
+            const selectedTrip = getTripById(selectedValue);
+            if (selectedTrip) {
+                setCurrentTrip(selectedValue);
+                // 여행인 경우 보기 모드 선택기 표시
+                viewModeSelector.style.display = 'flex';
+                // 기본적으로 여행 모드 선택
+                setViewModeUI('trip');
+            } else {
+                showError(`여행 데이터를 찾을 수 없습니다: ${selectedValue}`);
+            }
+        } else if (isTheme) {
+            // 테마 데이터 로드 (아직 로드되지 않은 경우)
+            if (!dataCache.isThemeCached(selectedValue)) {
+                await loadThemeData(selectedValue);
+            }
+            
+            const selectedTheme = getThemeById(selectedValue);
+            if (selectedTheme) {
+                setCurrentTheme(selectedValue);
+                // 테마인 경우 보기 모드 선택기 숨김
+                viewModeSelector.style.display = 'none';
+            } else {
+                showError(`테마 데이터를 찾을 수 없습니다: ${selectedValue}`);
+            }
+        } else {
+            showError(`선택한 항목이 테마 또는 여행 목록에 없습니다: ${selectedValue}`);
+        }
+    } catch (error) {
+        console.error('테마/여행 변경 중 오류 발생:', error);
+        showError('테마 또는 여행 데이터를 로드하는 중 오류가 발생했습니다.');
+    } finally {
+        showLoading(false);
     }
 }
 
