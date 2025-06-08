@@ -162,4 +162,41 @@
         top: 50%;
         transform: translateY(-50%);
     }
+}
+
+/* 성능 모니터링 반응형 스타일 */
+@media (max-width: 768px) {
+    /* 성능 경고 메시지 */
+    .performance-warning {
+        top: 10px;
+        right: 10px;
+        max-width: 300px;
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    
+    /* 성능 모니터링 버튼 */
+    .toggle-performance-btn {
+        bottom: 60px; /* 모바일 패널 핸들 위에 위치 */
+        right: 10px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    /* 성능 모니터링 패널 */
+    .performance-panel {
+        bottom: 70px; /* 모바일 패널 핸들 위에 위치 */
+        right: 10px;
+        width: 250px;
+        font-size: 12px;
+    }
+    
+    .perf-header h3 {
+        font-size: 14px;
+    }
+    
+    .perf-metric {
+        font-size: 11px;
+        padding: 3px 0;
+    }
 } 

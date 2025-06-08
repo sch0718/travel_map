@@ -291,19 +291,29 @@ function preloadMarkerImages() {
 }
 
 /**
- * 마커 업데이트 함수 (최적화 버전)
- * 주어진 장소 데이터를 기반으로 지도에 마커를 표시합니다.
- * 클러스터링을 적용하여 많은 수의 마커도 효율적으로 처리합니다.
+ * 지도에 마커 업데이트 함수
+ * 여러 장소의 마커를 지도에 표시합니다.
  * @param {Array} places - 장소 데이터 배열
  * @param {Object} trip - 여행 일정 객체 (선택적)
  */
 function updateMapMarkers(places, trip = null) {
+    // 성능 측정 시작
+    if (window.performanceMonitor) {
+        performanceMonitor.start('firstMarker');
+    }
+    
     // 기존 마커 제거
     removeAllMarkers();
     
     // 마커가 없으면 종료
     if (!places || places.length === 0) {
         console.log('표시할 장소가 없습니다.');
+        
+        // 성능 측정 종료 (마커 없음)
+        if (window.performanceMonitor) {
+            performanceMonitor.end('firstMarker');
+        }
+        
         return;
     }
     
@@ -325,6 +335,11 @@ function updateMapMarkers(places, trip = null) {
         if (marker) newMarkers.push(marker);
     });
     
+    // 첫 마커 생성 후 성능 측정 종료
+    if (window.performanceMonitor && newMarkers.length > 0) {
+        performanceMonitor.end('firstMarker');
+    }
+    
     // 나머지 마커는 비동기적으로 생성
     if (places.length > maxInitialMarkers) {
         console.log(`남은 마커 (${places.length - maxInitialMarkers}개) 비동기 생성`);
@@ -335,6 +350,9 @@ function updateMapMarkers(places, trip = null) {
             
             // 배치 처리 함수
             function processBatch(startIdx) {
+                // 작업 시작 시간 기록
+                const batchStartTime = performance.now();
+                
                 const endIdx = Math.min(startIdx + remainingBatchSize, remainingMarkers.length);
                 const currentBatch = remainingMarkers.slice(startIdx, endIdx);
                 
@@ -350,9 +368,19 @@ function updateMapMarkers(places, trip = null) {
                     }
                 }
                 
+                // 작업 소요 시간 계산
+                const batchTime = performance.now() - batchStartTime;
+                
+                // 성능 모니터링 (인터랙션 지연 시간 기록)
+                if (window.performanceMonitor && batchTime > 50) {
+                    performanceMonitor.updateMetrics('interaction', batchTime);
+                }
+                
                 // 아직 처리할 마커가 남아있으면 다음 배치 처리 예약
                 if (endIdx < remainingMarkers.length) {
-                    setTimeout(() => processBatch(endIdx), 10);
+                    // 배치 처리 시간이 길면 타임아웃 시간 증가
+                    const timeoutDelay = batchTime > 100 ? 50 : 10;
+                    setTimeout(() => processBatch(endIdx), timeoutDelay);
                 } else {
                     console.log('모든 마커 생성 완료');
                 }
@@ -361,6 +389,9 @@ function updateMapMarkers(places, trip = null) {
             // 첫 번째 배치 시작
             processBatch(0);
         }, 100);
+    } else if (window.performanceMonitor && newMarkers.length === 0) {
+        // 마커가 없는 경우 성능 측정 종료
+        performanceMonitor.end('firstMarker');
     }
     
     // 마커 클러스터러에 초기 마커 추가

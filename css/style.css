@@ -839,4 +839,126 @@ body > .label-tooltip-clone::after {
     display: flex;
     align-items: center;
     margin-bottom: 0.5rem;
+}
+
+/* 성능 모니터링 관련 스타일 */
+.performance-warning {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 87, 34, 0.9);
+    color: white;
+    padding: 12px 16px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    max-width: 400px;
+    font-size: 14px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.performance-warning .close-warning {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.toggle-performance-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+.toggle-performance-btn:hover {
+    background-color: #1976D2;
+}
+
+.performance-panel {
+    position: fixed;
+    bottom: 40px;
+    right: 20px;
+    width: 300px;
+    background-color: rgba(33, 33, 33, 0.9);
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    overflow: hidden;
+    font-family: 'Roboto', Arial, sans-serif;
+    animation: slideUp 0.3s ease-out;
+}
+
+.perf-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #1976D2;
+}
+
+.perf-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.perf-header button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.perf-content {
+    padding: 16px;
+}
+
+.perf-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.perf-metric {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.perf-metric:last-child {
+    border-bottom: none;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 } 
