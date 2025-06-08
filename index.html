@@ -4,30 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>여행 지도 웹앱</title>
+    <!-- 파비콘 추가 -->
+    <link rel="icon" href="/public/favicon.svg" type="image/svg+xml">
     <!-- CSS 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
-    <link rel="stylesheet" href="css/style.css?v=1.0.1">
-    <link rel="stylesheet" href="css/responsive.css?v=1.0.1">
+    <link rel="stylesheet" href="css/style.css?v=1.0.4">
+    <link rel="stylesheet" href="css/responsive.css?v=1.0.3">
     <!-- Iconify 라이브러리 추가 -->
     <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
+    <!-- 카카오 API 라이브러리 -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+    
+    <!-- 앱 초기화 스크립트 -->
     <script>
+        // 전역 객체 생성 (애플리케이션 상태 관리)
+        window.travelApp = {
+            isMapLoaded: false,
+            isMarkerClustererLoaded: false,
+            isDataLoaded: false,
+            isUIInitialized: false
+        };
+        
+        // 카카오맵 API 비동기 로딩 함수
+        function loadKakaoMapsAPI() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.type = 'text/javascript';
+                script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4&libraries=clusterer&autoload=false';
+                script.onload = () => {
+                    console.log('카카오맵 SDK 로드 완료');
+                    // API 초기화
+                    kakao.maps.load(() => {
+                        console.log('카카오맵 API 초기화 완료');
+                        window.travelApp.isMapLoaded = true;
+                        window.travelApp.isMarkerClustererLoaded = true; // 클러스터러도 함께 로드됨
+                        resolve();
+                    });
+                };
+                script.onerror = (error) => {
+                    console.error('카카오맵 SDK 로드 실패', error);
+                    reject(new Error('카카오맵 SDK 로드에 실패했습니다.'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
         // 앱 초기화 함수 - 순차적 실행 보장
         async function initApplication() {
             try {
                 console.log('앱 초기화 시작');
-                                
-                // 지도 초기화
-                initMap();
                 
-                // UI 초기화
+                // UI 초기화 (맵 API 의존성 없음)
                 initUI();
+                window.travelApp.isUIInitialized = true;
                 
-                // 데이터 초기화
+                // 카카오맵 API 로드 (비동기 처리)
+                await loadKakaoMapsAPI();
+                
+                // 라이브러리 로드 확인
+                if (!window.travelApp.isMapLoaded) {
+                    throw new Error('카카오맵 API 로드 실패');
+                }
+                
+                // 데이터 초기화 및 기본 테마 로드
                 await initData();
+                window.travelApp.isDataLoaded = true;
+                
+                // 지도 초기화 (카카오맵 API 의존)
+                const mapInitResult = initMap();
+                
+                if (!mapInitResult) {
+                    console.warn('지도 초기화에 실패했습니다. 제한된 기능으로 계속합니다.');
+                }
+                
+                // 지도 컨테이너 표시 상태 확인 및 강제 리레이아웃
+                setTimeout(() => {
+                    const mapContainer = document.getElementById('map');
+                    if (mapContainer) {
+                        const rect = mapContainer.getBoundingClientRect();
+                        console.log('앱 초기화 완료 후 지도 컨테이너 크기:', rect.width, 'x', rect.height);
+                        
+                        // 지도가 초기화되었지만 보이지 않는 경우 강제 리레이아웃
+                        if (typeof map !== 'undefined' && map) {
+                            console.log('지도 강제 리레이아웃 실행');
+                            map.relayout();
+                        }
+                    }
+                }, 1000);
                 
                 console.log('앱 초기화 완료');
             } catch (error) {
                 console.error('앱 초기화 실패:', error);
+                showError('애플리케이션 초기화 중 오류가 발생했습니다.', error);
             }
         }
         
@@ -93,7 +160,7 @@
             </div>
         </div>
         
-        <!-- 지도 영역 (사이드 패널 뒤로 이동) -->
+        <!-- 지도 영역 -->
         <div id="map" class="map-container"></div>
     </div>
 
@@ -121,9 +188,23 @@
         <div class="handle-bar"></div>
     </div>
 
+    <!-- 로딩 및 오류 메시지 UI -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p id="loading-message">로딩 중...</p>
+    </div>
+    
+    <div id="error-overlay" class="error-overlay" style="display: none;">
+        <div class="error-content">
+            <h3>오류 발생</h3>
+            <p id="error-message">알 수 없는 오류가 발생했습니다.</p>
+            <button id="error-close">닫기</button>
+        </div>
+    </div>
+
     <!-- JavaScript 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
-    <script src="js/data.js?v=1.0.1"></script>
-    <script src="js/map.js?v=1.0.1"></script>
-    <script src="js/ui.js?v=1.0.1"></script>
+    <script src="js/data.js?v=1.0.3"></script>
+    <script src="js/map.js?v=1.0.4"></script>
+    <script src="js/ui.js?v=1.0.3"></script>
 </body>
 </html> 

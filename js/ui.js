@@ -223,7 +223,7 @@ async function handleThemeChange() {
             
             const selectedTheme = getThemeById(selectedValue);
             if (selectedTheme) {
-                setCurrentTheme(selectedValue);
+                setCurrentTheme(selectedTheme);
                 // 테마인 경우 보기 모드 선택기 숨김
                 viewModeSelector.style.display = 'none';
             } else {
@@ -770,155 +770,231 @@ function getPlaceIcon(place) {
 }
 
 /**
- * 장소 목록 업데이트 함수
- * @param {Array} places - 장소 데이터 배열
- * @param {Object} trip - 여행 일정 객체 (선택적)
+ * 장소 목록 업데이트
+ * @param {Array} places 장소 데이터 배열
+ * @param {Object} trip 여행 데이터 (선택적)
  */
 function updatePlacesList(places, trip = null) {
-    // 장소 목록 초기화
-    placesList.innerHTML = '';
-    
-    // 장소가 없으면 메시지 표시
-    if (!places || places.length === 0) {
-        placesList.innerHTML = '<li class="no-places">표시할 장소가 없습니다.</li>';
-        return;
-    }
-    
-    // 각 장소에 대해 목록 항목 생성
-    places.forEach(place => {
-        const placeItem = document.createElement('li');
-        placeItem.className = 'place-item';
+    try {
+        // 장소 목록 컨테이너 요소
+        const placesList = document.getElementById('places');
+        if (!placesList) {
+            console.error('장소 목록 컨테이너를 찾을 수 없습니다.');
+            return;
+        }
         
-        // 장소 순서 표시 (여행 일정에서 사용)
-        let orderIndex = null;
+        // 목록 초기화
+        placesList.innerHTML = '';
+        
+        // 장소 데이터 확인
+        if (!places || !Array.isArray(places) || places.length === 0) {
+            placesList.innerHTML = '<li class="empty-list">표시할 장소가 없습니다.</li>';
+            return;
+        }
+        
+        // 장소 목록 요소 생성
+        const fragment = document.createDocumentFragment();
+        
+        // 여행 모드인 경우 일자별로 그룹화
         if (trip && trip.days) {
-            trip.days.some((day, dayIndex) => {
-                const orderInDay = day.places.findIndex(p => p === place.id);
-                if (orderInDay !== -1) {
-                    orderIndex = { day: dayIndex + 1, order: orderInDay + 1 };
-                    return true;
+            // 일자별 헤더와 장소 목록 생성
+            trip.days.forEach((day, dayIndex) => {
+                if (day.places && day.places.length > 0) {
+                    // 일자 헤더 생성
+                    const dayHeader = document.createElement('li');
+                    dayHeader.className = 'day-header';
+                    dayHeader.innerHTML = `
+                        <h4>${day.date || `Day ${dayIndex + 1}`}</h4>
+                        <span class="place-count">${day.places.length}개 장소</span>
+                    `;
+                    fragment.appendChild(dayHeader);
+                    
+                    // 일자의 장소 목록 생성
+                    day.places.forEach((place, placeIndex) => {
+                        const listItem = createPlaceListItem(place, trip, dayIndex, placeIndex);
+                        fragment.appendChild(listItem);
+                    });
                 }
-                return false;
             });
-            
-            if (orderIndex) {
-                placeItem.classList.add('trip-place');
-                
-                const orderElement = document.createElement('div');
-                orderElement.className = 'place-order';
-                orderElement.textContent = `${orderIndex.day}일차 - ${orderIndex.order}`;
-                placeItem.appendChild(orderElement);
-            }
+        } else {
+            // 일반 테마 모드: 장소 목록 생성
+            places.forEach((place) => {
+                const listItem = createPlaceListItem(place);
+                fragment.appendChild(listItem);
+            });
         }
         
-        // 장소 제목
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'place-title';
+        // 생성된 요소 추가
+        placesList.appendChild(fragment);
         
-        // 테마 모드일 경우 (trip이 없는 경우) 아이콘 추가
-        if (!trip && dataStore.currentTheme) {
-            // 아이콘 스팬 생성
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'place-icon';
-            iconSpan.textContent = getPlaceIcon(place);
-            iconSpan.style.marginRight = '5px';
-            
-            // 제목에 아이콘 추가
-            titleDiv.appendChild(iconSpan);
+    } catch (error) {
+        console.error('장소 목록 업데이트 중 오류 발생:', error);
+        document.getElementById('places').innerHTML = '<li class="error">장소 목록을 불러오는 중 오류가 발생했습니다.</li>';
+    }
+}
+
+/**
+ * 장소 목록 아이템 생성
+ * @param {Object} place 장소 데이터
+ * @param {Object} trip 여행 데이터 (선택적)
+ * @param {Number} dayIndex 일차 인덱스 (선택적)
+ * @param {Number} placeIndex 장소 인덱스 (선택적)
+ * @returns {HTMLElement} 장소 목록 아이템
+ */
+function createPlaceListItem(place, trip = null, dayIndex = -1, placeIndex = -1) {
+    try {
+        // 장소 데이터 유효성 검사
+        if (!place || !place.title) {
+            console.warn('유효하지 않은 장소 데이터:', place);
+            return document.createElement('li');
         }
         
-        // 제목 텍스트 추가
-        const titleText = document.createTextNode(place.title);
-        titleDiv.appendChild(titleText);
-        placeItem.appendChild(titleDiv);
+        // 목록 아이템 요소 생성
+        const listItem = document.createElement('li');
+        listItem.className = 'place-item';
+        listItem.dataset.placeId = place.id;
         
-        // 라벨 표시
+        // 순서 번호 (여행 모드에서만 표시)
+        let orderHTML = '';
+        if (trip && dayIndex >= 0 && placeIndex >= 0) {
+            orderHTML = `<span class="place-order">${placeIndex + 1}</span>`;
+        }
+        
+        // 장소 아이콘 (라벨 기반)
+        let iconHTML = '<iconify-icon icon="mdi:map-marker" class="place-icon"></iconify-icon>';
         if (place.labels && place.labels.length > 0) {
-            const labelsContainer = document.createElement('div');
-            labelsContainer.className = 'place-labels';
+            // 첫 번째 라벨 기준 아이콘 설정
+            const primaryLabel = place.labels[0];
+            const labelInfo = window.dataStore && window.dataStore.labelInfo ? 
+                              window.dataStore.labelInfo[primaryLabel] : null;
             
-            place.labels.forEach(label => {
-                const labelElement = createLabelElement(label, true);
-                labelsContainer.appendChild(labelElement);
+            if (labelInfo && labelInfo.icon) {
+                iconHTML = `<iconify-icon icon="${labelInfo.icon}" class="place-icon"></iconify-icon>`;
+            }
+        }
+        
+        // 라벨 HTML 생성
+        let labelsHTML = '';
+        if (place.labels && place.labels.length > 0) {
+            labelsHTML = '<div class="place-labels">';
+            place.labels.slice(0, 3).forEach(label => {
+                const labelElement = createLabelElement(label);
+                const tempDiv = document.createElement('div');
+                tempDiv.appendChild(labelElement);
+                labelsHTML += tempDiv.innerHTML;
             });
             
-            placeItem.appendChild(labelsContainer);
-        }
-        
-        // 상세 정보 토글 버튼
-        const toggleButton = document.createElement('button');
-        toggleButton.className = 'toggle-details';
-        toggleButton.textContent = '↓';
-        placeItem.appendChild(toggleButton);
-        
-        // 상세 정보 영역
-        const detailsElement = document.createElement('div');
-        detailsElement.className = 'place-details';
-        
-        // 주소
-        if (place.address) {
-            const addressElement = document.createElement('div');
-            addressElement.className = 'place-address';
-            addressElement.textContent = place.address;
-            detailsElement.appendChild(addressElement);
-        }
-        
-        // 설명
-        if (place.description) {
-            const descriptionElement = document.createElement('div');
-            descriptionElement.className = 'place-description';
-            descriptionElement.textContent = place.description;
-            detailsElement.appendChild(descriptionElement);
-        }
-        
-        placeItem.appendChild(detailsElement);
-        
-        // 상세 정보 토글 이벤트
-        toggleButton.addEventListener('click', function(e) {
-            e.stopPropagation(); // 부모 요소 클릭 이벤트 전파 방지
-            const details = this.nextElementSibling;
+            // 라벨이 3개 이상이면 "+" 표시 추가
+            if (place.labels.length > 3) {
+                labelsHTML += `<span class="more-labels">+${place.labels.length - 3}</span>`;
+            }
             
-            // 펼침 상태 클래스로 확인하여 토글
-            const isExpanded = placeItem.classList.contains('expanded');
-            
-            if (isExpanded) {
-                // 접기
-                placeItem.classList.remove('expanded');
-                this.textContent = '↓';
-            } else {
-                // 펼치기
-                placeItem.classList.add('expanded');
-                this.textContent = '↑';
+            labelsHTML += '</div>';
+        }
+        
+        // 장소 HTML 구성
+        listItem.innerHTML = `
+            ${orderHTML}
+            <div class="place-info">
+                <div class="place-header">
+                    ${iconHTML}
+                    <span class="place-name">${place.title}</span>
+                </div>
+                ${labelsHTML}
+                <div class="place-address">${place.address || ''}</div>
+            </div>
+        `;
+        
+        // 클릭 이벤트 추가
+        listItem.addEventListener('click', () => {
+            // 지도에 해당 장소 중심으로 이동
+            if (place.location && typeof window.mapModule !== 'undefined') {
+                const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+                window.mapModule.showPlaceInfo(place);
+                map.panTo(position);
+                map.setLevel(3); // 적절한 줌 레벨 설정
             }
         });
         
-        // 장소 아이템 클릭 이벤트 (제목 부분만)
-        const placeTitle = placeItem.querySelector('.place-title');
-        placeTitle.addEventListener('click', function() {
-            // 선택된 장소 스타일 적용
-            document.querySelectorAll('.place-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            placeItem.classList.add('selected');
-            
-            // 지도에서 해당 장소로 이동
-            moveToPlace(place.id);
-        });
-        
-        placesList.appendChild(placeItem);
-    });
-    
-    // 라벨 툴팁 이벤트 설정
-    setupLabelTooltips();
+        return listItem;
+    } catch (error) {
+        console.error('장소 목록 아이템 생성 중 오류 발생:', error, place);
+        const errorItem = document.createElement('li');
+        errorItem.className = 'place-item error';
+        errorItem.textContent = '장소 정보를 표시할 수 없습니다.';
+        return errorItem;
+    }
 }
 
 /**
  * 장소 정보 패널 표시 함수
- * @param {Object} place - 장소 데이터
- * @param {Object} markerPosition - 마커의 화면상 좌표 (선택적)
+ * @param {Object} place - 장소 정보 객체
+ * @param {Object} markerPosition - 마커의 화면상 위치 (x, y 좌표)
  */
-function showPlaceInfoPanel(place, markerPosition) {
-    // 장소 정보 패널 내용 업데이트
+async function showPlaceInfoPanel(place, markerPosition) {
+    if (!place || !place.id) {
+        console.error('유효하지 않은 장소 정보:', place);
+        return;
+    }
+    
+    // 로딩 상태 표시 (기본 정보로 패널 먼저 표시)
+    const placeInfoHeader = document.querySelector('.place-info-header');
+    const titleElement = document.getElementById('place-title');
+    titleElement.innerHTML = ''; // 내용 초기화
+    
+    // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
+    placeInfoPanel.style.display = 'block';
+    
+    // 기본 정보로 일단 패널 표시
+    titleElement.textContent = place.title || place.name || '장소 이름 없음';
+    document.getElementById('place-address').textContent = place.address || '주소 로딩 중...';
+    document.getElementById('place-description').textContent = place.description || '상세 정보를 불러오는 중...';
+    document.getElementById('place-labels').innerHTML = '';
+    
+    // 패널 위치 조정
+    positionPlaceInfoPanel(place, markerPosition);
+    
+    try {
+        // 장소 상세 정보 비동기 로드
+        const detailedPlace = await loadPlaceDetails(place.id);
+        
+        if (!detailedPlace) {
+            console.warn(`장소 ID ${place.id}에 대한 상세 정보를 찾을 수 없습니다. 기본 정보만 표시합니다.`);
+            // 기본 정보만으로 계속 표시
+            updatePlaceInfoPanelContent(place, true);
+            return;
+        }
+        
+        // 로드된 상세 정보로 패널 업데이트
+        updatePlaceInfoPanelContent(detailedPlace);
+    } catch (error) {
+        console.error('장소 상세 정보 로드 실패:', error);
+        // 기본 정보만으로 계속 표시
+        updatePlaceInfoPanelContent(place, true);
+    }
+    
+    // 장소 정보 패널 내부 클릭 이벤트가 지도로 전파되는 것을 방지
+    if (!placeInfoPanel._hasClickHandler) {
+        placeInfoPanel.addEventListener('click', function(e) {
+            // 이벤트 전파 방지
+            e.stopPropagation();
+        });
+        placeInfoPanel._hasClickHandler = true;
+    }
+}
+
+/**
+ * 장소 정보 패널 내용 업데이트 함수
+ * @param {Object} place - 장소 정보 객체
+ * @param {boolean} isBasicInfo - 기본 정보만 있는 경우 true
+ */
+function updatePlaceInfoPanelContent(place, isBasicInfo = false) {
+    if (!place) {
+        console.error('장소 정보가 없습니다.');
+        return;
+    }
+    
+    // 타이틀 업데이트
     const titleElement = document.getElementById('place-title');
     titleElement.innerHTML = ''; // 내용 초기화
     
@@ -935,11 +1011,19 @@ function showPlaceInfoPanel(place, markerPosition) {
     }
     
     // 제목 텍스트 추가
-    const titleText = document.createTextNode(place.title);
+    const titleText = document.createTextNode(place.title || place.name || '이름 없음');
     titleElement.appendChild(titleText);
     
-    document.getElementById('place-address').textContent = place.address;
-    document.getElementById('place-description').textContent = place.description;
+    // 기본 정보 업데이트
+    document.getElementById('place-address').textContent = place.address || '주소 정보 없음';
+    document.getElementById('place-description').textContent = place.description || '설명 정보 없음';
+    
+    if (isBasicInfo) {
+        // 기본 정보만 있는 경우 스타일 변경
+        document.getElementById('place-description').classList.add('info-loading-failed');
+    } else {
+        document.getElementById('place-description').classList.remove('info-loading-failed');
+    }
     
     // 라벨/태그 목록 업데이트
     const labelsContainer = document.getElementById('place-labels');
@@ -947,27 +1031,53 @@ function showPlaceInfoPanel(place, markerPosition) {
     
     if (place.labels && place.labels.length > 0) {
         place.labels.forEach(label => {
-            const labelElement = createLabelElement(label, false);
-            labelsContainer.appendChild(labelElement);
+            if (label) { // 유효한 라벨인 경우에만 생성
+                const labelElement = createLabelElement(label, false);
+                labelsContainer.appendChild(labelElement);
+            }
         });
+        
+        if (labelsContainer.children.length === 0) {
+            labelsContainer.innerHTML = '<span class="no-labels">라벨 없음</span>';
+        }
+    } else {
+        labelsContainer.innerHTML = '<span class="no-labels">라벨 없음</span>';
     }
     
     // 외부 링크 업데이트
     const naverLink = document.getElementById('naver-map-link');
     const kakaoLink = document.getElementById('kakao-map-link');
     
-    if (place.urls && place.urls.naver) {
-        naverLink.href = place.urls.naver;
+    // 기본적으로 링크 숨김
+    naverLink.style.display = 'none';
+    kakaoLink.style.display = 'none';
+    
+    // 좌표 기반 지도 링크 생성
+    if (place.location && place.location.lat && place.location.lng) {
+        const lat = place.location.lat;
+        const lng = place.location.lng;
+        const placeName = encodeURIComponent(place.title || place.name || '장소');
+        
+        // 네이버 지도 링크 생성
+        naverLink.href = `https://map.naver.com/v5/search/${placeName}?c=${lng},${lat},15,0,0,0,dh`;
         naverLink.style.display = 'inline-block';
-    } else {
-        naverLink.style.display = 'none';
+        
+        // 카카오 지도 링크 생성
+        kakaoLink.href = `https://map.kakao.com/link/map/${placeName},${lat},${lng}`;
+        kakaoLink.style.display = 'inline-block';
     }
     
-    if (place.urls && place.urls.kakao) {
-        kakaoLink.href = place.urls.kakao;
-        kakaoLink.style.display = 'inline-block';
-    } else {
-        kakaoLink.style.display = 'none';
+    // URL이 직접 제공된 경우 우선 사용
+    if (place.urls) {
+        if (place.urls.naver) {
+            naverLink.href = place.urls.naver;
+            naverLink.style.display = 'inline-block';
+        }
+        
+        if (place.urls.kakao) {
+            kakaoLink.href = place.urls.kakao;
+            kakaoLink.style.display = 'inline-block';
+        }
     }
     
     // 패널 헤더 색상 설정
@@ -975,19 +1085,17 @@ function showPlaceInfoPanel(place, markerPosition) {
     placeInfoHeader.style.borderBottom = `2px solid var(--primary-color)`;
     placeInfoHeader.style.backgroundColor = `var(--primary-color)10`;
     
-    // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
-    placeInfoPanel.style.display = 'block';
-    
-    // 장소 정보 패널 내부 클릭 이벤트가 지도로 전파되는 것을 방지
-    if (!placeInfoPanel._hasClickHandler) {
-        placeInfoPanel.addEventListener('click', function(e) {
-            // 이벤트 전파 방지
-            e.stopPropagation();
-        });
-        placeInfoPanel._hasClickHandler = true;
-    }
-    
-            // 마커 위치가 제공된 경우 위치 조정
+    // 라벨 툴팁 이벤트 설정
+    setupLabelTooltips();
+}
+
+/**
+ * 장소 정보 패널 위치 조정 함수
+ * @param {Object} place - 장소 정보 객체
+ * @param {Object} markerPosition - 마커의 화면상 위치 (x, y 좌표)
+ */
+function positionPlaceInfoPanel(place, markerPosition) {
+    // 마커 위치가 제공된 경우 위치 조정
     if (markerPosition) {
         // 지도 컨테이너의 크기와 위치
         const mapContainer = document.getElementById('map');
@@ -1067,12 +1175,6 @@ function showPlaceInfoPanel(place, markerPosition) {
         placeInfoPanel.style.top = '50%';
         placeInfoPanel.style.transform = 'translate(-50%, -50%)';
     }
-    
-    // 패널 표시
-    placeInfoPanel.style.display = 'block';
-    
-    // 라벨 툴팁 이벤트 설정
-    setupLabelTooltips();
 }
 
 /**
@@ -1364,43 +1466,65 @@ function setCurrentTrip(tripId) {
 }
 
 /**
- * 현재 테마 설정 함수
- * @param {string} themeId - 테마 ID
+ * 현재 테마 설정
+ * @param {Object} theme 테마 데이터
  */
-function setCurrentTheme(themeId) {
+function setCurrentTheme(theme) {
+    if (!theme) {
+        console.error('setCurrentTheme: 유효하지 않은 테마 객체가 전달되었습니다.', theme);
+        return;
+    }
+    
+    console.log('테마 설정 시작:', theme.title || '제목 없음', theme);
+    
     try {
-        // 테마 ID로 테마 데이터 가져오기
-        const theme = getThemeById(themeId);
-        if (!theme) {
-            throw new Error(`테마 데이터를 찾을 수 없습니다: ${themeId}`);
-        }
-        
-        console.log('테마 설정:', theme.title);
-        
-        // 테마 데이터 저장
+        // 전역 데이터 스토어에 현재 테마 설정
         dataStore.currentTheme = theme;
-        dataStore.currentTrip = null; // 여행 초기화
+        dataStore.currentTrip = null; // 테마 모드에서는 여행 데이터 초기화
+        dataStore.currentView = 'theme';
         
-        // 테마에 맞게 UI 업데이트
-        updateThemeInfo(theme);
-        updateCategoryFilters(theme);
+        // 테마 제목과 설명 업데이트
+        document.getElementById('theme-title').textContent = theme.title || '제목 없음';
+        document.getElementById('theme-description').textContent = theme.description || '설명 없음';
         
-        // 테마의 모든 장소 지도에 표시
-        if (theme.places && theme.places.length > 0) {
-            updateMapMarkers(theme.places);
-            updatePlacesList(theme.places);
+        // 테마에 속한 장소들 표시
+        console.log(`테마 설정: ${theme.title}`);
+        
+        // 지도 초기화 상태 확인 후 일정 시간 대기
+        const waitForMap = () => {
+            const isMapReady = typeof window.mapModule !== 'undefined' && 
+                              typeof window.mapModule.isMapInitialized === 'function' && 
+                              window.mapModule.isMapInitialized() && 
+                              typeof map !== 'undefined' && 
+                              typeof kakao !== 'undefined' && 
+                              typeof kakao.maps !== 'undefined';
             
-            // 라벨 툴팁 이벤트 설정 (명시적 호출)
-            setTimeout(setupLabelTooltips, 100);
-        } else {
-            showError('이 테마에는 장소 데이터가 없습니다.');
-        }
+            if (isMapReady) {
+                console.log('지도가 준비되었습니다. 마커를 업데이트합니다.');
+                // 마커 업데이트
+                updateMapMarkers(theme.places);
+                // 카테고리 필터 업데이트
+                updateCategoryFilters(theme);
+                // 장소 목록 업데이트
+                updatePlacesList(theme.places);
+                
+                // 마커가 있으면 지도 범위 조정
+                setMapBounds(theme.places);
+            } else {
+                console.warn('지도가 아직 초기화되지 않았습니다. 5초 후에 다시 시도합니다.');
+                // 지도 초기화를 위해 5초 대기 후 재시도
+                setTimeout(waitForMap, 5000);
+            }
+        };
         
-        // 보기 모드 선택기 숨김 (테마는 보기 모드가 없음)
-        viewModeSelector.style.display = 'none';
+        // 지도 초기화 확인 시작
+        waitForMap();
+        
+        return true;
     } catch (error) {
         console.error('테마 설정 오류:', error);
         showError('테마 데이터를 설정하는 중 오류가 발생했습니다.');
+        return false;
     }
 }
 
@@ -1569,47 +1693,38 @@ function hideGlobalTooltip() {
 }
 
 /**
- * 라벨 요소 생성 함수
- * @param {string} labelName - 라벨 이름
- * @param {boolean} isSmall - 작은 라벨 여부
- * @returns {HTMLElement} - 생성된 라벨 요소
+ * 장소 라벨 요소 생성
+ * @param {string} label 라벨 이름
+ * @returns {HTMLElement} 라벨 요소
  */
-function createLabelElement(labelName, isSmall = false) {
-    const labelInfo = getLabelInfo(labelName);
-    const labelElement = document.createElement('span');
+function createLabelElement(label) {
+    const labelSpan = document.createElement('span');
+    labelSpan.className = 'place-label';
+    labelSpan.textContent = label;
     
-    // 기본 클래스 및 사이즈 클래스 추가
-    labelElement.className = `place-label${isSmall ? ' small' : ''}`;
+    try {
+        // 라벨 정보 가져오기
+        if (window.dataStore && window.dataStore.labelInfo) {
+            const labelInfo = window.dataStore.labelInfo[label];
+            
+            // 라벨 정보가 있고 색상이 정의되어 있으면 적용
+            if (labelInfo && labelInfo.color) {
+                labelSpan.style.backgroundColor = labelInfo.color;
+            } else {
+                // 기본 색상 적용
+                labelSpan.style.backgroundColor = '#6c757d'; // 기본 회색
+            }
+        } else {
+            // 기본 색상 적용
+            labelSpan.style.backgroundColor = '#6c757d'; // 기본 회색
+        }
+    } catch (error) {
+        console.warn(`라벨(${label}) 스타일 적용 중 오류:`, error);
+        // 오류 발생 시 기본 색상 적용
+        labelSpan.style.backgroundColor = '#6c757d'; // 기본 회색
+    }
     
-    // 라벨 스타일 적용
-    labelElement.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
-    labelElement.style.color = labelInfo.color;
-    labelElement.style.borderLeftColor = labelInfo.color;
-    
-    // 아이콘 요소 생성
-    const iconElement = document.createElement('span');
-    iconElement.className = 'label-icon';
-    iconElement.innerHTML = `<iconify-icon icon="${labelInfo.icon}"></iconify-icon>`;
-    
-    // 텍스트 요소 생성
-    const textElement = document.createElement('span');
-    textElement.textContent = labelName;
-    
-    // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
-    const tooltipElement = document.createElement('span');
-    tooltipElement.className = 'label-tooltip';
-    tooltipElement.textContent = labelInfo.description;
-    tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
-    
-    // 요소 조립
-    labelElement.appendChild(iconElement);
-    labelElement.appendChild(textElement);
-    labelElement.appendChild(tooltipElement);
-    
-    // 이벤트 설정 상태 추적 속성 추가
-    labelElement.dataset.hasTooltipEvent = 'false';
-    
-    return labelElement;
+    return labelSpan;
 }
 
 /**
