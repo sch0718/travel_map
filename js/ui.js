@@ -95,73 +95,60 @@ function initThemeSelector() {
  * 이벤트 리스너 설정 함수
  */
 function setupEventListeners() {
-    // 테마/여행 선택 변경 이벤트
-    themeSelect.addEventListener('change', handleThemeChange);
+    // 테마/여행 선택 이벤트
+    if (themeSelect) {
+        themeSelect.addEventListener('change', handleThemeChange);
+    }
     
     // 검색 이벤트
-    searchButton.addEventListener('click', handleSearch);
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    });
+    if (searchInput && searchButton) {
+        // 검색 버튼 클릭 시 검색 실행
+        searchButton.addEventListener('click', handleSearch);
+        
+        // 검색 입력창에서 엔터 키 입력 시 검색 실행
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+    }
     
-    // 사이드 패널 토글 이벤트
-    togglePanelButton.addEventListener('click', toggleSidePanel);
+    // 패널 토글 버튼 이벤트
+    if (togglePanelButton) {
+        togglePanelButton.addEventListener('click', toggleSidePanel);
+    }
     
     // 장소 정보 패널 닫기 버튼 이벤트
-    document.getElementById('close-place-info').addEventListener('click', hidePlaceInfoPanel);
+    const closeInfoButton = document.getElementById('close-place-info');
+    if (closeInfoButton) {
+        closeInfoButton.addEventListener('click', hidePlaceInfoPanel);
+    }
     
-    // 모바일 패널 핸들 터치/클릭 이벤트
-    mobilePanelHandle.addEventListener('click', toggleMobilePanel);
+    // 모바일 패널 핸들 이벤트
+    if (mobilePanelHandle) {
+        mobilePanelHandle.addEventListener('click', showMobilePanel);
+    }
     
-    // 모바일에서 터치 이벤트 처리
-    setupTouchEvents();
+    // 뷰 모드 선택 버튼 이벤트
+    if (themeViewBtn && tripViewBtn) {
+        themeViewBtn.addEventListener('click', function() {
+            setViewModeUI('theme');
+        });
+        
+        tripViewBtn.addEventListener('click', function() {
+            setViewModeUI('trip');
+        });
+    }
     
-    // 반응형 처리를 위한 리사이즈 이벤트
+    // 화면 크기 변경 이벤트
     window.addEventListener('resize', handleResize);
     
-    // 테마/여행 보기 모드 선택 버튼 이벤트
-    themeViewBtn.addEventListener('click', () => {
-        setViewModeUI('theme');
-    });
-    
-    tripViewBtn.addEventListener('click', () => {
-        setViewModeUI('trip');
-    });
-}
-
-/**
- * 터치 이벤트 설정 함수
- * 모바일 환경에서 스와이프 제스처 처리
- */
-function setupTouchEvents() {
-    let touchStartY = 0;
-    let touchEndY = 0;
-    
-    // 터치 시작 위치 기록
-    mobilePanelHandle.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-    }, false);
-    
-    // 터치 종료 위치 기록 및 스와이프 처리
-    mobilePanelHandle.addEventListener('touchend', function(e) {
-        touchEndY = e.changedTouches[0].clientY;
-        handleSwipeGesture();
-    }, false);
-    
-    // 스와이프 제스처 처리
-    function handleSwipeGesture() {
-        const swipeDistance = touchStartY - touchEndY;
-        
-        // 위로 스와이프하면 패널 열기
-        if (swipeDistance > 50) {
-            showMobilePanel();
-        }
-        // 아래로 스와이프하면 패널 닫기
-        else if (swipeDistance < -50) {
-            hideMobilePanel();
-        }
+    // 설정 버튼 이벤트 (있는 경우에만)
+    const settingsButton = document.getElementById('settings-button');
+    if (settingsButton) {
+        settingsButton.addEventListener('click', function() {
+            alert('설정 기능은 아직 구현되지 않았습니다.');
+        });
     }
 }
 
@@ -1705,6 +1692,50 @@ function setupMutationObserver() {
     
     // 옵저버 참조 저장
     window._labelObserver = observer;
+}
+
+/**
+ * 테마 정보 표시 함수
+ * @param {Object} mapData - 맵 데이터 객체
+ */
+function displayThemeInfo(mapData) {
+    try {
+        if (!mapData || !mapData.title) {
+            console.error('유효하지 않은 맵 데이터:', mapData);
+            return;
+        }
+        
+        // 테마 제목과 설명 업데이트
+        const titleElement = document.getElementById('theme-title');
+        const descriptionElement = document.getElementById('theme-description');
+        
+        if (titleElement) {
+            titleElement.textContent = mapData.title;
+        }
+        
+        if (descriptionElement && mapData.description) {
+            descriptionElement.textContent = mapData.description;
+        }
+        
+        // 여행 일정이 있는 경우 추가 정보 표시
+        if (mapData.days && Array.isArray(mapData.days) && mapData.days.length > 0) {
+            // 여행 기간 표시
+            if (mapData.startDate && mapData.endDate && descriptionElement) {
+                descriptionElement.textContent += ` (${mapData.startDate} ~ ${mapData.endDate})`;
+            }
+        }
+        
+        // 테마 헤더 스타일 설정
+        const themeInfo = document.querySelector('.theme-info');
+        if (themeInfo) {
+            themeInfo.style.borderBottom = `2px solid var(--primary-color)`;
+            themeInfo.style.backgroundColor = `var(--primary-color)10`;
+        }
+        
+        console.log('테마 정보 표시 완료:', mapData.title);
+    } catch (error) {
+        console.error('테마 정보 표시 중 오류 발생:', error);
+    }
 }
 
 // UI 모듈 초기화 (DOM 로드 후)
