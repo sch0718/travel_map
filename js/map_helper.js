@@ -10,6 +10,26 @@ var markers = []; // 지도에 표시된 마커 배열
 var selectedMarker = null; // 현재 선택된 마커
 var mapControls = { zoomControl: null, mapTypeControl: null }; // 지도 컨트롤 참조 저장
 
+// 마커 아이콘 오버레이 스타일 정의
+const markerIconStyle = `
+<style>
+.marker-icon-overlay {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 14px;
+    height: 14px;
+    transform: translate(-45%, -32px);
+    z-index: 10;
+    pointer-events: none;
+}
+</style>
+`;
+
+// 스타일을 head에 추가
+document.head.insertAdjacentHTML('beforeend', markerIconStyle);
+
 // 전역 데이터 저장소 (각 페이지별 간소화된 버전)
 const pageDataStore = {
     places: [],
@@ -624,6 +644,7 @@ function updatePlacesList(places) {
                 // ui.js의 createLabelElement 스타일 적용
                 const labelInfo = getLabelInfo(label);
                 
+                // 라벨 스팬 생성
                 const labelSpan = document.createElement('span');
                 labelSpan.className = 'place-label small'; // small 클래스 추가
                 
@@ -753,6 +774,10 @@ function removeAllMarkers() {
     
     // 모든 마커 제거
     markers.forEach(marker => {
+        // 마커에 연결된 오버레이가 있으면 함께 제거
+        if (marker.iconOverlay) {
+            marker.iconOverlay.setMap(null);
+        }
         marker.setMap(null);
     });
     
@@ -886,62 +911,116 @@ function displayPlacesOnMap(places) {
 
 /**
  * 마커 생성 함수
- * @param {Object} place - 장소 정보
+ * @param {Object} place - 장소 데이터
  * @returns {kakao.maps.Marker} - 생성된 마커 객체
  */
 function createMarker(place) {
-    // 마커 위치 생성
-    const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
-    
-    // 기본 마커 이미지
-    let markerImage = null;
-    
-    // 라벨 기반 마커 스타일링 (첫 번째 라벨 사용)
-    if (place.labels && place.labels.length > 0) {
-        const firstLabel = place.labels[0];
-        const labelInfo = getLabelInfo(firstLabel);
-        
-        // 라벨 정보에서 색상과 아이콘 추출
-        const markerColor = labelInfo.color || '#1976D2';
-        const labelIcon = labelInfo.icon || 'mdi:map-marker';
-        
-        // 마커 이미지 생성 (색상과 아이콘 전달)
-        markerImage = createMarkerImage(markerColor, labelIcon);
-    } else {
-        // 기본 마커 이미지
-        markerImage = createMarkerImage('#1976D2');
+    // 장소 위치 가져오기 (필수)
+    if (!place.location || typeof place.location.lat !== 'number' || typeof place.location.lng !== 'number') {
+        console.error('유효하지 않은 장소 위치 정보:', place);
+        return null;
     }
     
-    // 마커 생성
+    // 마커 위치 설정
+    const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+    
+    // 마커 이미지 생성 (라벨 색상 활용)
+    let markerImage;
+    let iconContent = '';
+    let iconColor = '#1976D2';
+    
+    // 장소에 라벨이 있는 경우 첫 번째 라벨 정보 활용
+    if (place.labels && place.labels.length > 0) {
+        // 첫 번째 라벨 정보 가져오기
+        const labelInfo = getLabelInfo(place.labels[0]);
+        iconColor = labelInfo.color;
+        
+        // 라벨 색상으로 마커 이미지 생성
+        markerImage = createMarkerImage(labelInfo.color);
+        
+        // 아이콘 내용 생성
+        iconContent = `<iconify-icon icon="${labelInfo.icon}" style="color: ${labelInfo.color}; font-size: 14px;"></iconify-icon>`;
+    } else {
+        // 기본 마커 이미지 생성
+        markerImage = createMarkerImage('#1976D2');
+        iconContent = '<iconify-icon icon="mdi:map-marker" style="color: #1976D2; font-size: 14px;"></iconify-icon>';
+    }
+    
+    // 마커 객체 생성
     const marker = new kakao.maps.Marker({
-        position: position,
-        map: map,
-        title: place.title,
-        image: markerImage
+        position: position,          // 마커 위치
+        image: markerImage,          // 마커 이미지
+        clickable: true,             // 클릭 가능 설정
+        title: place.title || '',    // 마커 타이틀 (툴팁)
+        zIndex: 1                    // 마커 겹침 순서
     });
     
-    // 마커에 장소 정보 저장 (나중에 참조하기 위함)
-    marker.place = place;
+    // 마커를 지도에 추가
+    marker.setMap(map);
     
-    // 마커 클릭 이벤트 설정
+    // 마커에 장소 정보 저장 (나중에 참조 용이하게)
+    marker.place = place;
+    marker.iconColor = iconColor;
+    
+    // 아이콘 오버레이 생성 및 추가
+    const iconOverlay = new kakao.maps.CustomOverlay({
+        position: position,
+        content: `<div class="marker-icon-overlay" data-icon-color="${iconColor}">${iconContent}</div>`,
+        zIndex: 2, // 마커보다 위에 표시
+    });
+    
+    // 오버레이를 지도에 추가
+    iconOverlay.setMap(map);
+    
+    // 마커와 오버레이를 연결 (나중에 함께 제거하기 위해)
+    marker.iconOverlay = iconOverlay;
+    
+    // 마커 클릭 이벤트 리스너 등록
     kakao.maps.event.addListener(marker, 'click', function() {
-        // 이전 선택된 마커가 있으면 원래 이미지로 복원
+        // 장소 정보 패널 표시
+        showPlaceInfoPanel(place);
+        
+        // 해당 장소로 지도 중심 이동 (부드럽게)
+        map.panTo(position);
+        
+        // 선택된 마커 설정
         if (selectedMarker) {
-            // 여기서 원래 마커 이미지로 복원하는 로직 추가 가능
+            // 이전 선택 마커 스타일 원복
+            selectedMarker.setZIndex(1);
+            if (selectedMarker.iconOverlay) {
+                // 이전 선택 마커의 아이콘 오버레이 스타일 복원
+                const prevOverlayElement = selectedMarker.iconOverlay.a;
+                if (prevOverlayElement) {
+                    const iconDiv = prevOverlayElement.querySelector('.marker-icon-overlay');
+                    if (iconDiv) {
+                        iconDiv.style.transform = 'translate(-50%, -50%) scale(1)';
+                        const iconElement = iconDiv.querySelector('iconify-icon');
+                        if (iconElement) {
+                            iconElement.style.fontSize = '14px';
+                        }
+                    }
+                }
+            }
         }
         
         // 현재 마커를 선택된 마커로 설정
         selectedMarker = marker;
+        selectedMarker.setZIndex(10);
         
-        // 마커의 화면상 좌표 계산
-        const projection = map.getProjection();
-        const markerPosition = projection.containerPointFromCoords(marker.getPosition());
-        
-        // 장소 정보 패널 표시 (마커 위치 정보 전달)
-        showPlaceInfoPanel(place, markerPosition);
-        
-        // 해당 장소로 지도 중심 이동 (부드럽게)
-        map.panTo(position);
+        // 선택된 마커의 아이콘 오버레이 강조
+        if (marker.iconOverlay) {
+            const overlayElement = marker.iconOverlay.a;
+            if (overlayElement) {
+                const iconDiv = overlayElement.querySelector('.marker-icon-overlay');
+                if (iconDiv) {
+                    iconDiv.style.transform = 'translate(-50%, -50%) scale(1.3)';
+                    const iconElement = iconDiv.querySelector('iconify-icon');
+                    if (iconElement) {
+                        iconElement.style.fontSize = '16px';
+                    }
+                }
+            }
+        }
     });
     
     return marker;
@@ -950,14 +1029,14 @@ function createMarker(place) {
 /**
  * 마커 이미지 생성 함수
  * @param {string} color - 마커 색상 (기본값: #1976D2)
- * @param {string} icon - 라벨 아이콘 (사용하지 않음)
  * @returns {kakao.maps.MarkerImage} - 생성된 마커 이미지
  */
-function createMarkerImage(color = '#1976D2', icon = '') {
-    // SVG 마커 아이콘 정의 (핀 형태의 심플한 마커, 테두리 얇게, 구멍 크기 증가)
+function createMarkerImage(color = '#1976D2') {
+    // SVG 마커 아이콘 정의 (핀 형태, 테두리 얇게, 내부에 구멍)
     const svgMarker = `
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36" viewBox="0 0 24 36">
             <path fill="${color}" d="M12 0C5.8 0 0.8 5 0.8 11.2c0 4 2.5 7.9 7.2 13.5l3.4 4.5c0.3 0.3 0.9 0.3 1.2 0l3.4-4.5c4.7-5.6 7.2-9.5 7.2-13.5C23.2 5 18.2 0 12 0zm0 16.8c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/>
+            <circle fill="white" cx="12" cy="9.8" r="7"/>
         </svg>
     `;
     
@@ -1073,7 +1152,7 @@ function showPlaceInfoPanel(place, markerPosition) {
             const textElement = document.createElement('span');
             textElement.textContent = label;
             
-            // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
+            // 툴크 요소 생성 (숨겨진 상태로 데이터만 저장)
             const tooltipElement = document.createElement('span');
             tooltipElement.className = 'label-tooltip';
             tooltipElement.textContent = labelInfo.description;
