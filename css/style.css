@@ -343,8 +343,26 @@ h1, h2, h3 {
 .category-item label {
     font-size: 0.9rem;
     white-space: nowrap;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     line-height: 1;
+    vertical-align: middle;
+}
+
+/* 카테고리 아이콘 스타일 */
+.category-item label iconify-icon {
+    font-size: 1.2em;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+/* 카테고리 색상 도트 스타일 */
+.category-item .color-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-left: 4px;
     vertical-align: middle;
 }
 
@@ -642,6 +660,14 @@ h1, h2, h3 {
     border-left-width: 3px;
     border-left-style: solid;
     overflow: visible; /* 툴팁이 넘쳐도 잘리지 않도록 */
+    color: white; /* 텍스트 색상 설정 */
+}
+
+/* 아이콘 스타일 추가 */
+.place-label iconify-icon {
+    font-size: 1.1em;
+    vertical-align: middle;
+    margin-right: 2px;
 }
 
 .place-label .label-icon {
