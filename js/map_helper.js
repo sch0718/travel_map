@@ -778,16 +778,33 @@ function updatePlacesList(places) {
                     clickedPlace.location.lng
                 );
                 
-                // 지도 이동
+                // 지도 이동 (더 가깝게 보기 위해 줌 레벨 조정)
                 map.setCenter(position);
+                map.setLevel(3); // 더 가깝게 보기 위해 줌 레벨 조정 (낮을수록 더 확대됨)
                 
-                // 정보 패널 표시
-                showPlaceInfoPanel(clickedPlace);
+                // 마커 위치 계산
+                const projection = map.getProjection();
+                const markerPosition = projection.containerPointFromCoords(position);
+                
+                // 정보 패널 표시 (마커 위치 전달하여 마커 클릭과 동일하게 표시)
+                showPlaceInfoPanel(clickedPlace, markerPosition);
                 
                 // 선택된 항목 스타일 변경
                 const allPlaceItems = document.querySelectorAll('.place-item');
                 allPlaceItems.forEach(item => item.classList.remove('selected'));
                 this.classList.add('selected');
+                
+                // 클릭한 장소의 마커를 찾아 선택된 마커로 설정
+                markers.forEach(marker => {
+                    if (marker.place && marker.place.id === clickedPlace.id) {
+                        if (selectedMarker) {
+                            // 이전 선택 마커 스타일 원복
+                            selectedMarker.setZIndex(1);
+                        }
+                        // 현재 마커를 선택된 마커로 설정
+                        selectedMarker = marker;
+                    }
+                });
             }
         });
         
@@ -2450,3 +2467,65 @@ function showToast(message, duration = 2000) {
  * 뷰 모드 버튼 상태 업데이트 함수
  * 맵 데이터 타입에 따라 적절한 버튼을 활성화하고 다른 버튼을 비활성화합니다.
  */
+
+/**
+ * 특정 장소로 지도 이동 함수
+ * @param {string} placeId - 장소 ID
+ */
+function moveToPlace(placeId) {
+    // 장소 ID로 장소 객체 찾기
+    const place = getPlaceById(placeId);
+    if (!place) {
+        console.error('존재하지 않는 장소:', placeId);
+        return;
+    }
+    
+    // 지도 중심 이동
+    map.setCenter(new kakao.maps.LatLng(place.location.lat, place.location.lng));
+    
+    // 줌 레벨 조정 (더 가깝게)
+    map.setLevel(3);
+    
+    // 해당 마커 찾기
+    const marker = markers.find(m => m.place && m.place.id === place.id);
+    if (marker) {
+        // 이전 선택 마커 처리
+        if (selectedMarker) {
+            selectedMarker.setZIndex(1);
+        }
+        
+        // 현재 마커를 선택된 마커로 설정
+        selectedMarker = marker;
+        selectedMarker.setZIndex(10);
+        
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        let markerPosition;
+        
+        // 마커 타입에 따라 위치 계산 방법 다르게 적용
+        if (marker instanceof kakao.maps.Marker) {
+            // 일반 마커인 경우
+            markerPosition = projection.containerPointFromCoords(marker.getPosition());
+        } else if (marker instanceof kakao.maps.CustomOverlay) {
+            // 커스텀 오버레이인 경우
+            const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+            markerPosition = projection.containerPointFromCoords(position);
+        } else {
+            // 알 수 없는 마커 타입
+            markerPosition = null;
+        }
+        
+        // 장소 정보 패널 표시 (마커 위치 전달)
+        if (markerPosition) {
+            showPlaceInfoPanel(place, markerPosition);
+        } else {
+            showPlaceInfoPanel(place);
+        }
+    } else {
+        // 마커를 찾을 수 없는 경우 패널만 표시
+        showPlaceInfoPanel(place);
+    }
+}
+
+// 함수를 전역으로 노출
+window.moveToPlace = moveToPlace;
