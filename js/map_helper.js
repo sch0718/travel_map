@@ -355,16 +355,57 @@ function setMapEventListeners() {
     // 지도 드래그 종료 이벤트
     kakao.maps.event.addListener(map, 'dragend', function() {
         console.log('지도 이동 완료');
-        // 선택된 마커가 있고 정보 패널이 표시 중이면 위치 업데이트
-        updateInfoPanelPosition();
+        // 선택된 마커가 화면에 보이는지 확인
+        checkMarkerVisibility();
     });
     
     // 지도 줌 변경 이벤트
     kakao.maps.event.addListener(map, 'zoom_changed', function() {
         console.log('지도 줌 레벨 변경:', map.getLevel());
+        // 선택된 마커가 화면에 보이는지 확인
+        checkMarkerVisibility();
+    });
+    
+    // 지도 이동 및 줌 변경 후 유휴 상태 이벤트
+    kakao.maps.event.addListener(map, 'idle', function() {
         // 선택된 마커가 있고 정보 패널이 표시 중이면 위치 업데이트
         updateInfoPanelPosition();
     });
+}
+
+/**
+ * 선택된 마커가 현재 지도 화면에 보이는지 확인하는 함수
+ */
+function checkMarkerVisibility() {
+    // 선택된 마커가 있고 정보 패널이 표시 중인 경우
+    if (selectedMarker && document.getElementById('place-info-panel').style.display === 'block') {
+        // 지도의 현재 바운드 영역 가져오기
+        const bounds = map.getBounds();
+        let markerPosition;
+        
+        // 마커 타입에 따라 위치 가져오기
+        if (selectedMarker instanceof kakao.maps.Marker) {
+            // 일반 마커인 경우
+            markerPosition = selectedMarker.getPosition();
+        } else if (selectedMarker instanceof kakao.maps.CustomOverlay) {
+            // 커스텀 오버레이인 경우
+            const place = selectedMarker.place;
+            if (!place) return;
+            
+            markerPosition = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+        } else {
+            return; // 알 수 없는 마커 타입
+        }
+        
+        // 마커가 지도 화면에 보이는지 확인
+        if (!bounds.contain(markerPosition)) {
+            console.log('선택된 마커가 화면에서 벗어남 - 정보 패널 닫기');
+            hidePlaceInfoPanel();
+        } else {
+            // 마커가 화면에 보이는 경우 위치 업데이트만 수행
+            updateInfoPanelPosition();
+        }
+    }
 }
 
 /**
@@ -663,7 +704,7 @@ function updatePlacesList(places) {
                 const textElement = document.createElement('span');
                 textElement.textContent = label;
                 
-                // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
+                // 툴크 요소 생성 (숨겨진 상태로 데이터만 저장)
                 const tooltipElement = document.createElement('span');
                 tooltipElement.className = 'label-tooltip';
                 tooltipElement.textContent = labelInfo.description;
@@ -952,7 +993,7 @@ function createMarker(place) {
         position: position,          // 마커 위치
         image: markerImage,          // 마커 이미지
         clickable: true,             // 클릭 가능 설정
-        title: place.title || '',    // 마커 타이틀 (툴팁)
+        title: place.title || '',    // 마커 타이틀 (툴크)
         zIndex: 1                    // 마커 겹침 순서
     });
     
@@ -978,8 +1019,12 @@ function createMarker(place) {
     
     // 마커 클릭 이벤트 리스너 등록
     kakao.maps.event.addListener(marker, 'click', function() {
-        // 장소 정보 패널 표시
-        showPlaceInfoPanel(place);
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        const markerPosition = projection.containerPointFromCoords(marker.getPosition());
+        
+        // 장소 정보 패널 표시 (마커 위치 전달)
+        showPlaceInfoPanel(place, markerPosition);
         
         // 해당 장소로 지도 중심 이동 (부드럽게)
         map.panTo(position);
@@ -992,7 +1037,6 @@ function createMarker(place) {
         
         // 현재 마커를 선택된 마커로 설정
         selectedMarker = marker;
-        // selectedMarker.setZIndex(10);
     });
     
     return marker;
@@ -1188,10 +1232,10 @@ function showPlaceInfoPanel(place, markerPosition) {
         // 가로 위치 계산
         if (isRightHalf) {
             // 마커가 오른쪽 영역에 있으면 팝업은 마커 왼쪽에 표시
-            left = markerPosition.x - panelWidth - 10; // 간격 축소 (20px → 10px)
+            left = markerPosition.x - panelWidth;
         } else {
             // 마커가 왼쪽 영역에 있으면 팝업은 마커 오른쪽에 표시
-            left = markerPosition.x + 10; // 간격 축소 (20px → 10px)
+            left = markerPosition.x;
         }
         
         // 마커 타입 감지 - 클릭된 마커의 DOM 요소를 확인
@@ -1200,8 +1244,18 @@ function showPlaceInfoPanel(place, markerPosition) {
         // 마커 타입을 확인하는 방법
         // 1. place.order가 있으면 숫자 마커
         // 2. pageDataStore.currentTrip이 있으면 숫자 마커 가능성 높음
+        // 3. DOM에서 클릭된 마커 요소를 확인
         if (place.order !== undefined || pageDataStore.currentTrip) {
             isCustomNumberMarker = true;
+        } else {
+            // DOM에서 마커 타입 확인 (숫자 마커인지 여부)
+            const markerElements = document.querySelectorAll('.custom-marker');
+            for (const elem of markerElements) {
+                if (elem.getAttribute('data-place-id') === place.id) {
+                    isCustomNumberMarker = /^\d+$/.test(elem.textContent.trim());
+                    break;
+                }
+            }
         }
         
         // 세로 위치 계산 (마커 타입에 따라 최적화)
@@ -1211,15 +1265,15 @@ function showPlaceInfoPanel(place, markerPosition) {
                 top = markerPosition.y - panelHeight - 5; // 숫자 마커 바로 위에 표시
             } else {
                 // 일반 마커의 경우 (높이: 36px)
-                top = markerPosition.y - panelHeight - 8; // 일반 마커 위에 표시
+                top = markerPosition.y - panelHeight;
             }
         } else {
             if (isCustomNumberMarker) {
                 // 숫자 마커의 경우
-                top = markerPosition.y + 20; // 숫자 마커 아래에 표시
+                top = markerPosition.y + 30; // 숫자 마커 아래에 표시, 간격 확대
             } else {
                 // 일반 마커의 경우
-                top = markerPosition.y + 25; // 일반 마커 아래에 표시
+                top = markerPosition.y - 10;
             }
         }
         
