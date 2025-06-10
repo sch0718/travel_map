@@ -778,16 +778,7 @@ function updatePlacesList(places) {
                     clickedPlace.location.lng
                 );
                 
-                // 지도 이동 (더 가깝게 보기 위해 줌 레벨 조정)
-                map.setCenter(position);
-                map.setLevel(3); // 더 가깝게 보기 위해 줌 레벨 조정 (낮을수록 더 확대됨)
-                
-                // 마커 위치 계산
-                const projection = map.getProjection();
-                const markerPosition = projection.containerPointFromCoords(position);
-                
-                // 정보 패널 표시 (마커 위치 전달하여 마커 클릭과 동일하게 표시)
-                showPlaceInfoPanel(clickedPlace, markerPosition);
+                executeMarkerClickEvent(clickedPlace, position);
                 
                 // 선택된 항목 스타일 변경
                 const allPlaceItems = document.querySelectorAll('.place-item');
@@ -860,6 +851,19 @@ function updatePlacesList(places) {
     });
     
     console.log('장소 목록 업데이트 완료:', places.length);
+}
+
+function executeMarkerClickEvent(place, position) {
+    // 지도 이동 (더 가깝게 보기 위해 줌 레벨 조정)
+    map.setCenter(position);
+    map.setLevel(3); // 더 가깝게 보기 위해 줌 레벨 조정 (낮을수록 더 확대됨)
+    
+    // 마커 위치 계산
+    const projection = map.getProjection();
+    const markerPosition = projection.containerPointFromCoords(position);
+    
+    // 정보 패널 표시 (마커 위치 전달하여 마커 클릭과 동일하게 표시)
+    showPlaceInfoPanel(place, markerPosition);
 }
 
 /**
@@ -1098,24 +1102,7 @@ function createMarker(place) {
     
     // 마커 클릭 이벤트 리스너 등록
     kakao.maps.event.addListener(marker, 'click', function() {
-        // 마커의 화면상 위치 계산
-        const projection = map.getProjection();
-        const markerPosition = projection.containerPointFromCoords(marker.getPosition());
-        
-        // 장소 정보 패널 표시 (마커 위치 전달)
-        showPlaceInfoPanel(place, markerPosition);
-        
-        // 해당 장소로 지도 중심 이동 (부드럽게)
-        map.panTo(position);
-        
-        // 선택된 마커 설정
-        if (selectedMarker) {
-            // 이전 선택 마커 스타일 원복
-            selectedMarker.setZIndex(1);
-        }
-        
-        // 현재 마커를 선택된 마커로 설정
-        selectedMarker = marker;
+        executeMarkerClickEvent(place, position);
     });
     
     return marker;
@@ -1349,7 +1336,7 @@ function showPlaceInfoPanel(place, markerPosition) {
         } else {
             if (isCustomNumberMarker) {
                 // 숫자 마커의 경우
-                top = markerPosition.y + 30; // 숫자 마커 아래에 표시, 간격 확대
+                top = markerPosition.y + 10;
             } else {
                 // 일반 마커의 경우
                 top = markerPosition.y - 10;
@@ -2140,6 +2127,7 @@ function showTripDay(trip, dayIndex) {
         
         const placeItem = document.createElement('li');
         placeItem.className = 'place-item trip-place';
+        placeItem.dataset.id = place.id;
         
         // 다음 장소와의 이동 정보 (있는 경우)
         let distanceInfo = '';
@@ -2198,8 +2186,8 @@ function showTripDay(trip, dayIndex) {
             });
             placeItem.classList.add('selected');
             
-            // 지도에서 해당 장소로 이동
-            moveToPlace(place.id);
+            const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+            executeMarkerClickEvent(place, position);
         });
         
         placesList.appendChild(placeItem);
@@ -2346,34 +2334,22 @@ function createOrderMarker(place, order) {
     // 마커 위치 설정
     const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
     
-    // 마커 스타일 설정
-    const markerStyle = {
-        backgroundColor: '#3498db',
-        color: '#fff',
-        borderRadius: '50%',
-        width: '30px',
-        height: '30px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontWeight: 'bold',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
-    };
-    
-    // 마커 HTML 생성
+    // 마커 HTML 생성 - z-index 높게 설정
     const markerHtml = `
         <div class="custom-marker" style="
-            background-color: ${markerStyle.backgroundColor};
-            color: ${markerStyle.color};
-            border-radius: ${markerStyle.borderRadius};
-            width: ${markerStyle.width};
-            height: ${markerStyle.height};
-            display: ${markerStyle.display};
-            justify-content: ${markerStyle.justifyContent};
-            align-items: ${markerStyle.alignItems};
-            font-weight: ${markerStyle.fontWeight};
-            box-shadow: ${markerStyle.boxShadow};
-            z-index: 2;
+            background-color: #3498db;
+            color: #fff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 10;
+            position: relative;
         " data-place-id="${place.id}">${order}</div>
     `;
     
@@ -2381,31 +2357,45 @@ function createOrderMarker(place, order) {
     const marker = new kakao.maps.CustomOverlay({
         position: position,
         content: markerHtml,
-        zIndex: 2,
+        zIndex: 10,
         yAnchor: 0.5
     });
     
     // 마커를 지도에 추가
     marker.setMap(map);
     
-    // 마커에 장소 정보 저장 (클릭 이벤트에서 사용)
+    // 마커에 장소 정보 저장
     marker.place = place;
     
-    // 클릭 이벤트 추가
-    kakao.maps.event.addListener(marker, 'click', function() {
-        // 마커의 화면상 위치 계산
-        const projection = map.getProjection();
-        const markerPosition = projection.containerPointFromCoords(position);
-        
-        // 장소 정보 패널 표시
-        showPlaceInfoPanel(place, markerPosition);
-        
-        // 선택된 마커 설정
-        if (selectedMarker) {
-            selectedMarker.setZIndex(1);
-        }
-        selectedMarker = marker;
-    });
+    // DOM 요소에 직접 클릭 이벤트 추가하기 위한 타임아웃 설정
+    // (오버레이가 렌더링된 후에 DOM 요소를 찾기 위함)
+    setTimeout(() => {
+        // 방금 추가한 커스텀 마커 요소 찾기
+        const markerElements = document.querySelectorAll('.custom-marker');
+        markerElements.forEach(elem => {
+            if (elem.getAttribute('data-place-id') === place.id) {
+                // 이미 이벤트가 있는지 확인
+                if (!elem.getAttribute('data-has-event')) {
+                    // 클릭 이벤트 추가
+                    elem.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 이벤트 버블링 방지
+                        executeMarkerClickEvent(place, position);
+
+                        // 선택된 항목 스타일 변경
+                        const allPlaceItems = document.querySelectorAll('.place-item');
+                        allPlaceItems.forEach(item => item.classList.remove('selected'));
+                        const placesList = document.getElementById('places');
+                        const selectedPlaceItem = placesList.querySelector(`[data-id="${place.id}"]`);
+                        if (selectedPlaceItem) {
+                            selectedPlaceItem.classList.add('selected');
+                        }
+                    });
+                    // 이벤트 추가 표시
+                    elem.setAttribute('data-has-event', 'true');
+                }
+            }
+        });
+    }, 100);
     
     // 마커 배열에 추가
     markers.push(marker);
