@@ -20,7 +20,7 @@ const markerIconStyle = `
     align-items: center;
     width: 14px;
     height: 14px;
-    transform: translate(-50%, -32px);
+    transform: translate(-45%, -32px);
     z-index: 10;
     pointer-events: none;
     transition: transform 0.2s ease;
@@ -37,6 +37,7 @@ const pageDataStore = {
     filteredPlaces: [],
     labelInfo: {},
     currentMapData: null, // 현재 로드된 맵 데이터 저장
+    mapDataType: 'theme', // 맵 데이터 타입: 'theme' 또는 'trip'
     themeColors: [
         "#4285F4", "#3F51B5", "#2196F3", "#03A9F4", "#89ABE3", 
         "#34A853", "#009688", "#4CAF50", "#8BC34A", "#A7BEAE", 
@@ -607,6 +608,67 @@ function setupPageEvents() {
     // 현재 URL 확인
     const currentUrl = window.location.pathname;
     
+    // 테마 뷰와 여행 뷰 간 전환 기능 추가
+    const viewModeSelector = document.getElementById('view-mode-selector');
+    const themeViewBtn = document.getElementById('theme-view-btn');
+    const tripViewBtn = document.getElementById('trip-view-btn');
+    
+    // view-mode-selector가 있으면 표시
+    if (viewModeSelector) {
+        viewModeSelector.style.display = 'flex';
+    }
+    
+    // 뷰 모드 버튼 이벤트 설정
+    if (themeViewBtn && tripViewBtn) {
+        themeViewBtn.addEventListener('click', function() {
+            // 테마 뷰로 전환
+            themeViewBtn.classList.add('active');
+            tripViewBtn.classList.remove('active');
+            
+            // 맵 데이터 타입 업데이트
+            pageDataStore.mapDataType = 'theme';
+            
+            // 테마 뷰에서는 카테고리별로 장소 표시
+            if (pageDataStore && pageDataStore.places) {
+                displayPlacesOnMap(pageDataStore.places);
+            }
+        });
+        
+        tripViewBtn.addEventListener('click', function() {
+            // 버튼이 비활성화 상태면 이벤트 무시
+            if (this.disabled) {
+                console.log('여행 뷰 버튼이 비활성화되어 있습니다.');
+                return;
+            }
+            
+            // 여행 뷰로 전환
+            tripViewBtn.classList.add('active');
+            themeViewBtn.classList.remove('active');
+            
+            // 맵 데이터 타입 업데이트
+            pageDataStore.mapDataType = 'trip';
+            
+            // 페이지별 여행 뷰 처리
+            if (currentUrl.includes('jeju_food.html')) {
+                // 맛집 페이지에서는 첫 번째 음식 카테고리 필터링
+                if (pageDataStore && pageDataStore.currentMapData) {
+                    const firstCategory = Object.keys(pageDataStore.currentMapData.categories || {})[0];
+                    if (firstCategory) {
+                        filterPlacesByCategory('food_type', firstCategory, true);
+                    }
+                }
+            } else if (currentUrl.includes('jeju_trip_202506.html')) {
+                // 여행 페이지에서는 첫 번째 일정 카테고리 필터링
+                if (pageDataStore && pageDataStore.currentMapData) {
+                    const firstDayCategory = Object.keys(pageDataStore.currentMapData.categories || {})[0];
+                    if (firstDayCategory) {
+                        filterPlacesByCategory('day', firstDayCategory, true);
+                    }
+                }
+            }
+        });
+    }
+    
     // 페이지별 특수 처리
     if (currentUrl.includes('jeju_food.html')) {
         // 제주 맛집 페이지에 특화된 이벤트 설정
@@ -848,6 +910,19 @@ async function loadSpecificMapData(dataPath) {
         pageDataStore.places = mapData.places || [];
         pageDataStore.filteredPlaces = [...pageDataStore.places]; // 초기에는 모든 장소 표시
         
+        // 맵 데이터 타입 감지 ('trip' 또는 'theme')
+        // trip 데이터는 days 필드가 있거나 파일명에 trip이 포함된 경우
+        if (mapData.days || 
+            mapData.type === 'trip' || 
+            dataPath.toLowerCase().includes('trip') ||
+            (mapData.categories && Object.keys(mapData.categories).some(cat => cat.toLowerCase().includes('day')))) {
+            pageDataStore.mapDataType = 'trip';
+        } else {
+            pageDataStore.mapDataType = 'theme';
+        }
+        
+        console.log('맵 데이터 타입:', pageDataStore.mapDataType);
+        
         // 테마 정보 표시
         displayThemeInfo(mapData);
         
@@ -861,6 +936,9 @@ async function loadSpecificMapData(dataPath) {
         if (mapData.categories) {
             updateCategoryFilters(mapData.categories);
         }
+        
+        // 뷰 모드 버튼 업데이트
+        updateViewModeButtons();
         
         console.log('지도 데이터 로드 완료:', mapData.title || '제목 없음');
         return mapData;
@@ -1782,6 +1860,7 @@ window.showPlaceInfoPanel = showPlaceInfoPanel;
 window.handlePageSearch = handlePageSearch;
 window.updateCategoryFilters = updateCategoryFilters;
 window.displayThemeInfo = displayThemeInfo;
+window.updateViewModeButtons = updateViewModeButtons;
 
 // DOM이 로드된 후 이벤트 설정
 document.addEventListener('DOMContentLoaded', function() {
@@ -1813,4 +1892,50 @@ document.addEventListener('DOMContentLoaded', function() {
         // 기타 다른 페이지에 대한 처리
         console.log('알 수 없는 페이지 - 데이터 자동 로드 없음');
     }
-}); 
+});
+
+/**
+ * 뷰 모드 버튼 상태 업데이트 함수
+ * 맵 데이터 타입에 따라 적절한 버튼을 활성화하고 다른 버튼을 비활성화합니다.
+ */
+function updateViewModeButtons() {
+    const themeViewBtn = document.getElementById('theme-view-btn');
+    const tripViewBtn = document.getElementById('trip-view-btn');
+    
+    if (!themeViewBtn || !tripViewBtn) {
+        console.warn('뷰 모드 버튼을 찾을 수 없습니다.');
+        return;
+    }
+    
+    // 기존 active 클래스 제거
+    themeViewBtn.classList.remove('active');
+    tripViewBtn.classList.remove('active');
+    
+    // 버튼 초기화 (모두 활성화)
+    themeViewBtn.disabled = false;
+    tripViewBtn.disabled = false;
+    themeViewBtn.style.cursor = 'pointer';
+    tripViewBtn.style.cursor = 'pointer';
+    themeViewBtn.style.opacity = '1';
+    tripViewBtn.style.opacity = '1';
+    
+    // 맵 데이터 타입에 따라 적절한 버튼 활성화 및 다른 버튼 비활성화
+    if (pageDataStore.mapDataType === 'trip') {
+        // 여행 데이터일 경우, 여행 버튼 활성화
+        tripViewBtn.classList.add('active');
+        console.log('여행 뷰 모드 활성화');
+    } else {
+        // 테마 데이터일 경우, 테마 버튼 활성화하고 여행 버튼 비활성화
+        themeViewBtn.classList.add('active');
+        // 여행 버튼 비활성화
+        tripViewBtn.disabled = true;
+        tripViewBtn.style.cursor = 'not-allowed';
+        tripViewBtn.style.opacity = '0.5';
+        console.log('테마 뷰 모드 활성화 (여행 뷰 버튼 비활성화)');
+    }
+}
+
+/**
+ * 장소 목록 표시 함수
+ * @param {Array} places - 표시할 장소 배열
+ */

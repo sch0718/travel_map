@@ -161,6 +161,15 @@
             <a href="jeju_food.html" class="gnb-btn active">제주도 맛집</a>
             <a href="jeju_trip_202506.html" class="gnb-btn">제주도 여행</a>
         </nav>
+        <!-- 테마/여행 보기 모드 선택 버튼 추가 -->
+        <div id="view-mode-selector" class="view-mode-selector">
+            <button id="theme-view-btn" class="view-mode-btn">
+                <iconify-icon icon="mdi:map-marker-multiple" style="margin-right: 4px;"></iconify-icon>테마
+            </button>
+            <button id="trip-view-btn" class="view-mode-btn active">
+                <iconify-icon icon="mdi:routes" style="margin-right: 4px;"></iconify-icon>여행
+            </button>
+        </div>
         <div class="search-container">
             <input type="text" id="search-input" placeholder="장소 검색...">
             <button id="search-button">검색</button>
