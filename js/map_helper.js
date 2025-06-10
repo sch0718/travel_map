@@ -20,9 +20,10 @@ const markerIconStyle = `
     align-items: center;
     width: 14px;
     height: 14px;
-    transform: translate(-45%, -32px);
+    transform: translate(-50%, -32px);
     z-index: 10;
     pointer-events: none;
+    transition: transform 0.2s ease;
 }
 </style>
 `;
@@ -987,40 +988,11 @@ function createMarker(place) {
         if (selectedMarker) {
             // 이전 선택 마커 스타일 원복
             selectedMarker.setZIndex(1);
-            if (selectedMarker.iconOverlay) {
-                // 이전 선택 마커의 아이콘 오버레이 스타일 복원
-                const prevOverlayElement = selectedMarker.iconOverlay.a;
-                if (prevOverlayElement) {
-                    const iconDiv = prevOverlayElement.querySelector('.marker-icon-overlay');
-                    if (iconDiv) {
-                        iconDiv.style.transform = 'translate(-50%, -50%) scale(1)';
-                        const iconElement = iconDiv.querySelector('iconify-icon');
-                        if (iconElement) {
-                            iconElement.style.fontSize = '14px';
-                        }
-                    }
-                }
-            }
         }
         
         // 현재 마커를 선택된 마커로 설정
         selectedMarker = marker;
-        selectedMarker.setZIndex(10);
-        
-        // 선택된 마커의 아이콘 오버레이 강조
-        if (marker.iconOverlay) {
-            const overlayElement = marker.iconOverlay.a;
-            if (overlayElement) {
-                const iconDiv = overlayElement.querySelector('.marker-icon-overlay');
-                if (iconDiv) {
-                    iconDiv.style.transform = 'translate(-50%, -50%) scale(1.3)';
-                    const iconElement = iconDiv.querySelector('iconify-icon');
-                    if (iconElement) {
-                        iconElement.style.fontSize = '16px';
-                    }
-                }
-            }
-        }
+        // selectedMarker.setZIndex(10);
     });
     
     return marker;
