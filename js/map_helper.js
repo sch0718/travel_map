@@ -1278,6 +1278,7 @@ function showPlaceInfoPanel(place, markerPosition) {
 function hidePlaceInfoPanel() {
     const panel = document.getElementById('place-info-panel');
     if (panel) {
+        panel.style.display = 'none';
         panel.classList.remove('visible');
     }
     
