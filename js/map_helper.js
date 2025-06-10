@@ -38,6 +38,7 @@ const pageDataStore = {
     labelInfo: {},
     currentMapData: null, // 현재 로드된 맵 데이터 저장
     mapDataType: 'theme', // 맵 데이터 타입: 'theme' 또는 'trip'
+    viewMode: 'theme', // 현재 보기 모드: 'theme' 또는 'trip'
     themeColors: [
         "#4285F4", "#3F51B5", "#2196F3", "#03A9F4", "#89ABE3", 
         "#34A853", "#009688", "#4CAF50", "#8BC34A", "#A7BEAE", 
@@ -621,17 +622,14 @@ function setupPageEvents() {
     // 뷰 모드 버튼 이벤트 설정
     if (themeViewBtn && tripViewBtn) {
         themeViewBtn.addEventListener('click', function() {
-            // 테마 뷰로 전환
-            themeViewBtn.classList.add('active');
-            tripViewBtn.classList.remove('active');
-            
-            // 맵 데이터 타입 업데이트
-            pageDataStore.mapDataType = 'theme';
-            
-            // 테마 뷰에서는 카테고리별로 장소 표시
-            if (pageDataStore && pageDataStore.places) {
-                displayPlacesOnMap(pageDataStore.places);
+            // 버튼이 비활성화 상태면 이벤트 무시
+            if (this.disabled) {
+                console.log('테마 뷰 버튼이 비활성화되어 있습니다.');
+                return;
             }
+            
+            // 테마 뷰로 전환
+            setViewMode('theme');
         });
         
         tripViewBtn.addEventListener('click', function() {
@@ -642,30 +640,7 @@ function setupPageEvents() {
             }
             
             // 여행 뷰로 전환
-            tripViewBtn.classList.add('active');
-            themeViewBtn.classList.remove('active');
-            
-            // 맵 데이터 타입 업데이트
-            pageDataStore.mapDataType = 'trip';
-            
-            // 페이지별 여행 뷰 처리
-            if (currentUrl.includes('jeju_food.html')) {
-                // 맛집 페이지에서는 첫 번째 음식 카테고리 필터링
-                if (pageDataStore && pageDataStore.currentMapData) {
-                    const firstCategory = Object.keys(pageDataStore.currentMapData.categories || {})[0];
-                    if (firstCategory) {
-                        filterPlacesByCategory('food_type', firstCategory, true);
-                    }
-                }
-            } else if (currentUrl.includes('jeju_trip_202506.html')) {
-                // 여행 페이지에서는 첫 번째 일정 카테고리 필터링
-                if (pageDataStore && pageDataStore.currentMapData) {
-                    const firstDayCategory = Object.keys(pageDataStore.currentMapData.categories || {})[0];
-                    if (firstDayCategory) {
-                        filterPlacesByCategory('day', firstDayCategory, true);
-                    }
-                }
-            }
+            setViewMode('trip');
         });
     }
     
@@ -937,11 +912,20 @@ async function loadSpecificMapData(dataPath) {
             updateCategoryFilters(mapData.categories);
         }
         
-        // 뷰 모드 버튼 업데이트
-        updateViewModeButtons();
-        
-        console.log('지도 데이터 로드 완료:', mapData.title || '제목 없음');
-        return mapData;
+            // 뷰 모드 버튼 업데이트
+    updateViewModeButtons();
+    
+    // 데이터 타입에 따라 초기 뷰 모드 설정
+    if (pageDataStore.mapDataType === 'trip') {
+        // 여행 데이터일 경우 여행 모드로 시작
+        setViewMode('trip');
+    } else {
+        // 테마 데이터일 경우 테마 모드로 시작
+        setViewMode('theme');
+    }
+    
+    console.log('지도 데이터 로드 완료:', mapData.title || '제목 없음');
+    return mapData;
     } catch (error) {
         console.error('지도 데이터 로드 오류:', error);
         alert(`지도 데이터 로드 중 오류가 발생했습니다: ${error.message}`);
@@ -1938,4 +1922,531 @@ function updateViewModeButtons() {
 /**
  * 장소 목록 표시 함수
  * @param {Array} places - 표시할 장소 배열
+ */
+
+/**
+ * 보기 모드 설정 함수
+ * @param {string} mode - 'theme' 또는 'trip'
+ */
+function setViewMode(mode) {
+    if (mode !== 'theme' && mode !== 'trip') {
+        console.error('유효하지 않은 보기 모드:', mode);
+        return;
+    }
+    
+    // 토스트 메시지 표시
+    const message = mode === 'theme' ? '테마 모드로 전환되었습니다.' : '여행 모드로 전환되었습니다.';
+    showToast(message);
+    
+    // 현재 보기 모드 저장
+    pageDataStore.viewMode = mode;
+    pageDataStore.mapDataType = mode;
+    
+    // 뷰 모드 버튼 UI 업데이트
+    const themeViewBtn = document.getElementById('theme-view-btn');
+    const tripViewBtn = document.getElementById('trip-view-btn');
+    
+    if (themeViewBtn && tripViewBtn) {
+        // 모든 active 클래스 제거
+        themeViewBtn.classList.remove('active');
+        tripViewBtn.classList.remove('active');
+        
+        // 선택된 모드에 따라 active 클래스 추가
+        if (mode === 'theme') {
+            themeViewBtn.classList.add('active');
+            themeViewBtn.style.transform = 'translateY(-1px)';
+            tripViewBtn.style.transform = 'translateY(0)';
+        } else {
+            tripViewBtn.classList.add('active');
+            tripViewBtn.style.transform = 'translateY(-1px)';
+            themeViewBtn.style.transform = 'translateY(0)';
+        }
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
+    // 모드에 맞게 화면 표시
+    if (mode === 'theme') {
+        displayThemeView();
+    } else {
+        displayTripView();
+    }
+    
+    console.log(`보기 모드 변경: ${mode}`);
+}
+
+/**
+ * 테마 보기 모드로 표시하는 함수
+ */
+function displayThemeView() {
+    if (!pageDataStore.currentMapData) return;
+    
+    // 경로 선 제거 (이전에 그려진 것이 있다면)
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+        window.currentPolyline = null;
+    }
+    
+    // 맵 데이터의 모든 장소를 테마처럼 표시
+    const allPlaces = pageDataStore.places || [];
+    pageDataStore.filteredPlaces = allPlaces; // 필터링된 장소 목록 초기화
+    
+    // 지도에 모든 장소 표시
+    displayPlacesOnMap(allPlaces);
+    
+    // 장소 목록 업데이트
+    displayPlaces(allPlaces);
+    
+    // 장소 목록 제목을 '장소'로 설정 (일정 대신)
+    const placesListTitle = document.getElementById('places-list-title');
+    if (placesListTitle) {
+        placesListTitle.textContent = `장소 목록 (${allPlaces.length})`;
+    }
+    
+    // 카테고리 필터 재생성
+    updateCategoryFilters(pageDataStore.currentMapData.categories || {});
+    
+    console.log('테마 보기 모드 적용 완료');
+}
+
+/**
+ * 여행 보기 모드로 표시하는 함수
+ */
+function displayTripView() {
+    if (!pageDataStore.currentMapData) return;
+    
+    // 맵 데이터에 days 필드가 없으면 테마 모드로 전환
+    if (!pageDataStore.currentMapData.days) {
+        console.log('일정 정보가 없습니다. 테마 모드로 전환합니다.');
+        setViewMode('theme');
+        return;
+    }
+    
+    // 카테고리 목록 대신 일정 표시
+    const categoryList = document.getElementById('category-list');
+    if (categoryList) {
+        categoryList.innerHTML = '';
+        
+        // 일자별 탭 생성
+        const dayTabs = document.createElement('div');
+        dayTabs.className = 'day-buttons';
+        
+        pageDataStore.currentMapData.days.forEach((day, index) => {
+            const dayTab = document.createElement('button');
+            dayTab.className = 'day-tab';
+            dayTab.textContent = `${day.day}일차`;
+            
+            // 1일차일 경우 기본적으로 활성화
+            if (index === 0) {
+                dayTab.classList.add('active');
+            }
+            
+            dayTab.addEventListener('click', () => {
+                // 클릭한 탭 활성화 및 다른 탭 비활성화
+                document.querySelectorAll('.day-tab').forEach(tab => tab.classList.remove('active'));
+                dayTab.classList.add('active');
+                
+                showTripDay(pageDataStore.currentMapData, index);
+            });
+            dayTabs.appendChild(dayTab);
+        });
+        
+        categoryList.appendChild(dayTabs);
+    }
+    
+    // 장소 목록에 일정 일차만 표시하도록 UI 업데이트
+    const placesListTitle = document.getElementById('places-list-title');
+    if (placesListTitle) {
+        placesListTitle.textContent = '일정';
+    }
+    
+    // 기본적으로 첫 번째 일차 표시
+    if (pageDataStore.currentMapData.days && pageDataStore.currentMapData.days.length > 0) {
+        showTripDay(pageDataStore.currentMapData, 0);
+    }
+    
+    console.log('여행 보기 모드 적용 완료');
+}
+
+/**
+ * 여행 일정의 특정 일차 표시 함수
+ * @param {Object} trip - 여행 일정 객체
+ * @param {number} dayIndex - 일차 인덱스
+ */
+function showTripDay(trip, dayIndex) {
+    // 선택된 마커가 있으면 원래 스타일로 복원
+    if (selectedMarker) {
+        selectedMarker.setZIndex(1);
+        selectedMarker = null;
+    }
+    
+    // 장소 정보 패널 닫기
+    hidePlaceInfoPanel();
+    
+    // 탭 활성화 상태 변경
+    const dayTabs = document.querySelectorAll('.day-tab');
+    dayTabs.forEach((tab, i) => {
+        if (i === dayIndex) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
+        }
+    });
+    
+    // 선택된 일차의 장소 목록 표시
+    const day = trip.days[dayIndex];
+    if (!day) return;
+    
+    // 장소 목록 업데이트
+    const placesList = document.getElementById('places');
+    if (!placesList) return;
+    
+    placesList.innerHTML = '';
+    
+    // 일차 정보 헤더
+    const dayInfo = document.createElement('div');
+    dayInfo.className = 'day-info';
+    dayInfo.innerHTML = `<h4>${day.date || ''} (${day.day}일차)</h4>`;
+    if (day.memo) {
+        dayInfo.innerHTML += `<p>${day.memo}</p>`;
+    }
+    placesList.appendChild(dayInfo);
+    
+    // 일차의 장소 목록 (방문 순서대로 정렬)
+    const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
+    
+    sortedPlaces.forEach((dayPlace, index) => {
+        // 장소 ID를 이용해 장소 정보 가져오기
+        const place = trip.places.find(p => p.id === dayPlace.placeId);
+        if (!place) return;
+        
+        const placeItem = document.createElement('li');
+        placeItem.className = 'place-item trip-place';
+        
+        // 다음 장소와의 이동 정보 (있는 경우)
+        let distanceInfo = '';
+        
+        if (index < sortedPlaces.length - 1 && dayPlace.distance) {
+            distanceInfo = `
+                <div class="place-distance">
+                    <span>${dayPlace.distance || ''} ${dayPlace.duration || ''}</span>
+                </div>
+            `;
+        }
+        
+        // 기본 요약 정보
+        const basicInfoHTML = `
+            <div class="place-order">${dayPlace.order}</div>
+            <div class="place-info-row">
+                <div class="place-time">${dayPlace.timeEstimate || ''}</div>
+                <div class="place-title">${place.title}</div>
+            </div>
+            ${dayPlace.memo ? `<div class="place-memo">${dayPlace.memo}</div>` : ''}
+            ${distanceInfo}
+        `;
+        
+        // 상세 정보 (펼쳤을 때만 보임)
+        const detailsHTML = `
+            <div class="place-details">
+                ${place.address ? `<div class="place-address">📍 ${place.address}</div>` : ''}
+                ${place.description ? `<div class="place-description">📝 ${place.description}</div>` : ''}
+                ${place.labels && place.labels.length > 0 ? `
+                    <div class="place-labels-container"></div>
+                ` : ''}
+            </div>
+        `;
+        
+        // 전체 HTML 구성
+        placeItem.innerHTML = `
+            ${basicInfoHTML}
+            <button class="toggle-details">↓</button>
+            ${detailsHTML}
+        `;
+        
+        // 확장/축소 토글 버튼 이벤트
+        const toggleButton = placeItem.querySelector('.toggle-details');
+        toggleButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
+            placeItem.classList.toggle('expanded');
+            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+        });
+        
+        // 장소 아이템 클릭 이벤트 (제목 부분만)
+        const placeTitle = placeItem.querySelector('.place-title');
+        placeTitle.addEventListener('click', function() {
+            // 선택된 장소 스타일 적용
+            document.querySelectorAll('.place-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            placeItem.classList.add('selected');
+            
+            // 지도에서 해당 장소로 이동
+            moveToPlace(place.id);
+        });
+        
+        placesList.appendChild(placeItem);
+    });
+    
+    // 지도에 경로 표시
+    showTripPath(trip, dayIndex);
+    
+    // 라벨을 동적으로 추가
+    const labelsContainers = document.querySelectorAll('.place-labels-container');
+    labelsContainers.forEach((container, idx) => {
+        if (idx >= sortedPlaces.length) return;
+        
+        const placeId = sortedPlaces[idx].placeId;
+        const place = trip.places.find(p => p.id === placeId);
+        
+        if (place && place.labels && place.labels.length > 0) {
+            // 클래스 이름 변경하여 올바른 컨테이너 클래스 사용
+            container.className = 'place-labels';
+            
+            // 각 라벨에 대해 라벨 생성
+            place.labels.forEach(label => {
+                const labelInfo = getLabelInfo(label);
+                
+                const labelElement = document.createElement('span');
+                labelElement.className = 'place-label small';
+                
+                // 라벨 스타일 적용
+                labelElement.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
+                labelElement.style.color = labelInfo.color;
+                labelElement.style.borderLeftColor = labelInfo.color;
+                
+                // 아이콘 요소 생성
+                const iconElement = document.createElement('span');
+                iconElement.className = 'label-icon';
+                iconElement.innerHTML = `<iconify-icon icon="${labelInfo.icon}"></iconify-icon>`;
+                
+                // 텍스트 요소 생성
+                const textElement = document.createElement('span');
+                textElement.textContent = label;
+                
+                // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
+                const tooltipElement = document.createElement('span');
+                tooltipElement.className = 'label-tooltip';
+                tooltipElement.textContent = labelInfo.description;
+                tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
+                
+                // 요소 조립
+                labelElement.appendChild(iconElement);
+                labelElement.appendChild(textElement);
+                labelElement.appendChild(tooltipElement);
+                
+                container.appendChild(labelElement);
+            });
+        }
+    });
+}
+
+/**
+ * 여행 일정 경로 표시 함수
+ * @param {Object} trip - 여행 일정 객체
+ * @param {number} dayIndex - 일차 인덱스
+ */
+function showTripPath(trip, dayIndex) {
+    // 기존 마커 제거
+    removeAllMarkers();
+    
+    // 경로 선 제거 (이전에 그려진 것이 있다면)
+    if (window.currentPolyline) {
+        window.currentPolyline.setMap(null);
+        window.currentPolyline = null;
+    }
+    
+    // 해당 일차 정보 가져오기
+    const day = trip.days[dayIndex];
+    if (!day || !day.places || day.places.length === 0) {
+        console.log('해당 일차에 방문할 장소가 없습니다.');
+        return;
+    }
+    
+    // 방문 순서대로 정렬
+    const sortedPlaces = [...day.places].sort((a, b) => a.order - b.order);
+    
+    // 경로 표시를 위한 좌표 배열
+    const linePath = [];
+    const pathPlaces = [];
+    
+    // 장소 순서대로 좌표 추가 및 마커 생성
+    sortedPlaces.forEach(dayPlace => {
+        // trip.places 배열에서 직접 장소 정보 가져오기
+        const place = trip.places.find(p => p.id === dayPlace.placeId);
+        if (!place || !place.location || !place.location.lat || !place.location.lng) return;
+        
+        // 유효한 위치 정보인지 확인
+        const lat = place.location.lat;
+        const lng = place.location.lng;
+        
+        if (typeof lat !== 'number' || typeof lng !== 'number') return;
+        
+        // 경로에 좌표 추가
+        linePath.push(new kakao.maps.LatLng(lat, lng));
+        
+        // 마커 생성
+        createOrderMarker(place, dayPlace.order);
+        
+        // 경로 계산을 위한 장소 배열에 추가
+        pathPlaces.push(place);
+    });
+    
+    // 경로 선 생성 (2개 이상의 장소가 있을 때만)
+    if (linePath.length >= 2) {
+        const polyline = new kakao.maps.Polyline({
+            path: linePath,
+            strokeWeight: 3,
+            strokeColor: '#3498db',
+            strokeOpacity: 0.7,
+            strokeStyle: 'solid'
+        });
+        
+        // 경로 선을 지도에 표시
+        polyline.setMap(map);
+        
+        // 현재 경로 선 저장 (나중에 제거하기 위해)
+        window.currentPolyline = polyline;
+    }
+    
+    // 모든 장소가 보이도록 지도 범위 조정
+    if (pathPlaces.length > 0) {
+        setMapBounds(pathPlaces);
+    }
+}
+
+/**
+ * 순서가 있는 마커 생성 함수
+ * @param {Object} place - 장소 객체
+ * @param {number} order - 순서 번호
+ */
+function createOrderMarker(place, order) {
+    // 장소 위치 확인
+    if (!place.location || typeof place.location.lat !== 'number' || typeof place.location.lng !== 'number') {
+        return null;
+    }
+    
+    // 마커 위치 설정
+    const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
+    
+    // 마커 스타일 설정
+    const markerStyle = {
+        backgroundColor: '#3498db',
+        color: '#fff',
+        borderRadius: '50%',
+        width: '30px',
+        height: '30px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.3)'
+    };
+    
+    // 마커 HTML 생성
+    const markerHtml = `
+        <div class="custom-marker" style="
+            background-color: ${markerStyle.backgroundColor};
+            color: ${markerStyle.color};
+            border-radius: ${markerStyle.borderRadius};
+            width: ${markerStyle.width};
+            height: ${markerStyle.height};
+            display: ${markerStyle.display};
+            justify-content: ${markerStyle.justifyContent};
+            align-items: ${markerStyle.alignItems};
+            font-weight: ${markerStyle.fontWeight};
+            box-shadow: ${markerStyle.boxShadow};
+            z-index: 2;
+        " data-place-id="${place.id}">${order}</div>
+    `;
+    
+    // 커스텀 오버레이 생성
+    const marker = new kakao.maps.CustomOverlay({
+        position: position,
+        content: markerHtml,
+        zIndex: 2,
+        yAnchor: 0.5
+    });
+    
+    // 마커를 지도에 추가
+    marker.setMap(map);
+    
+    // 마커에 장소 정보 저장 (클릭 이벤트에서 사용)
+    marker.place = place;
+    
+    // 클릭 이벤트 추가
+    kakao.maps.event.addListener(marker, 'click', function() {
+        // 마커의 화면상 위치 계산
+        const projection = map.getProjection();
+        const markerPosition = projection.containerPointFromCoords(position);
+        
+        // 장소 정보 패널 표시
+        showPlaceInfoPanel(place, markerPosition);
+        
+        // 선택된 마커 설정
+        if (selectedMarker) {
+            selectedMarker.setZIndex(1);
+        }
+        selectedMarker = marker;
+    });
+    
+    // 마커 배열에 추가
+    markers.push(marker);
+    
+    return marker;
+}
+
+/**
+ * 토스트 메시지 표시 함수
+ * @param {string} message - 표시할 메시지
+ * @param {number} duration - 메시지 표시 시간 (밀리초)
+ */
+function showToast(message, duration = 2000) {
+    // 기존 토스트 메시지 제거
+    const existingToast = document.getElementById('toast-message');
+    if (existingToast) {
+        document.body.removeChild(existingToast);
+    }
+    
+    // 새 토스트 메시지 생성
+    const toast = document.createElement('div');
+    toast.id = 'toast-message';
+    toast.textContent = message;
+    
+    // 스타일 설정
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    toast.style.color = 'white';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '4px';
+    toast.style.fontSize = '14px';
+    toast.style.zIndex = '9999';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease';
+    
+    // 문서에 추가
+    document.body.appendChild(toast);
+    
+    // 애니메이션 효과
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 10);
+    
+    // 자동 제거
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
+    }, duration);
+}
+
+/**
+ * 뷰 모드 버튼 상태 업데이트 함수
+ * 맵 데이터 타입에 따라 적절한 버튼을 활성화하고 다른 버튼을 비활성화합니다.
  */
