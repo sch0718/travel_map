@@ -7,6 +7,7 @@
 var map; // 카카오 맵 객체
 var markers = []; // 지도에 표시된 마커 배열
 var selectedMarker = null; // 현재 선택된 마커
+var mapControls = { zoomControl: null, mapTypeControl: null }; // 지도 컨트롤 참조 저장
 
 /**
  * 지도 초기화 함수
@@ -14,6 +15,16 @@ var selectedMarker = null; // 현재 선택된 마커
  */
 function initMap() {
     try {
+        console.log('지도 초기화 시작');
+        
+        // 이미 초기화된 지도가 있는지 확인
+        if (map) {
+            console.log('이미 초기화된 지도가 있습니다. 기존 지도를 재활용합니다.');
+            // 기존 지도 크기 재조정만 수행
+            forceMapRelayout();
+            return;
+        }
+        
         // 지도를 표시할 div 요소 가져오기
         const container = document.getElementById('map');
         
@@ -109,13 +120,36 @@ function ensureContainerSize(container) {
  * 줌 컨트롤, 타입 변경 컨트롤 등을 추가합니다.
  */
 function addMapControls() {
+    // 기존에 추가된 컨트롤이 있으면 제거
+    removeMapControls();
+    
     // 줌 컨트롤 추가
-    const zoomControl = new kakao.maps.ZoomControl();
-    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+    mapControls.zoomControl = new kakao.maps.ZoomControl();
+    map.addControl(mapControls.zoomControl, kakao.maps.ControlPosition.RIGHT);
     
     // 지도 타입 컨트롤 추가
-    const mapTypeControl = new kakao.maps.MapTypeControl();
-    map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+    mapControls.mapTypeControl = new kakao.maps.MapTypeControl();
+    map.addControl(mapControls.mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+    
+    console.log('지도 컨트롤 추가 완료');
+}
+
+/**
+ * 지도 컨트롤 제거 함수
+ * 기존에 추가된 지도 컨트롤을 제거합니다.
+ */
+function removeMapControls() {
+    // 줌 컨트롤 제거
+    if (mapControls.zoomControl) {
+        map.removeControl(mapControls.zoomControl);
+        mapControls.zoomControl = null;
+    }
+    
+    // 지도 타입 컨트롤 제거
+    if (mapControls.mapTypeControl) {
+        map.removeControl(mapControls.mapTypeControl);
+        mapControls.mapTypeControl = null;
+    }
 }
 
 /**
