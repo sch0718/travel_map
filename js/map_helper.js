@@ -25,6 +25,23 @@ const markerIconStyle = `
     pointer-events: none;
     transition: transform 0.2s ease;
 }
+
+/* 글로벌 툴팁 스타일 */
+#global-tooltip-container {
+    position: fixed;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.global-tooltip {
+    background-color: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    max-width: 200px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
 </style>
 `;
 
@@ -731,6 +748,7 @@ function updatePlacesList(places) {
                 labelSpan.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
                 labelSpan.style.color = labelInfo.color;
                 labelSpan.style.borderLeftColor = labelInfo.color;
+                labelSpan.style.position = 'relative'; // 툴팁 위치 기준점 설정
                 
                 // 아이콘 요소 생성
                 const iconElement = document.createElement('span');
@@ -741,19 +759,16 @@ function updatePlacesList(places) {
                 const textElement = document.createElement('span');
                 textElement.textContent = label;
                 
-                // 툴크 요소 생성 (숨겨진 상태로 데이터만 저장)
+                // 툴팁 요소 생성
                 const tooltipElement = document.createElement('span');
                 tooltipElement.className = 'label-tooltip';
                 tooltipElement.textContent = labelInfo.description;
-                tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
+                tooltipElement.style.display = 'none'; // 초기에는 숨김 상태
                 
                 // 요소 조립
                 labelSpan.appendChild(iconElement);
                 labelSpan.appendChild(textElement);
                 labelSpan.appendChild(tooltipElement);
-                
-                // 이벤트 설정 상태 추적 속성 추가
-                labelSpan.dataset.hasTooltipEvent = 'false';
                 
                 placeLabels.appendChild(labelSpan);
             });
@@ -833,6 +848,9 @@ function updatePlacesList(places) {
         placeItem.appendChild(detailsElement);
         placesList.appendChild(placeItem);
     });
+    
+    // 라벨 툴팁 이벤트 설정
+    setupLabelTooltips();
     
     console.log('장소 목록 업데이트 완료:', places.length);
 }
@@ -1229,6 +1247,7 @@ function showPlaceInfoPanel(place, markerPosition) {
             labelElement.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
             labelElement.style.color = labelInfo.color;
             labelElement.style.borderLeftColor = labelInfo.color;
+            labelElement.style.position = 'relative'; // 툴팁 위치 기준점 설정
             
             // 아이콘 요소 생성
             const iconElement = document.createElement('span');
@@ -1239,19 +1258,16 @@ function showPlaceInfoPanel(place, markerPosition) {
             const textElement = document.createElement('span');
             textElement.textContent = label;
             
-            // 툴크 요소 생성 (숨겨진 상태로 데이터만 저장)
+            // 툴팁 요소 생성
             const tooltipElement = document.createElement('span');
             tooltipElement.className = 'label-tooltip';
             tooltipElement.textContent = labelInfo.description;
-            tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
+            tooltipElement.style.display = 'none'; // 초기에는 숨김 상태
             
             // 요소 조립
             labelElement.appendChild(iconElement);
             labelElement.appendChild(textElement);
             labelElement.appendChild(tooltipElement);
-            
-            // 이벤트 설정 상태 추적 속성 추가
-            labelElement.dataset.hasTooltipEvent = 'false';
             
             labels.appendChild(labelElement);
         });
@@ -1367,6 +1383,11 @@ function showPlaceInfoPanel(place, markerPosition) {
     // 패널 표시
     panel.style.display = 'block';
     panel.classList.add('visible');
+    
+    // 라벨 툴팁 이벤트 설정 - 약간의 지연을 주어 DOM이 완전히 렌더링된 후 설정
+    setTimeout(() => {
+        setupLabelTooltips();
+    }, 100);
 }
 
 /**
@@ -1854,14 +1875,149 @@ window.handlePageSearch = handlePageSearch;
 window.updateCategoryFilters = updateCategoryFilters;
 window.displayThemeInfo = displayThemeInfo;
 window.updateViewModeButtons = updateViewModeButtons;
+window.setupLabelTooltips = setupLabelTooltips; // 새로 추가된 함수 노출
+window.positionTooltip = positionTooltip; // 새로 추가된 함수 노출
+
+/**
+ * 라벨 툴팁 설정 함수
+ * 라벨에 마우스를 올렸을 때 툴팁을 표시합니다.
+ */
+function setupLabelTooltips() {
+    // 모든 라벨 요소에 이벤트 추가
+    document.querySelectorAll('.place-label').forEach(label => {
+        // 이미 이벤트가 설정되어 있다면 건너뛰기
+        if (label.dataset.hasTooltipEvent === 'true') return;
+        
+        // 툴팁 요소 찾기
+        const tooltipElement = label.querySelector('.label-tooltip');
+        if (!tooltipElement) return;
+        
+        // 마우스 진입 이벤트
+        label.addEventListener('mouseenter', function() {
+            positionTooltip(this, tooltipElement);
+        });
+        
+        // 마우스 이탈 이벤트
+        label.addEventListener('mouseleave', function() {
+            hideGlobalTooltip();
+        });
+        
+        // 이벤트 설정 표시
+        label.dataset.hasTooltipEvent = 'true';
+    });
+}
+
+/**
+ * 전역 툴팁 숨기기
+ */
+function hideGlobalTooltip() {
+    const container = document.getElementById('global-tooltip-container');
+    if (container) {
+        // 콘텐츠만 지우고 컨테이너는 유지
+        container.innerHTML = '';
+        
+        // 애니메이션 중이면 취소
+        if (window._tooltipHideTimeout) {
+            clearTimeout(window._tooltipHideTimeout);
+            window._tooltipHideTimeout = null;
+        }
+    }
+}
+
+/**
+ * 툴팁 위치를 계산하고 설정하는 함수
+ * @param {HTMLElement} labelElement - 라벨 요소
+ * @param {HTMLElement} tooltipElement - 툴팁 요소
+ */
+function positionTooltip(labelElement, tooltipElement) {
+    if (!tooltipElement) return;
+    
+    // 전역 툴팁 컨테이너 생성 또는 가져오기
+    let tooltipContainer = document.getElementById('global-tooltip-container');
+    if (!tooltipContainer) {
+        tooltipContainer = document.createElement('div');
+        tooltipContainer.id = 'global-tooltip-container';
+        document.body.appendChild(tooltipContainer);
+    }
+    
+    // 기존 툴팁 제거
+    tooltipContainer.innerHTML = '';
+    
+    // 라벨 요소의 위치와 크기 정보
+    const rect = labelElement.getBoundingClientRect();
+    
+    // 새로운 툴팁 생성
+    const newTooltip = document.createElement('div');
+    newTooltip.className = 'global-tooltip';
+    newTooltip.textContent = tooltipElement.textContent;
+    newTooltip.style.position = 'fixed';
+    
+    // 화살표 추가
+    const arrow = document.createElement('div');
+    arrow.style.position = 'absolute';
+    arrow.style.width = '0';
+    arrow.style.height = '0';
+    newTooltip.appendChild(arrow);
+    
+    // 툴팁 컨테이너에 추가 (위치 계산을 위해)
+    tooltipContainer.appendChild(newTooltip);
+    
+    // 툴팁 크기 계산
+    const tooltipWidth = newTooltip.offsetWidth;
+    const tooltipHeight = newTooltip.offsetHeight;
+    
+    // 기본 위치 계산 (라벨 위)
+    let top = rect.top - 10 - tooltipHeight;
+    let left = rect.left + (rect.width / 2) - (tooltipWidth / 2);
+    
+    // 화면 경계 확인
+    if (top < 10) { // 위쪽 경계
+        // 라벨 아래에 표시
+        top = rect.bottom + 10;
+        
+        // 화살표를 위쪽으로
+        arrow.style.bottom = 'auto';
+        arrow.style.top = '-8px';
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+        arrow.style.borderLeft = '8px solid transparent';
+        arrow.style.borderRight = '8px solid transparent';
+        arrow.style.borderBottom = '8px solid #333';
+    } else {
+        // 화살표를 아래쪽으로
+        arrow.style.top = 'auto';
+        arrow.style.bottom = '-8px';
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+        arrow.style.borderLeft = '8px solid transparent';
+        arrow.style.borderRight = '8px solid transparent';
+        arrow.style.borderTop = '8px solid #333';
+    }
+    
+    // 좌우 경계 확인
+    if (left < 10) { // 왼쪽 경계
+        left = 10;
+        arrow.style.left = Math.max(rect.left + rect.width / 2 - left, 10) + 'px';
+    } else if (left + tooltipWidth > window.innerWidth - 10) { // 오른쪽 경계
+        left = window.innerWidth - tooltipWidth - 10;
+        arrow.style.left = Math.min(rect.left + rect.width / 2 - left, tooltipWidth - 20) + 'px';
+    } else {
+        arrow.style.left = '50%';
+        arrow.style.marginLeft = '-8px';
+    }
+    
+    // 최종 위치 설정
+    newTooltip.style.top = top + 'px';
+    newTooltip.style.left = left + 'px';
+}
 
 // DOM이 로드된 후 이벤트 설정
 document.addEventListener('DOMContentLoaded', function() {
     // 페이지 이벤트 설정
     setupPageEvents();
     
-    // loadMapData 함수를 window 객체에 노출하여 HTML 인라인 스크립트에서 사용 가능하게 함
-    window.loadMapData = loadMapData;
+    // 라벨 툴팁 이벤트 설정
+    setupLabelTooltips();
     
     // 페이지 초기화 함수도 window 객체에 노출
     if (typeof window.loadSpecificMapData === 'undefined') {
@@ -2207,7 +2363,7 @@ function showTripDay(trip, dayIndex) {
             // 클래스 이름 변경하여 올바른 컨테이너 클래스 사용
             container.className = 'place-labels';
             
-            // 각 라벨에 대해 라벨 생성
+            // 각 라벨에 대해 라벨 요소 생성하여 추가
             place.labels.forEach(label => {
                 const labelInfo = getLabelInfo(label);
                 
@@ -2218,6 +2374,7 @@ function showTripDay(trip, dayIndex) {
                 labelElement.style.backgroundColor = labelInfo.color + '20'; // 10% 투명도
                 labelElement.style.color = labelInfo.color;
                 labelElement.style.borderLeftColor = labelInfo.color;
+                labelElement.style.position = 'relative'; // 툴팁 위치 기준점 설정
                 
                 // 아이콘 요소 생성
                 const iconElement = document.createElement('span');
@@ -2228,11 +2385,11 @@ function showTripDay(trip, dayIndex) {
                 const textElement = document.createElement('span');
                 textElement.textContent = label;
                 
-                // 툴팁 요소 생성 (숨겨진 상태로 데이터만 저장)
+                // 툴팁 요소 생성
                 const tooltipElement = document.createElement('span');
                 tooltipElement.className = 'label-tooltip';
                 tooltipElement.textContent = labelInfo.description;
-                tooltipElement.style.display = 'none'; // 화면에 보이지 않도록 설정
+                tooltipElement.style.display = 'none'; // 초기에는 숨김 상태
                 
                 // 요소 조립
                 labelElement.appendChild(iconElement);
@@ -2243,6 +2400,11 @@ function showTripDay(trip, dayIndex) {
             });
         }
     });
+    
+    // 라벨 툴팁 이벤트 설정 - 약간의 지연을 주어 DOM이 완전히 렌더링된 후 설정
+    setTimeout(() => {
+        setupLabelTooltips();
+    }, 100);
 }
 
 /**
