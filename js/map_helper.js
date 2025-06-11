@@ -779,23 +779,7 @@ function updatePlacesList(places) {
                 );
                 
                 executeMarkerClickEvent(clickedPlace, position);
-                
-                // 선택된 항목 스타일 변경
-                const allPlaceItems = document.querySelectorAll('.place-item');
-                allPlaceItems.forEach(item => item.classList.remove('selected'));
-                this.classList.add('selected');
-                
-                // 클릭한 장소의 마커를 찾아 선택된 마커로 설정
-                markers.forEach(marker => {
-                    if (marker.place && marker.place.id === clickedPlace.id) {
-                        if (selectedMarker) {
-                            // 이전 선택 마커 스타일 원복
-                            selectedMarker.setZIndex(1);
-                        }
-                        // 현재 마커를 선택된 마커로 설정
-                        selectedMarker = marker;
-                    }
-                });
+                selectPlaceDetails(this);
             }
         });
         
@@ -864,6 +848,24 @@ function executeMarkerClickEvent(place, position) {
     
     // 정보 패널 표시 (마커 위치 전달하여 마커 클릭과 동일하게 표시)
     showPlaceInfoPanel(place, markerPosition);
+}
+
+/**
+ * 장소 상세 정보를 선택한다. 선택되지 않은 다른 장소는 상세 정보를 숨긴다.
+ * @param {HTMLElement} placeItem - 선택된 장소 아이템
+ */
+function selectPlaceDetails(placeItem) {
+    // 선택된 장소 스타일 적용
+    document.querySelectorAll('.place-item').forEach(item => {
+        item.classList.remove('selected');
+        const toggleButton = item.querySelector('.toggle-details');
+        toggleButton.textContent = '↓';
+        item.classList.remove('expanded');
+    });
+    placeItem.classList.add('selected', 'expanded');
+    const toggleButton = placeItem.querySelector('.toggle-details');
+    toggleButton.textContent = '↑';
+    placeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 /**
@@ -1103,6 +1105,9 @@ function createMarker(place) {
     // 마커 클릭 이벤트 리스너 등록
     kakao.maps.event.addListener(marker, 'click', function() {
         executeMarkerClickEvent(place, position);
+        const placesList = document.getElementById('places');
+        const placeItem = placesList.querySelector(`[data-id="${place.id}"]`);
+        selectPlaceDetails(placeItem);
     });
     
     return marker;
@@ -2173,21 +2178,15 @@ function showTripDay(trip, dayIndex) {
         const toggleButton = placeItem.querySelector('.toggle-details');
         toggleButton.addEventListener('click', (e) => {
             e.stopPropagation(); // 부모 요소 클릭 이벤트 중단
-            placeItem.classList.toggle('expanded');
-            toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
+            toggleTripPlaceDetails(placeItem);
         });
         
         // 장소 아이템 클릭 이벤트 (제목 부분만)
         const placeTitle = placeItem.querySelector('.place-title');
         placeTitle.addEventListener('click', function() {
-            // 선택된 장소 스타일 적용
-            document.querySelectorAll('.place-item').forEach(item => {
-                item.classList.remove('selected');
-            });
-            placeItem.classList.add('selected');
-            
             const position = new kakao.maps.LatLng(place.location.lat, place.location.lng);
             executeMarkerClickEvent(place, position);
+            selectTripPlaceDetails(placeItem);
         });
         
         placesList.appendChild(placeItem);
@@ -2244,6 +2243,34 @@ function showTripDay(trip, dayIndex) {
             });
         }
     });
+}
+
+/**
+ * 여행 일정 장소를 선택하면 장소 상세 정보를 출력한다. 선택되지 않은 다른 장소는 상세 정보를 숨긴다.
+ * @param {HTMLElement} placeItem - 선택된 장소 아이템
+ */
+function selectTripPlaceDetails(placeItem) {
+    // 선택된 장소 스타일 적용
+    document.querySelectorAll('.place-item').forEach(item => {
+        item.classList.remove('selected');
+        const toggleButton = item.querySelector('.toggle-details');
+        toggleButton.textContent = '↓';
+        item.classList.remove('expanded');
+    });
+    placeItem.classList.add('selected', 'expanded');
+    const toggleButton = placeItem.querySelector('.toggle-details');
+    toggleButton.textContent = '↑';
+    placeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/**
+ * 여행 일정 장소 상세 정보를 토글한다.
+ * @param {HTMLElement} placeItem - 토글된 장소 아이템
+ */
+function toggleTripPlaceDetails(placeItem) {
+    placeItem.classList.toggle('expanded');
+    const toggleButton = placeItem.querySelector('.toggle-details');
+    toggleButton.textContent = placeItem.classList.contains('expanded') ? '↑' : '↓';
 }
 
 /**
@@ -2380,15 +2407,9 @@ function createOrderMarker(place, order) {
                     elem.addEventListener('click', function(e) {
                         e.stopPropagation(); // 이벤트 버블링 방지
                         executeMarkerClickEvent(place, position);
-
-                        // 선택된 항목 스타일 변경
-                        const allPlaceItems = document.querySelectorAll('.place-item');
-                        allPlaceItems.forEach(item => item.classList.remove('selected'));
                         const placesList = document.getElementById('places');
                         const selectedPlaceItem = placesList.querySelector(`[data-id="${place.id}"]`);
-                        if (selectedPlaceItem) {
-                            selectedPlaceItem.classList.add('selected');
-                        }
+                        selectTripPlaceDetails(selectedPlaceItem);
                     });
                     // 이벤트 추가 표시
                     elem.setAttribute('data-has-event', 'true');
