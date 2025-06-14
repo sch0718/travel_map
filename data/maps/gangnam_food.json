@@ -1,0 +1,53 @@
+{
+    "id": "gangnam_food-2024.08.09",
+    "title": "강남역 주변 맛집",
+    "description": "강남역 주변 맛집 목록",
+    "created": "2024-08-09",
+    "modified": "2025-06-11",
+    "color": "#FF5757",
+    "labels": [
+        "강남역",
+        "맛집",
+        "서울"
+    ],
+    "places": [
+        {
+            "id": "place-4fa35d1b5339",
+            "title": "연희동칼국수 강남역점",
+            "location": {
+                "lat": 37.4978933,
+                "lng": 127.0259573
+            },
+            "address": "서울 서초구 서초대로 411 B1-3호",
+            "description": "깊은 사골 국물 맛의 맛있는 칼국수",
+            "urls": {
+                "naver": "https://naver.me/5YFdbzZa"
+            },
+            "labels": [
+                "서울",
+                "강남역",
+                "맛집",
+                "칼국수,만두"
+            ]
+        },
+        {
+            "id": "place-69f2841223f2",
+            "title": "진심왕돈까스 역삼점",
+            "location": {
+                "lat": 37.4977703,
+                "lng": 127.0314426
+            },
+            "address": "서울 강남구 테헤란로8길 16 지희빌딩 지상 1층",
+            "description": "친절한 서비스와 맛있는 메뉴의 조화",
+            "urls": {
+                "naver": "https://naver.me/F1rx0OBd"
+            },
+            "labels": [
+                "서울",
+                "강남역",
+                "맛집",
+                "한식"
+            ]
+        }
+    ]
+}

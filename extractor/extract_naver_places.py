@@ -47,6 +47,16 @@ def create_place_object(place_info, url):
         return None
     
     try:
+        # 카테고리 정보 추출 및 라벨 생성
+        category = place_info.get("category", "")
+        labels = [category] if category else []
+        
+        # 강남역 맛집에는 기본 라벨 추가
+        labels.extend(["강남역", "맛집", "서울"])
+        
+        # 중복 라벨 제거
+        labels = list(set(labels))
+        
         return {
             "id": f"place-{uuid.uuid4().hex[:12]}",
             "title": place_info.get("name", ""),
@@ -55,11 +65,11 @@ def create_place_object(place_info, url):
                 "lng": float(place_info.get("x", 0))
             },
             "address": place_info.get("roadAddress", ""),
-            "description": place_info.get("microReview", "") or "",
+            "description": place_info.get("microReview", "") or place_info.get("reviewText", "") or "",
             "urls": {
                 "naver": url
             },
-            "labels": [place_info.get("category", "")] if place_info.get("category") else []
+            "labels": labels
         }
     except Exception as e:
         print(f"Error creating place object: {e}")
@@ -92,7 +102,7 @@ def main():
     # 파일 경로 설정
     target_file = "extractor/target_urls.txt"
     finished_file = "extractor/finished_urls.txt"
-    json_file = "data/maps/jeju_food.json"
+    json_file = "data/maps/gangnam_food.json"  # 강남역 맛집 정보를 저장할 파일 경로
     
     # finished_urls.txt 파일이 없으면 생성
     if not os.path.exists(finished_file):
