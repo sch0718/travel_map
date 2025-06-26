@@ -1,0 +1,183 @@
+{
+    "id": "yangpeong_brunch-2025.06.26",
+    "title": "채원님과 양평 브런치",
+    "description": "토요일에 브런치 먹으러 가요",
+    "created": "2025-06-26",
+    "modified": "2025-06-26",
+    "color": "#FF5757",
+    "labels": [
+        {
+            "name": "애견동반",
+            "description": "반려견 동반 가능한 장소",
+            "icon": "mdi:dog",
+            "color": "#9C27B0"
+        },
+        {
+            "name": "베이커리",
+            "description": "베이커리",
+            "icon": "mdi:bread-slice",
+            "color": "#795548"
+        },
+        {
+            "name": "브런치",
+            "description": "브런치 맛집",
+            "icon": "mdi:silverware-fork-knife",
+            "color": "#FBBC05"
+        },
+        {
+            "name": "채원님과",
+            "description": "채원님과 함께 먹는 브런치",
+            "color": "#4285F4"
+        },
+        {
+            "name": "양평",
+            "description": "양평 주변",
+            "icon": "mdi:beach",
+            "color": "#8BC34A"
+        },
+        {
+            "name": "카페,디저트",
+            "description": "카페,디저트",
+            "icon": "mdi:food",
+            "color": "#FF5722"
+        }
+    ],
+    "places": [
+        {
+            "id": "place-58cf3bc25d5c",
+            "title": "구벼울",
+            "location": {
+                "lat": 37.5088187,
+                "lng": 127.4249258
+            },
+            "address": "경기 양평군 옥천면 남한강변길 123-19",
+            "description": "남한강 풍경과 함께하는 힐링 카페 (10kg 이하 반려견 동반 가능, 야외 및 2층 비닐하우스 내부)",
+            "labels": [
+                "애견동반",
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1781659302"
+            }
+        },
+        {
+            "id": "place-414e06179880",
+            "title": "베이커리 씨어터",
+            "location": {
+                "lat": 37.6736074,
+                "lng": 127.3750372
+            },
+            "address": "경기 남양주시 화도읍 경춘로2696번길 4-15",
+            "description": "북한강 뷰와 함께하는 힐링 카페",
+            "labels": [
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/35608479"
+            }
+        },
+        {
+            "id": "place-bc0a76e9df5f",
+            "title": "브리끄",
+            "location": {
+                "lat": 37.6588834,
+                "lng": 127.3732809
+            },
+            "address": "경기 남양주시 화도읍 북한강로 1696-2 브리끄",
+            "description": "솔티드 아인슈페너의 짭조름한 매력 (반려견 동반 가능, 실내외 모두)",
+            "labels": [
+                "애견동반",
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1676819087"
+            }
+        },
+        {
+            "id": "place-3dcd93fe7acc",
+            "title": "녹화",
+            "location": {
+                "lat": 37.6183719,
+                "lng": 127.3441995
+            },
+            "address": "경기 남양주시 화도읍 북한강로 1171 녹화",
+            "description": "실타래처럼 녹아내리는 말차빙수의 맛 (반려견 동반 가능, 실내외 모두)",
+            "labels": [
+                "애견동반",
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1945365599"
+            }
+        },
+        {
+            "id": "place-7413551d9673",
+            "title": "아유 스페이스",
+            "location": {
+                "lat": 37.636031,
+                "lng": 127.3580696
+            },
+            "address": "경기 남양주시 화도읍 북한강로1462번길 71 아유스페이스",
+            "description": "커피와 디저트의 환상적인 조화",
+            "labels": [
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1741192061"
+            }
+        },
+        {
+            "id": "place-9351cbf3a691",
+            "title": "라온숨",
+            "location": {
+                "lat": 37.6161724,
+                "lng": 127.3438682
+            },
+            "address": "경기 남양주시 화도읍 북한강로 1146",
+            "description": "북한강 뷰와 함께하는 힐링 카페 (반려동물 입장 불가)",
+            "labels": [
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1529049266"
+            }
+        },
+        {
+            "id": "place-817e59363a42",
+            "title": "카페리노",
+            "location": {
+                "lat": 37.5466616,
+                "lng": 127.3172718
+            },
+            "address": "경기 양평군 양서면 양수로152번길 32-1",
+            "description": "맛있는 커피와 예쁜 경치가 만나는 순간",
+            "labels": [
+                "베이커리",
+                "브런치",
+                "채원님과",
+                "양평"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1204908993"
+            }
+        }
+    ]
+}

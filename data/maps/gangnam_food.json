@@ -1,53 +1,374 @@
 {
-    "id": "gangnam_food-2024.08.09",
+    "id": "gangnam_food-2025.06.26",
     "title": "강남역 주변 맛집",
     "description": "강남역 주변 맛집 목록",
-    "created": "2024-08-09",
-    "modified": "2025-06-11",
+    "created": "2025-06-26",
+    "modified": "2025-06-26",
     "color": "#FF5757",
     "labels": [
         "강남역",
-        "맛집",
-        "서울"
+        "맛집"
     ],
     "places": [
         {
-            "id": "place-4fa35d1b5339",
-            "title": "연희동칼국수 강남역점",
+            "id": "place-15df9a74fe92",
+            "title": "남소관 우육도삭면",
             "location": {
-                "lat": 37.4978933,
-                "lng": 127.0259573
+                "lat": 37.4996443,
+                "lng": 127.0275677
             },
-            "address": "서울 서초구 서초대로 411 B1-3호",
-            "description": "깊은 사골 국물 맛의 맛있는 칼국수",
-            "urls": {
-                "naver": "https://naver.me/5YFdbzZa"
-            },
+            "address": "서울 강남구 테헤란로1길 19 1층 2층 남소관 우육도삭면",
+            "description": "담백하고 개운한 국물의 맛있는 도삭면",
             "labels": [
-                "서울",
+                "중식당",
                 "강남역",
-                "맛집",
-                "칼국수,만두"
-            ]
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1812494362"
+            }
         },
         {
-            "id": "place-69f2841223f2",
-            "title": "진심왕돈까스 역삼점",
+            "id": "place-91f35a1d00f2",
+            "title": "이태리부대찌개 강남역점",
             "location": {
-                "lat": 37.4977703,
-                "lng": 127.0314426
+                "lat": 37.4958398,
+                "lng": 127.0305728
             },
-            "address": "서울 강남구 테헤란로8길 16 지희빌딩 지상 1층",
-            "description": "친절한 서비스와 맛있는 메뉴의 조화",
-            "urls": {
-                "naver": "https://naver.me/F1rx0OBd"
-            },
+            "address": "서울 강남구 테헤란로4길 40 신소애빌딩 2층",
+            "description": "",
             "labels": [
-                "서울",
+                "찌개,전골",
                 "강남역",
-                "맛집",
-                "한식"
-            ]
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/560775631"
+            }
+        },
+        {
+            "id": "place-96673663090f",
+            "title": "리원",
+            "location": {
+                "lat": 37.4981866,
+                "lng": 127.0307498
+            },
+            "address": "서울 강남구 테헤란로6길 7",
+            "description": "맛있는 음식과 풍성한 양의 만남",
+            "labels": [
+                "중식당",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/18794277"
+            }
+        },
+        {
+            "id": "place-6e4a3153bb0f",
+            "title": "크림VIP라운지",
+            "location": {
+                "lat": 37.4979716,
+                "lng": 127.0259786
+            },
+            "address": "서울 서초구 서초대로 411 GT타워 B1",
+            "description": "",
+            "labels": [
+                "카페,디저트",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1740499064"
+            }
+        },
+        {
+            "id": "place-2e3de1e67138",
+            "title": "돝고기506",
+            "location": {
+                "lat": 37.5007232,
+                "lng": 127.0352391
+            },
+            "address": "서울 강남구 테헤란로 145 지하1층",
+            "description": "맛있는 음식과 고기의 향연",
+            "labels": [
+                "돼지고기구이",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1087970189"
+            }
+        },
+        {
+            "id": "place-83b9c91bd8fa",
+            "title": "다온정",
+            "location": {
+                "lat": 37.4984019,
+                "lng": 127.0330638
+            },
+            "address": "서울 강남구 테헤란로14길 16 라인빌딩",
+            "description": "정갈한 맛과 맛있는 반찬의 조화",
+            "labels": [
+                "한정식",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/35516400"
+            }
+        },
+        {
+            "id": "place-419ae2fe6f67",
+            "title": "킹콩부대찌개 역삼점",
+            "location": {
+                "lat": 37.4992,
+                "lng": 127.0356166
+            },
+            "address": "서울 강남구 논현로87길 15-8 종합빌딩 1층",
+            "description": "",
+            "labels": [
+                "찌개,전골",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1554777942"
+            }
+        },
+        {
+            "id": "place-b48c866d74fd",
+            "title": "나에코",
+            "location": {
+                "lat": 37.5015085,
+                "lng": 127.0245677
+            },
+            "address": "서울 서초구 서초대로75길 45 1층 (나에코지점)",
+            "description": "신선한 재료로 만든 맛있는 고등어봉초밥",
+            "labels": [
+                "일식당",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1115767815"
+            }
+        },
+        {
+            "id": "place-10daa1f6d683",
+            "title": "까사생갈비",
+            "location": {
+                "lat": 37.5031496,
+                "lng": 127.0262024
+            },
+            "address": "서울 강남구 봉은사로2길 23 . 2층 까사생갈비",
+            "description": "맛있는 고기와 깔끔한 음식의 조화",
+            "labels": [
+                "육류,고기요리",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/593588180"
+            }
+        },
+        {
+            "id": "place-6c893d1c06bd",
+            "title": "다몽집 신논현본점",
+            "location": {
+                "lat": 37.5017942,
+                "lng": 127.0271567
+            },
+            "address": "서울 강남구 강남대로100길 13 지하1층/2층 다몽집",
+            "description": "맛있는 음식과 고기의 하모니",
+            "labels": [
+                "육류,고기요리",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1028354634"
+            }
+        },
+        {
+            "id": "place-f81815569d96",
+            "title": "브릭오븐",
+            "location": {
+                "lat": 37.5030638,
+                "lng": 127.0277571
+            },
+            "address": "서울 강남구 강남대로102길 31 2층",
+            "description": "다양한 메뉴 중 맛있는 피자를 즐기는 시간",
+            "labels": [
+                "피자",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/21547240"
+            }
+        },
+        {
+            "id": "place-45fd9419ea5a",
+            "title": "봉우화로",
+            "location": {
+                "lat": 37.5017533,
+                "lng": 127.0273416
+            },
+            "address": "서울 강남구 봉은사로18길 76 스타 팰리스",
+            "description": "맛있는 고기와 다양한 음식의 향연",
+            "labels": [
+                "육류,고기요리",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/11609540"
+            }
+        },
+        {
+            "id": "place-705c1afb01ce",
+            "title": "도치피자 강남",
+            "location": {
+                "lat": 37.501007,
+                "lng": 127.028891
+            },
+            "address": "서울 강남구 강남대로98길 27 1층",
+            "description": "넓은 매장에서의 여유로운 맛있는 파스타",
+            "labels": [
+                "피자",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/20472120"
+            }
+        },
+        {
+            "id": "place-4a5f294de1ce",
+            "title": "몽슈슈 강남점",
+            "location": {
+                "lat": 37.4942024,
+                "lng": 127.0312226
+            },
+            "address": "서울 강남구 역삼로3길 11 1층",
+            "description": "",
+            "labels": [
+                "베이커리",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1862121901"
+            }
+        },
+        {
+            "id": "place-77bdea114c4c",
+            "title": "반갑다 하대포",
+            "location": {
+                "lat": 37.4940738,
+                "lng": 127.0313693
+            },
+            "address": "서울 강남구 역삼로3길 7 1층",
+            "description": "맛있는 고기와 풍성한 밑반찬의 조화",
+            "labels": [
+                "육류,고기요리",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/37486499"
+            }
+        },
+        {
+            "id": "place-4dd41330c893",
+            "title": "이엘포레스트",
+            "location": {
+                "lat": 37.4924289,
+                "lng": 127.0319782
+            },
+            "address": "서울 강남구 역삼로4길 16 성우스타우스오피스텔 B109호",
+            "description": "맛있는 치즈 피자와 함께하는 특별한 식사",
+            "labels": [
+                "이탈리아음식",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1755586163"
+            }
+        },
+        {
+            "id": "place-528926131fa7",
+            "title": "춘천한옥집",
+            "location": {
+                "lat": 37.5029673,
+                "lng": 127.0275956
+            },
+            "address": "서울 강남구 강남대로102길 29 지하1층",
+            "description": "양 많고 맛있는 닭갈비 맛집",
+            "labels": [
+                "한식",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/37021055"
+            }
+        },
+        {
+            "id": "place-19698666f29c",
+            "title": "풍년집",
+            "location": {
+                "lat": 37.4937381,
+                "lng": 127.0357349
+            },
+            "address": "서울 강남구 역삼로14길 13",
+            "description": "맛있는 된장찌개와 소갈비살의 조화",
+            "labels": [
+                "소고기구이",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/18583473"
+            }
+        },
+        {
+            "id": "place-c1c48a15af66",
+            "title": "노랑저고리 한정식",
+            "location": {
+                "lat": 37.498308,
+                "lng": 127.0252161
+            },
+            "address": "서울 서초구 서초대로73길 9 타임빌딩 5층",
+            "description": "다양한 맛있는 반찬과 친절한 서비스의 만남",
+            "labels": [
+                "한정식",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/11856990"
+            }
+        },
+        {
+            "id": "place-ba530179e4d9",
+            "title": "참치공방 강남점",
+            "location": {
+                "lat": 37.4950845,
+                "lng": 127.0308811
+            },
+            "address": "서울 강남구 강남대로78길 18 2층",
+            "description": "품질 좋은 참치와 친절한 서비스의 조화",
+            "labels": [
+                "생선회",
+                "강남역",
+                "맛집"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/87710088"
+            }
         }
     ]
 }
