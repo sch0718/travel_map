@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>양평 브런치 지도</title>
+    <!-- 파비콘 추가 -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <!-- CSS 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
+    <link rel="stylesheet" href="css/style.css?v=1.0.2">
+    <link rel="stylesheet" href="css/responsive.css?v=1.0.1">
+    <!-- Iconify 라이브러리 추가 -->
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <!-- JavaScript 헬퍼 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
+    <script src="js/map_helper.js?v=1.3.6"></script>
+    <script>
+        // 페이지 로드 시 카카오맵 API 로드 확인 실행
+        document.addEventListener('DOMContentLoaded', loadKakaoMapAPI);
+    </script>
+    <!-- GNB 영역 스타일 추가 -->
+    <style>
+        /* 헤더 레이아웃 개선 */
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .app-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-right: 10px;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        /* 검색 영역 스타일 개선 */
+        .search-container {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            height: 36px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+        
+        #search-input {
+            border: none;
+            padding: 8px 12px;
+            flex: 1;
+            min-width: 180px;
+            height: 100%;
+            font-size: 14px;
+            outline: none;
+        }
+        
+        #search-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            height: 100%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        
+        #search-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* GNB 스타일 */
+        .gnb {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .gnb-btn {
+            display: block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background-color: #f0f0f0;
+        }
+        
+        .gnb-btn.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .gnb-btn:hover {
+            background-color: #ddd;
+        }
+        
+        .gnb-btn.active:hover {
+            background-color: #2980b9;
+        }
+        
+        /* 모바일 대응 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 8px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .app-title {
+                margin-bottom: 8px;
+                text-align: center;
+            }
+            
+            .gnb {
+                margin: 8px 0;
+                width: 100%;
+                justify-content: center;
+                overflow-x: auto;
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 5px;
+            }
+            
+            .gnb-btn {
+                padding: 6px 10px;
+                font-size: 0.9em;
+            }
+            
+            .search-container {
+                margin: 8px auto;
+                width: 95%;
+                max-width: 400px;
+                height: 40px;
+            }
+            
+            #search-input {
+                font-size: 16px; /* 모바일에서 확대 방지 */
+            }
+            
+            #search-button {
+                min-width: 60px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 영역 -->
+    <header class="header">
+        <div class="app-title">맛집 지도</div>
+        <!-- GNB 영역 추가 -->
+        <nav class="gnb">
+        </nav>
+        <!-- 테마/여행 보기 모드 선택 버튼 추가 -->
+        <div id="view-mode-selector" class="view-mode-selector">
+            <button id="theme-view-btn" class="view-mode-btn">
+                <iconify-icon icon="mdi:map-marker-multiple" style="margin-right: 4px;"></iconify-icon>테마
+            </button>
+            <button id="trip-view-btn" class="view-mode-btn active">
+                <iconify-icon icon="mdi:routes" style="margin-right: 4px;"></iconify-icon>여행
+            </button>
+        </div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="장소 검색...">
+            <button id="search-button">검색</button>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="container">
+        <!-- 사이드 패널 -->
+        <div class="side-panel">
+            <div class="panel-toggle">
+                <button id="toggle-panel">▶</button>
+            </div>
+            <div class="panel-content">
+                <!-- 테마/여행 정보 -->
+                <div class="theme-info">
+                    <h2 id="theme-title">제주도 맛집</h2>
+                    <p id="theme-description">제주도 맛집 목록</p>
+                </div>
+
+                <!-- 카테고리 필터 -->
+                <div class="category-filter">
+                    <h3>카테고리</h3>
+                    <div id="category-list">
+                        <!-- 카테고리는 JavaScript로 동적 생성 -->
+                    </div>
+                </div>
+
+                <!-- 장소 목록 -->
+                <div class="place-list">
+                    <h3 id="places-list-title">장소 목록</h3>
+                    <ul id="places">
+                        <!-- 장소 목록은 JavaScript로 동적 생성 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 지도 영역 (사이드 패널 뒤로 이동) -->
+        <div id="map" class="map-container"></div>
+    </div>
+
+    <!-- 장소 정보 패널 (기본적으로 숨김) -->
+    <div id="place-info-panel" class="place-info-panel">
+        <div class="place-info-header">
+            <h3 id="place-title">장소명</h3>
+            <button id="close-place-info">✕</button>
+        </div>
+        <div class="place-info-content">
+            <p id="place-address">주소</p>
+            <div id="place-labels">
+                <!-- 라벨/태그는 JavaScript로 동적 생성 -->
+            </div>
+            <p id="place-description">설명</p>
+            <div class="place-links">
+                <a id="naver-map-link" href="#" target="_blank">네이버 지도</a>
+                <a id="kakao-map-link" href="#" target="_blank">카카오 지도</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모바일용 하단 패널 핸들 -->
+    <div id="mobile-panel-handle" class="mobile-panel-handle">
+        <div class="handle-bar"></div>
+    </div>
+</body>
+</html> 

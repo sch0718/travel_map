@@ -230,7 +230,11 @@ async function initApplication() {
         const currentUrl = window.location.pathname;
         let dataPath = '';
         
-        if (currentUrl.includes('jeju_food.html')) {
+        if (currentUrl.includes('gangnam_food.html')) {
+            dataPath = 'data/maps/gangnam_food.json';
+        } else if (currentUrl.includes('yangpeong_brunch.html')) {
+            dataPath = 'data/maps/yangpeong_brunch.json';
+        } else if (currentUrl.includes('jeju_food.html')) {
             dataPath = 'data/maps/jeju_food.json';
         } else if (currentUrl.includes('jeju_trip_202506.html')) {
             dataPath = 'data/maps/jeju_trip_202506.json';
@@ -1281,10 +1285,20 @@ function showPlaceInfoPanel(place, markerPosition) {
         const lng = place.location.lng;
         
         // 네이버 지도 링크
-        naverLink.href = `https://map.naver.com/v5/?c=${lng},${lat},15,0,0,0,dh&entry=plt`;
+        if (place.urls && place.urls.naver) {
+            naverLink.href = place.urls.naver;
+            naverLink.style.display = 'inline-block';
+        } else {
+            naverLink.style.display = 'none';
+        }
         
-        // 카카오 지도 링크
-        kakaoLink.href = `https://map.kakao.com/link/map/${encodeURIComponent(place.title)},${lat},${lng}`;
+        // 카카오 지도 링크 - 데이터에 있는 경우에만 표시
+        if (place.urls && place.urls.kakao) {
+            kakaoLink.href = place.urls.kakao;
+            kakaoLink.style.display = 'inline-block';
+        } else {
+            kakaoLink.style.display = 'none';
+        }
     }
     
     // 패널 표시 전에 일단 보이게 설정 (크기 계산을 위해)
@@ -1449,8 +1463,35 @@ async function loadMapData(dataPath) {
         const mapData = await response.json();
         
         // 라벨 정보 추출 및 저장 (있는 경우)
-        if (mapData.labelInfo) {
-            pageDataStore.labelInfo = mapData.labelInfo;
+        // 기존 코드: 맵 데이터의 labelInfo로 기존 라벨 정보를 완전히 덮어씀
+        // if (mapData.labelInfo) {
+        //     pageDataStore.labelInfo = mapData.labelInfo;
+        // }
+        
+        // 수정된 코드: 기존 라벨 정보를 유지하면서 맵 데이터의 라벨 정보로 오버라이딩
+        // 1. mapData.labelInfo 객체가 있는 경우 처리
+        if (mapData.labelInfo && typeof mapData.labelInfo === 'object') {
+            console.log('맵 데이터의 labelInfo 객체를 사용하여 라벨 정보 오버라이딩');
+            for (const [labelName, labelInfo] of Object.entries(mapData.labelInfo)) {
+                pageDataStore.labelInfo[labelName] = {
+                    ...pageDataStore.labelInfo[labelName], // 기존 정보 유지
+                    ...labelInfo // 맵 데이터의 정보로 오버라이딩
+                };
+            }
+        }
+        
+        // 2. mapData.labels 배열이 있는 경우 처리 (yangpeong_brunch.json 같은 경우)
+        if (mapData.labels && Array.isArray(mapData.labels)) {
+            console.log('맵 데이터의 labels 배열을 사용하여 라벨 정보 오버라이딩');
+            mapData.labels.forEach(label => {
+                if (label.name) {
+                    pageDataStore.labelInfo[label.name] = {
+                        icon: label.icon || pageDataStore.labelInfo[label.name]?.icon || "mdi:tag",
+                        color: label.color || pageDataStore.labelInfo[label.name]?.color || "#9E9E9E",
+                        description: label.description || pageDataStore.labelInfo[label.name]?.description || label.name
+                    };
+                }
+            });
         }
         
         // 성능 최적화: 장소 객체 참조 중복 제거 및 필요한 데이터만 유지

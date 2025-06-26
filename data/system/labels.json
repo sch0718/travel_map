@@ -227,6 +227,12 @@
       "description": "전통 시장 및 시장 형태의 상권",
       "icon": "mdi:store",
       "color": "#D09683"
+    },
+    {
+      "name": "애견동반",
+      "description": "반려견 동반 가능한 장소",
+      "icon": "mdi:dog",
+      "color": "#9C27B0"
     }
   ]
 } 
