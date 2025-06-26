@@ -40,6 +40,84 @@
             "description": "카페,디저트",
             "icon": "mdi:food",
             "color": "#FF5722"
+        },
+        {
+            "name": "브런치카페",
+            "description": "브런치 전문 카페",
+            "icon": "mdi:coffee",
+            "color": "#FF9800"
+        },
+        {
+            "name": "이탈리아음식",
+            "description": "이탈리아 요리 전문점",
+            "icon": "mdi:pizza",
+            "color": "#E91E63"
+        },
+        {
+            "name": "양식",
+            "description": "서양식 요리",
+            "icon": "mdi:silverware",
+            "color": "#3F51B5"
+        },
+        {
+            "name": "강변뷰",
+            "description": "강이나 호수가 보이는 전망을 가진 장소",
+            "icon": "mdi:waves",
+            "color": "#03A9F4"
+        },
+        {
+            "name": "힐링",
+            "description": "편안하고 휴식을 취하기 좋은 장소",
+            "icon": "mdi:spa",
+            "color": "#4CAF50"
+        },
+        {
+            "name": "커피",
+            "description": "고급 원두 또는 특별한 커피를 제공하는 장소",
+            "icon": "mdi:coffee",
+            "color": "#795548"
+        },
+        {
+            "name": "시그니처메뉴",
+            "description": "특별한 시그니처 메뉴가 있는 장소",
+            "icon": "mdi:star",
+            "color": "#FFC107"
+        },
+        {
+            "name": "분위기좋은",
+            "description": "인테리어나 분위기가 특별히 좋은 장소",
+            "icon": "mdi:candle",
+            "color": "#9C27B0"
+        },
+        {
+            "name": "정원",
+            "description": "예쁜 정원이나 야외 공간이 있는 장소",
+            "icon": "mdi:flower",
+            "color": "#8BC34A"
+        },
+        {
+            "name": "샌드위치",
+            "description": "샌드위치가 맛있는 장소",
+            "icon": "mdi:food-croissant",
+            "color": "#FF9800"
+        },
+        {
+            "name": "피자",
+            "description": "피자가 맛있는 장소",
+            "icon": "mdi:pizza",
+            "color": "#F44336"
+        },
+        {
+            "name": "파스타",
+            "description": "파스타가 맛있는 장소",
+            "icon": "mdi:noodles",
+            "color": "#FFEB3B"
+        },
+        {
+            "name": "전망좋은",
+            "description": "좋은 전망이나 경치가 있는 장소",
+            "icon": "mdi:image-filter-hdr",
+            "color": "#2196F3"
         }
     ],
     "places": [
@@ -54,10 +132,12 @@
             "description": "남한강 풍경과 함께하는 힐링 카페 (10kg 이하 반려견 동반 가능, 야외 및 2층 비닐하우스 내부)",
             "labels": [
                 "애견동반",
+                "강변뷰",
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "힐링"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/1781659302"
@@ -71,12 +151,16 @@
                 "lng": 127.3750372
             },
             "address": "경기 남양주시 화도읍 경춘로2696번길 4-15",
-            "description": "북한강 뷰와 함께하는 힐링 카페",
+            "description": "북한강 뷰와 함께하는 힐링 카페 (반려견 동반 가능)",
             "labels": [
+                "애견동반",
+                "강변뷰",
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "힐링",
+                "베이커리"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/35608479"
@@ -90,13 +174,13 @@
                 "lng": 127.3732809
             },
             "address": "경기 남양주시 화도읍 북한강로 1696-2 브리끄",
-            "description": "솔티드 아인슈페너의 짭조름한 매력 (반려견 동반 가능, 실내외 모두)",
+            "description": "솔티드 아인슈페너의 짭조름한 매력 (반려견 동반 불가)",
             "labels": [
-                "애견동반",
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "시그니처메뉴"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/1676819087"
@@ -116,7 +200,8 @@
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "시그니처메뉴"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/1945365599"
@@ -135,7 +220,8 @@
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "커피"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/1741192061"
@@ -151,10 +237,12 @@
             "address": "경기 남양주시 화도읍 북한강로 1146",
             "description": "북한강 뷰와 함께하는 힐링 카페 (반려동물 입장 불가)",
             "labels": [
+                "강변뷰",
                 "브런치",
                 "채원님과",
                 "양평",
-                "카페,디저트"
+                "카페,디저트",
+                "힐링"
             ],
             "urls": {
                 "naver": "https://map.naver.com/p/entry/place/1529049266"
@@ -170,13 +258,285 @@
             "address": "경기 양평군 양서면 양수로152번길 32-1",
             "description": "맛있는 커피와 예쁜 경치가 만나는 순간",
             "labels": [
+                "전망좋은",
                 "베이커리",
+                "브런치",
+                "채원님과",
+                "양평",
+                "카페,디저트"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1204908993"
+            }
+        },
+        {
+            "id": "place-8a4c3f291d5c",
+            "title": "브리즈131",
+            "location": {
+                "lat": 37.5333074,
+                "lng": 127.4665697
+            },
+            "address": "경기 양평군 옥천면 신복길 131 1, 2층",
+            "description": "예쁜 정원과 분위기 좋은 공간에서의 휴식",
+            "labels": [
+                "브런치카페",
+                "분위기좋은",
+                "정원",
+                "채원님과",
+                "양평",
+                "브런치",
+                "힐링"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1322238456"
+            }
+        },
+        {
+            "id": "place-707f427807ff",
+            "title": "루니투니 LOONIE TOONIE",
+            "location": {
+                "lat": 37.4874562,
+                "lng": 127.4935838
+            },
+            "address": "경기 양평군 양평읍 양근로 231",
+            "description": "고급 원두와 맛있는 샌드위치의 만남",
+            "labels": [
+                "브런치카페",
+                "채원님과",
+                "양평",
+                "브런치",
+                "커피",
+                "샌드위치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1069867910"
+            }
+        },
+        {
+            "id": "place-d9923380404f",
+            "title": "디엔디어스 다이닝랩",
+            "location": {
+                "lat": 37.5915766,
+                "lng": 127.2225553
+            },
+            "address": "경기 남양주시 와부읍 수레로116번길 16 아이비타워 1층",
+            "description": "쫄깃한 화덕 피자와 맛있는 생면 파스타",
+            "labels": [
+                "이탈리아음식",
+                "채원님과",
+                "양평",
+                "브런치",
+                "피자",
+                "파스타"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/37350276"
+            }
+        },
+        {
+            "id": "place-abeeadeb5ef6",
+            "title": "우프하우스",
+            "location": {
+                "lat": 37.6080968,
+                "lng": 127.3767473
+            },
+            "address": "경기 양평군 서종면 잠실3길 4 102호",
+            "description": "신선한 재료로 만든 맛있는 음식 (10kg 이하 반려견 동반 가능, 테라스/야외 공간만)",
+            "labels": [
+                "애견동반",
+                "브런치카페",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1435085434"
+            }
+        },
+        {
+            "id": "place-0b45ecc936dc",
+            "title": "우노레또브런치카페",
+            "location": {
+                "lat": 37.5022476,
+                "lng": 127.4318488
+            },
+            "address": "경기 양평군 강하면 전의1길 28",
+            "description": "예쁜 인테리어와 좋은 분위기의 힐링 스팟",
+            "labels": [
+                "애견동반",
+                "분위기좋은",
+                "브런치",
+                "채원님과",
+                "양평",
+                "힐링"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1801109933"
+            }
+        },
+        {
+            "id": "place-c45efd7d9e93",
+            "title": "라푸르네",
+            "location": {
+                "lat": 37.5237695,
+                "lng": 127.3883256
+            },
+            "address": "경기 양평군 양서면 양서도곡길121번길 33 1층",
+            "description": "",
+            "labels": [
+                "브런치카페",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1046717890"
+            }
+        },
+        {
+            "id": "place-b19d42098922",
+            "title": "카페 알베로벨로",
+            "location": {
+                "lat": 37.6579831,
+                "lng": 127.3375135
+            },
+            "address": "경기 남양주시 화도읍 경춘로2247번길 16-13 카페알베로벨로",
+            "description": "맛있는 음식과 아늑한 분위기의 조화",
+            "labels": [
+                "애견동반",
+                "분위기좋은",
                 "브런치",
                 "채원님과",
                 "양평"
             ],
             "urls": {
-                "naver": "https://map.naver.com/p/entry/place/1204908993"
+                "naver": "https://map.naver.com/p/entry/place/1972960934"
+            }
+        },
+        {
+            "id": "place-a12609c31bdf",
+            "title": "어파인하우스",
+            "location": {
+                "lat": 37.6765022,
+                "lng": 127.4854341
+            },
+            "address": "경기 가평군 설악면 유명로 1649 어파인하우스",
+            "description": "맛있는 음식과 좋은 분위기의 만남",
+            "labels": [
+                "애견동반",
+                "브런치카페",
+                "분위기좋은",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1869365056"
+            }
+        },
+        {
+            "id": "place-f5cbe0f09cbb",
+            "title": "리본팝",
+            "location": {
+                "lat": 37.6379859,
+                "lng": 127.3017481
+            },
+            "address": "경기 남양주시 화도읍 수레로 1105-49 리본팝",
+            "description": "특별한 서비스와 맛있는 음식의 만남",
+            "labels": [
+                "애견동반",
+                "브런치카페",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1115803359"
+            }
+        },
+        {
+            "id": "place-394266ef99b3",
+            "title": "카페담장",
+            "location": {
+                "lat": 37.6282922,
+                "lng": 127.3029871
+            },
+            "address": "경기 남양주시 화도읍 재재기로71번길 11-2 카페담장",
+            "description": "맛있는 음식과 깔끔한 인테리어의 조화",
+            "labels": [
+                "애견동반",
+                "분위기좋은",
+                "브런치",
+                "채원님과",
+                "양평"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1051289647"
+            }
+        },
+        {
+            "id": "place-f0e96a22a967",
+            "title": "언더스탠드커피 로스터스",
+            "location": {
+                "lat": 37.4990407,
+                "lng": 127.3026096
+            },
+            "address": "경기 광주시 남종면 산수로 1684",
+            "description": "아름다운 전망과 편안한 분위기의 휴식처",
+            "labels": [
+                "애견동반",
+                "브런치카페",
+                "전망좋은",
+                "채원님과",
+                "양평",
+                "브런치",
+                "커피",
+                "힐링"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1970899549"
+            }
+        },
+        {
+            "id": "place-d9ec17a1d7a4",
+            "title": "아난티 코드 살롱 드 이터널저니",
+            "location": {
+                "lat": 37.624956,
+                "lng": 127.4794533
+            },
+            "address": "경기 가평군 설악면 유명로 1007-90",
+            "description": "분위기 좋은 공간에서 즐기는 맛있는 브런치",
+            "labels": [
+                "브런치카페",
+                "분위기좋은",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1587872635"
+            }
+        },
+        {
+            "id": "place-f5670c799639",
+            "title": "엠아르 남양주본점",
+            "location": {
+                "lat": 37.6502837,
+                "lng": 127.3688376
+            },
+            "address": "경기 남양주시 화도읍 북한강로 1602-22 엠아르",
+            "description": "예쁜 인테리어와 아름다운 강 뷰의 조화",
+            "labels": [
+                "애견동반",
+                "강변뷰",
+                "분위기좋은",
+                "양식",
+                "채원님과",
+                "양평",
+                "브런치"
+            ],
+            "urls": {
+                "naver": "https://map.naver.com/p/entry/place/1058703542"
             }
         }
     ]
