@@ -1,129 +1,110 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>여행 지도 웹앱</title>
-    <!-- CSS 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
-    <link rel="stylesheet" href="css/style.css?v=1.0.1">
-    <link rel="stylesheet" href="css/responsive.css?v=1.0.1">
-    <!-- Iconify 라이브러리 추가 -->
-    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
-    <script>
-        // 앱 초기화 함수 - 순차적 실행 보장
-        async function initApplication() {
-            try {
-                console.log('앱 초기화 시작');
-                                
-                // 지도 초기화
-                initMap();
-                
-                // UI 초기화
-                initUI();
-                
-                // 데이터 초기화
-                await initData();
-                
-                console.log('앱 초기화 완료');
-            } catch (error) {
-                console.error('앱 초기화 실패:', error);
-            }
-        }
-        
-        // 페이지 로드 시 앱 초기화 실행
-        document.addEventListener('DOMContentLoaded', initApplication);
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여행 지도</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5cda008d02047bd5e619b759494363c4"></script>
+  <script type="module" src="js/app.js"></script>
 </head>
 <body>
-    <!-- 헤더 영역 -->
+  <div class="app">
+    <!-- Header -->
     <header class="header">
-        <div class="app-title">여행 지도</div>
-        <div class="theme-selector">
-            <select id="theme-select">
-                <option value="">테마/여행 선택</option>
-                <!-- 테마 옵션은 JavaScript로 동적 생성 -->
-            </select>
-        </div>
-        <!-- 테마/여행 보기 모드 선택 버튼 추가 -->
-        <div id="view-mode-selector" class="view-mode-selector" style="display: none;">
-            <button id="theme-view-btn" class="view-mode-btn">
-                <iconify-icon icon="mdi:map-marker-multiple" style="margin-right: 4px;"></iconify-icon>테마
-            </button>
-            <button id="trip-view-btn" class="view-mode-btn active">
-                <iconify-icon icon="mdi:routes" style="margin-right: 4px;"></iconify-icon>여행
-            </button>
-        </div>
-        <div class="search-container">
-            <input type="text" id="search-input" placeholder="장소 검색...">
-            <button id="search-button">검색</button>
-        </div>
-        <button id="settings-button" class="settings-button">설정</button>
+      <span class="header__title">여행 지도</span>
+
+      <div class="header__selector">
+        <select id="theme-select">
+          <option value="">테마/여행 선택</option>
+        </select>
+      </div>
+
+      <div id="view-mode-selector" class="view-mode" style="display:none;">
+        <button id="theme-view-btn" class="view-mode__btn" type="button">테마</button>
+        <button id="trip-view-btn" class="view-mode__btn active" type="button">여행</button>
+      </div>
+
+      <div class="header__search">
+        <iconify-icon icon="mdi:magnify" class="header__search-icon"></iconify-icon>
+        <input type="text" id="search-input" placeholder="장소 검색...">
+      </div>
+      <button id="search-button" style="display:none;"></button>
+
+      <div class="header__spacer"></div>
+
+      <div class="header__actions">
+        <button id="settings-button" class="icon-btn" type="button" aria-label="설정">
+          <iconify-icon icon="mdi:cog"></iconify-icon>
+        </button>
+      </div>
     </header>
 
-    <!-- 메인 콘텐츠 영역 -->
-    <div class="container">
-        <!-- 사이드 패널 -->
-        <div class="side-panel">
-            <div class="panel-toggle">
-                <button id="toggle-panel">▶</button>
-            </div>
-            <div class="panel-content">
-                <!-- 테마/여행 정보 -->
-                <div class="theme-info">
-                    <h2 id="theme-title">테마 제목</h2>
-                    <p id="theme-description">테마 설명</p>
-                </div>
+    <!-- Main -->
+    <div class="main">
+      <!-- Map -->
+      <div class="map-container">
+        <div id="map"></div>
+      </div>
 
-                <!-- 카테고리 필터 -->
-                <div class="category-filter">
-                    <h3>카테고리</h3>
-                    <div id="category-list">
-                        <!-- 카테고리는 JavaScript로 동적 생성 -->
-                    </div>
-                </div>
-
-                <!-- 장소 목록 -->
-                <div class="place-list">
-                    <h3 id="places-list-title">장소 목록</h3>
-                    <ul id="places">
-                        <!-- 장소 목록은 JavaScript로 동적 생성 -->
-                    </ul>
-                </div>
-            </div>
+      <!-- Side Panel -->
+      <aside class="side-panel">
+        <div id="mobile-panel-handle" class="mobile-handle">
+          <div class="mobile-handle__bar"></div>
         </div>
-        
-        <!-- 지도 영역 (사이드 패널 뒤로 이동) -->
-        <div id="map" class="map-container"></div>
+
+        <div class="side-panel__header">
+          <div class="theme-info">
+            <h2 id="theme-title" class="side-panel__title">테마를 선택하세요</h2>
+            <p id="theme-description" class="side-panel__description"></p>
+          </div>
+        </div>
+
+        <div id="trip-info-bar" class="trip-info" style="display:none;"></div>
+
+        <div id="day-tabs" class="day-tabs" style="display:none;"></div>
+
+        <div class="category-filter">
+          <div id="category-list" class="category-filter__list"></div>
+        </div>
+
+        <div class="side-panel__content">
+          <h3 id="places-list-title" class="side-panel__title" style="padding:var(--space-sm) var(--space-md);font-size:var(--font-size-sm);">장소 목록</h3>
+          <ul id="places" class="place-list"></ul>
+        </div>
+      </aside>
+
+      <!-- Panel Toggle -->
+      <button id="toggle-panel" class="panel-toggle" type="button" aria-label="패널 접기">▶</button>
     </div>
 
-    <!-- 장소 정보 패널 (기본적으로 숨김) -->
-    <div id="place-info-panel" class="place-info-panel">
-        <div class="place-info-header">
-            <h3 id="place-title">장소명</h3>
-            <button id="close-place-info">✕</button>
+    <!-- Place Info Panel -->
+    <div id="place-info-panel" class="place-info">
+      <button id="close-place-info" class="place-info__close" type="button" aria-label="닫기">
+        <iconify-icon icon="mdi:close"></iconify-icon>
+      </button>
+      <div class="place-info__header">
+        <h3 id="place-title" class="place-info__title"></h3>
+        <p id="place-address" class="place-info__address"></p>
+      </div>
+      <div class="place-info__body">
+        <p id="place-description" class="place-info__description"></p>
+        <div id="place-labels" class="place-info__labels"></div>
+        <div class="place-info__links">
+          <a id="naver-map-link" class="place-info__link" href="#" target="_blank" rel="noopener">
+            <iconify-icon icon="simple-icons:naver"></iconify-icon> 네이버 지도
+          </a>
+          <a id="kakao-map-link" class="place-info__link" href="#" target="_blank" rel="noopener">
+            <iconify-icon icon="simple-icons:kakaotalk"></iconify-icon> 카카오 지도
+          </a>
         </div>
-        <div class="place-info-content">
-            <p id="place-address">주소</p>
-            <div id="place-labels">
-                <!-- 라벨/태그는 JavaScript로 동적 생성 -->
-            </div>
-            <p id="place-description">설명</p>
-            <div class="place-links">
-                <a id="naver-map-link" href="#" target="_blank">네이버 지도</a>
-                <a id="kakao-map-link" href="#" target="_blank">카카오 지도</a>
-            </div>
-        </div>
+      </div>
     </div>
-
-    <!-- 모바일용 하단 패널 핸들 -->
-    <div id="mobile-panel-handle" class="mobile-panel-handle">
-        <div class="handle-bar"></div>
-    </div>
-
-    <!-- JavaScript 파일 연결 (캐시 방지를 위한 버전 쿼리 추가) -->
-    <script src="js/data.js?v=1.0.1"></script>
-    <script src="js/map.js?v=1.0.1"></script>
-    <script src="js/ui.js?v=1.0.1"></script>
+  </div>
 </body>
-</html> 
+</html>

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "maps": [
+    "jeju_food.json",
+    "jeju_trip_202506.json"
+  ],
+  "system": {
+    "labels": "system/labels.json",
+    "transportations": "system/transportations.json"
+  }
+}
